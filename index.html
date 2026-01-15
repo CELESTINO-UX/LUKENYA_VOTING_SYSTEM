@@ -1,0 +1,1857 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lukenya Voting System</title>
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <style>
+    :root {
+      --primary: #4361ee;
+      --primary-dark: #3a56d4;
+      --secondary: #7209b7;
+      --success: #4cc9f0;
+      --danger: #f72585;
+      --warning: #f8961e;
+      --light: #f8f9fa;
+      --dark: #212529;
+      --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      --transition: all 0.3s ease;
+      --gradient: linear-gradient(135deg, #4361ee 0%, #7209b7 100%);
+      --gradient-light: linear-gradient(135deg, #4cc9f0 0%, #4361ee 100%);
+    }
+
+    body {
+      background: linear-gradient(135deg, #f4f4f4 0%, #e6e9f0 100%);
+      min-height: 100vh;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .custom-card {
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+      border-left: 4px solid var(--primary);
+      transition: var(--transition);
+    }
+
+    .custom-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .user-card {
+      cursor: pointer;
+      border-top: 4px solid var(--primary);
+      transition: var(--transition);
+    }
+
+    .user-card:hover {
+      transform: translateY(-5px);
+      background: var(--gradient-light) !important;
+      color: white !important;
+    }
+
+    .user-card:hover i {
+      color: white !important;
+    }
+
+    .candidate-option {
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .candidate-option:hover {
+      border-color: var(--primary);
+      background-color: #f8f9fa;
+    }
+
+    .candidate-option.selected {
+      border-color: var(--success);
+      background-color: #e8f5e8;
+    }
+
+    .candidate-photo {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid var(--primary);
+    }
+
+    .photo-preview {
+      max-width: 150px;
+      max-height: 150px;
+      border-radius: 8px;
+      display: none;
+    }
+
+    .developer-photo {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 5px solid var(--primary);
+      box-shadow: var(--shadow);
+    }
+
+    .status-badge {
+      font-size: 0.8rem;
+      font-weight: bold;
+    }
+
+    .progress-bar-custom {
+      height: 8px;
+      background: #eee;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .progress-custom {
+      height: 100%;
+      background: var(--gradient);
+      border-radius: 4px;
+      transition: width 0.5s ease;
+    }
+
+    .notification {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 1000;
+      animation: slideInRight 0.5s ease;
+    }
+
+    @keyframes slideInRight {
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+
+    .action-card {
+      border-top: 4px solid var(--warning);
+    }
+
+    .result-card {
+      border-left: 4px solid var(--success);
+    }
+
+    .system-title {
+      background: var(--gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-weight: bold;
+    }
+
+    .custom-btn-primary {
+      background: var(--primary);
+      border-color: var(--primary);
+    }
+
+    .custom-btn-primary:hover {
+      background: var(--primary-dark);
+      border-color: var(--primary-dark);
+    }
+
+    .custom-btn-success {
+      background: var(--success);
+      border-color: var(--success);
+    }
+
+    .custom-btn-danger {
+      background: var(--danger);
+      border-color: var(--danger);
+    }
+
+    .custom-btn-warning {
+      background: var(--warning);
+      border-color: var(--warning);
+    }
+    
+    .hidden {
+      display: none !important;
+    }
+    
+    .hero-section {
+      background: linear-gradient(135deg, #4361ee 0%, #7209b7 100%);
+      color: white;
+      border-radius: 20px;
+      padding: 3rem 2rem;
+      margin-bottom: 2rem;
+      text-align: center;
+    }
+    
+    .vote-btn {
+      background: white;
+      color: #4361ee;
+      border: none;
+      padding: 1rem 3rem;
+      font-size: 1.2rem;
+      font-weight: bold;
+      border-radius: 50px;
+      transition: all 0.3s ease;
+      margin-top: 2rem;
+    }
+    
+    .vote-btn:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    }
+    
+    .settings-btn {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 100;
+      background: var(--primary);
+      color: white;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      transition: all 0.3s ease;
+    }
+    
+    .settings-btn:hover {
+      background: var(--primary-dark);
+      transform: rotate(30deg);
+    }
+    
+    .modal-content {
+      border-radius: 15px;
+      border: none;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    }
+    
+    .settings-option {
+      padding: 1rem;
+      border-bottom: 1px solid #eee;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    
+    .settings-option:hover {
+      background-color: #f8f9fa;
+    }
+    
+    .settings-option:last-child {
+      border-bottom: none;
+    }
+    
+    .voter-choice-card {
+      transition: all 0.3s ease;
+      height: 100%;
+    }
+    
+    .voter-choice-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+    }
+    
+    .welcome-text {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+    }
+    
+    .sub-welcome-text {
+      font-size: 1.2rem;
+      opacity: 0.9;
+      margin-bottom: 2rem;
+    }
+    
+    .developer-name {
+      font-size: 2rem;
+      font-weight: bold;
+      color: var(--secondary);
+      margin-bottom: 0.5rem;
+    }
+    
+    .developer-role {
+      color: var(--primary);
+      font-weight: 600;
+      font-size: 1.2rem;
+      margin-bottom: 1.5rem;
+    }
+    
+    .developer-description {
+      font-size: 1rem;
+      line-height: 1.6;
+      color: var(--dark);
+    }
+    
+    /* Center logo styles */
+    .logo-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .system-logo {
+      max-width: 200px;
+      max-height: 150px;
+      object-fit: contain;
+      margin-bottom: 1rem;
+      border-radius: 10px;
+      box-shadow: var(--shadow);
+    }
+    
+    .logo-placeholder {
+      width: 200px;
+      height: 150px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--gradient-light);
+      border-radius: 10px;
+      margin-bottom: 1rem;
+      box-shadow: var(--shadow);
+    }
+  </style>
+</head>
+<body>
+  <!-- Settings Button -->
+  <div class="settings-btn" data-bs-toggle="modal" data-bs-target="#settingsModal">
+    <i class="bi bi-gear-fill fs-4"></i>
+  </div>
+
+  <!-- Settings Modal -->
+  <div class="modal fade" id="settingsModal" tabindex="-1" aria-labelledby="settingsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header bg-primary text-white">
+          <h5 class="modal-title" id="settingsModalLabel">Website Settings</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body p-0">
+          <div class="settings-option" onclick="showSection('adminLogin')" data-bs-dismiss="modal">
+            <div class="d-flex align-items-center">
+              <i class="bi bi-shield-lock text-primary me-3 fs-5"></i>
+              <div>
+                <h6 class="mb-1">Admin Panel</h6>
+                <p class="mb-0 text-muted small">Access administrator controls</p>
+              </div>
+            </div>
+          </div>
+          <div class="settings-option" onclick="showDeveloperInfo()" data-bs-dismiss="modal">
+            <div class="d-flex align-items-center">
+              <i class="bi bi-person-circle text-primary me-3 fs-5"></i>
+              <div>
+                <h6 class="mb-1">Developer Information</h6>
+                <p class="mb-0 text-muted small">View system developer details</p>
+              </div>
+            </div>
+          </div>
+          <div class="settings-option" onclick="showSection('home')" data-bs-dismiss="modal">
+            <div class="d-flex align-items-center">
+              <i class="bi bi-house text-primary me-3 fs-5"></i>
+              <div>
+                <h6 class="mb-1">Home Page</h6>
+                <p class="mb-0 text-muted small">Return to main page</p>
+              </div>
+            </div>
+          </div>
+          <div class="settings-option" onclick="toggleTheme()" data-bs-dismiss="modal">
+            <div class="d-flex align-items-center">
+              <i class="bi bi-moon text-primary me-3 fs-5"></i>
+              <div>
+                <h6 class="mb-1">Toggle Theme</h6>
+                <p class="mb-0 text-muted small">Switch between light/dark mode</p>
+              </div>
+            </div>
+          </div>
+          <div class="settings-option" onclick="resetAllData()" data-bs-dismiss="modal">
+            <div class="d-flex align-items-center">
+              <i class="bi bi-arrow-clockwise text-danger me-3 fs-5"></i>
+              <div>
+                <h6 class="mb-1 text-danger">Reset All Data</h6>
+                <p class="mb-0 text-muted small">Clear all voting data (Admin only)</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container py-4">
+    <header class="text-center mb-5">
+      <div class="logo-container mb-3">
+        <!-- Logo Display Area - Centered -->
+        <img id="systemLogo" class="system-logo" src="" alt="System Logo" style="display: none;">
+        <div id="defaultLogo" class="logo-placeholder">
+          <i class="bi bi-person-badge fs-1 text-white"></i>
+        </div>
+        <h1 class="system-title display-4 mt-2">Lukenya Voting System</h1>
+      </div>
+      <p class="subtitle text-secondary fs-5">British Curriculum Student Council Elections</p>
+    </header>
+
+    <!-- Home Section -->
+    <section id="home" class="fade-in mb-4">
+      <div class="hero-section">
+        <h2 class="welcome-text">WELCOME TO LUKENYA BRITISH CURRICULUM SCHOOL</h2>
+        <p class="sub-welcome-text">STUDENT ELECTION</p>
+        <button class="btn vote-btn" onclick="showVoterChoice()">
+          <i class="bi bi-check-circle me-2"></i>CAST YOUR VOTE
+        </button>
+      </div>
+    </section>
+
+    <!-- Voter Choice Section -->
+    <section id="voterChoice" class="card custom-card hidden mb-4">
+      <div class="card-body">
+        <h2 class="card-title text-secondary mb-4">Select Voter Type</h2>
+        <p class="card-text mb-4">Please select your role to proceed with voting:</p>
+        
+        <div class="row g-4">
+          <div class="col-md-6">
+            <div class="card voter-choice-card" onclick="showSection('studentLogin')">
+              <div class="card-body text-center py-5">
+                <i class="bi bi-person-circle fs-1 text-primary mb-3"></i>
+                <h3 class="card-title">Student Voter</h3>
+                <p class="card-text">Vote as a registered student</p>
+                <button class="btn custom-btn-primary mt-3 text-white">Continue as Student</button>
+              </div>
+            </div>
+          </div>
+          
+          <div class="col-md-6">
+            <div class="card voter-choice-card" onclick="showSection('staffLogin')">
+              <div class="card-body text-center py-5">
+                <i class="bi bi-person-workspace fs-1 text-primary mb-3"></i>
+                <h3 class="card-title">Staff Voter</h3>
+                <p class="card-text">Vote as a staff member</p>
+                <button class="btn custom-btn-primary mt-3 text-white">Continue as Staff</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="d-flex gap-2 mt-4">
+          <button class="btn btn-outline-primary" onclick="showSection('home')"><i class="bi bi-arrow-left me-1"></i>Back to Home</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Student Login Section -->
+    <section id="studentLogin" class="card custom-card hidden mb-4">
+      <div class="card-body">
+        <h2 class="card-title text-secondary mb-4"><i class="bi bi-person-circle me-2"></i>Student Login</h2>
+        <div class="mb-3">
+          <label for="sName" class="form-label">First Name</label>
+          <input type="text" class="form-control" id="sName" placeholder="Enter your first name">
+        </div>
+        <div class="mb-3">
+          <label for="sAdm" class="form-label">Admission Number</label>
+          <input type="text" class="form-control" id="sAdm" placeholder="Enter your admission number">
+        </div>
+        <div class="mb-3">
+          <label for="sClass" class="form-label">Class</label>
+          <input type="text" class="form-control" id="sClass" placeholder="Enter your class">
+        </div>
+        <button class="btn custom-btn-primary w-100 text-white mb-3" onclick="verifyStudent()">Login to Vote</button>
+        <div class="d-flex gap-2">
+          <button class="btn btn-outline-primary" onclick="showSection('voterChoice')"><i class="bi bi-arrow-left me-1"></i>Back to Voter Choice</button>
+          <button class="btn btn-outline-secondary" onclick="showSection('home')"><i class="bi bi-house me-1"></i>Home</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Staff Login Section -->
+    <section id="staffLogin" class="card custom-card hidden mb-4">
+      <div class="card-body">
+        <h2 class="card-title text-secondary mb-4"><i class="bi bi-person-workspace me-2"></i>Staff Login</h2>
+        <div class="mb-3">
+          <label for="tName" class="form-label">First Name</label>
+          <input type="text" class="form-control" id="tName" placeholder="Enter your first name">
+        </div>
+        <div class="mb-3">
+          <label for="tID" class="form-label">Staff ID</label>
+          <input type="text" class="form-control" id="tID" placeholder="Enter your staff ID">
+        </div>
+        <button class="btn custom-btn-primary w-100 text-white mb-3" onclick="verifyStaff()">Login to Vote</button>
+        <div class="d-flex gap-2">
+          <button class="btn btn-outline-primary" onclick="showSection('voterChoice')"><i class="bi bi-arrow-left me-1"></i>Back to Voter Choice</button>
+          <button class="btn btn-outline-secondary" onclick="showSection('home')"><i class="bi bi-house me-1"></i>Home</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Vote Section -->
+    <section id="voteSection" class="card custom-card hidden mb-4">
+      <div class="card-body">
+        <h2 class="card-title text-secondary mb-4"><i class="bi bi-check-circle me-2"></i>Cast Your Vote</h2>
+        <p class="card-text mb-4">Please select your preferred candidate for each position:</p>
+        <div id="voteForm"></div>
+        <button class="btn custom-btn-success w-100 text-white mb-3" onclick="submitVote()"><i class="bi bi-send me-1"></i>Submit Vote</button>
+        <div class="d-flex gap-2">
+          <button class="btn btn-outline-primary" onclick="showSection('home')"><i class="bi bi-arrow-left me-1"></i>Back to Home</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Admin Login Section -->
+    <section id="adminLogin" class="card custom-card hidden mb-4">
+      <div class="card-body">
+        <h2 class="card-title text-secondary mb-4"><i class="bi bi-shield-lock me-2"></i>Admin Login</h2>
+        <div class="mb-3">
+          <label for="adminPass" class="form-label">Administrator Password</label>
+          <input type="password" class="form-control" id="adminPass" placeholder="Enter administrator password">
+        </div>
+        <button class="btn custom-btn-primary w-100 text-white mb-3" onclick="adminAccess()">Login to Admin Panel</button>
+        <div class="d-flex gap-2">
+          <button class="btn btn-outline-primary" onclick="showSection('home')"><i class="bi bi-arrow-left me-1"></i>Back to Home</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Admin Panel Section -->
+    <section id="adminPanel" class="card custom-card hidden mb-4">
+      <div class="card-body">
+        <h2 class="card-title text-secondary mb-4"><i class="bi bi-gear me-2"></i>Admin Panel</h2>
+        
+        <!-- Admin Actions Section - Initially Hidden -->
+        <div id="adminActionsSection" class="hidden">
+          <div class="row g-4 mb-4">
+            <div class="col-lg-3 col-md-6">
+              <div class="card action-card h-100">
+                <div class="card-body">
+                  <h3 class="card-title h5"><i class="bi bi-person-plus me-2"></i>Register Voter</h3>
+                  <div class="mb-3">
+                    <label for="voterType" class="form-label">Voter Type</label>
+                    <select class="form-select" id="voterType">
+                      <option value="student">Student</option>
+                      <option value="staff">Staff</option>
+                    </select>
+                  </div>
+                  <div class="mb-3">
+                    <label for="voterName" class="form-label">First Name</label>
+                    <input type="text" class="form-control" id="voterName" placeholder="Enter first name">
+                  </div>
+                  <div class="mb-3">
+                    <label for="voterID" class="form-label">ID Number</label>
+                    <input type="text" class="form-control" id="voterID" placeholder="Admission No / Staff ID">
+                  </div>
+                  <div class="mb-3" id="classField">
+                    <label for="voterClass" class="form-label">Class</label>
+                    <input type="text" class="form-control" id="voterClass" placeholder="Enter class (students only)">
+                  </div>
+                  <button class="btn custom-btn-primary w-100 text-white" onclick="registerVoter()">Register Voter</button>
+                </div>
+              </div>
+            </div>
+            
+            <div class="col-lg-3 col-md-6">
+              <div class="card action-card h-100">
+                <div class="card-body">
+                  <h3 class="card-title h5"><i class="bi bi-person-plus me-2"></i>Add Candidate</h3>
+                  <div class="mb-3">
+                    <label for="positionSelect" class="form-label">Position</label>
+                    <select class="form-select" id="positionSelect"></select>
+                  </div>
+                  <div class="mb-3">
+                    <label for="candidateName" class="form-label">Candidate Name</label>
+                    <input type="text" class="form-control" id="candidateName" placeholder="Enter candidate name">
+                  </div>
+                  <div class="mb-3">
+                    <label for="candidatePhoto" class="form-label">Candidate Photo</label>
+                    <input type="file" class="form-control" id="candidatePhoto" accept="image/*">
+                    <img id="photoPreview" class="photo-preview mt-2" alt="Photo Preview">
+                  </div>
+                  <button class="btn custom-btn-primary w-100 text-white" onclick="addCandidate()">Add Candidate</button>
+                </div>
+              </div>
+            </div>
+            
+            <div class="col-lg-3 col-md-6">
+              <div class="card action-card h-100">
+                <div class="card-body">
+                  <h3 class="card-title h5"><i class="bi bi-image me-2"></i>System Logo</h3>
+                  <div class="mb-3">
+                    <label for="logoUpload" class="form-label">Upload System Logo</label>
+                    <input type="file" class="form-control" id="logoUpload" accept="image/*">
+                    <img id="logoPreview" class="photo-preview mt-2" alt="Logo Preview">
+                  </div>
+                  <button class="btn custom-btn-primary w-100 text-white" onclick="uploadLogo()">Set System Logo</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-lg-3 col-md-6">
+              <div class="card action-card h-100">
+                <div class="card-body">
+                  <h3 class="card-title h5"><i class="bi bi-person me-2"></i>Developer Photo</h3>
+                  <div class="mb-3">
+                    <label for="developerPhotoUpload" class="form-label">Upload Developer Photo</label>
+                    <input type="file" class="form-control" id="developerPhotoUpload" accept="image/*">
+                    <img id="developerPhotoPreview" class="photo-preview mt-2" alt="Developer Photo Preview">
+                  </div>
+                  <button class="btn custom-btn-primary w-100 text-white" onclick="uploadDeveloperPhoto()">Set Developer Photo</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <h3 class="h4 mb-3"><i class="bi bi-people me-2"></i>Voter Management</h3>
+          <button class="btn btn-outline-primary mb-3" onclick="showRegistered()">Show Registered Voters</button>
+          <div id="registeredVoters"></div>
+          
+          <h3 class="h4 mt-4 mb-3"><i class="bi bi-person-badge me-2"></i>Candidate Management</h3>
+          <button class="btn btn-outline-primary mb-3" onclick="showCandidates()">Show Candidates</button>
+          <div id="candidateManagement"></div>
+          
+          <h3 class="h4 mt-4 mb-3"><i class="bi bi-bar-chart me-2"></i>Election Results</h3>
+          <button class="btn btn-outline-primary mb-3" onclick="showResults()">Show Results</button>
+          <div id="results" class="row g-3"></div>
+          
+          <h3 class="h4 mt-4 mb-3"><i class="bi bi-clock-history me-2"></i>Login Attempts</h3>
+          <button class="btn btn-outline-primary mb-3" onclick="showLoginAttempts()">Show Login Attempts</button>
+          <div id="loginAttempts"></div>
+          
+          <h3 class="h4 mt-4 mb-3"><i class="bi bi-download me-2"></i>Data Export</h3>
+          <div class="d-flex flex-wrap gap-2 mb-3">
+            <button class="btn btn-outline-primary" onclick="downloadCSV('voters')">Download Voters CSV</button>
+            <button class="btn btn-outline-primary" onclick="downloadCSV('candidates')">Download Candidates CSV</button>
+            <button class="btn btn-outline-primary" onclick="downloadCSV('results')">Download Results CSV</button>
+            <button class="btn btn-outline-primary" onclick="downloadPDF()">Download Results PDF</button>
+          </div>
+        </div>
+        
+        <div class="d-flex gap-2">
+          <button class="btn btn-outline-primary" onclick="showSection('home')"><i class="bi bi-arrow-left me-1"></i>Back to Home</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Developer Information Section -->
+    <section id="developerInfo" class="card custom-card hidden mt-4">
+      <div class="card-body">
+        <h2 class="card-title text-secondary mb-4">System Developer</h2>
+        <div class="d-flex flex-column flex-md-row align-items-center justify-content-center gap-4">
+          <img id="developerPhotoDisplay" class="developer-photo" src="https://media.licdn.com/dms/image/v2/D4D03AQE4Mxq98eAj3A/profile-displayphoto-shrink_400_400/profile-displayphoto-shrink_400_400/0/1713035735123?e=1737590400&v=beta&t=gnppxVAT9pxyyhD1l_TfQ77P55Im3O7BZ6ArfnsYfes" alt="Developer Photo - Celestino Otieno">
+          <div class="developer-details text-center text-md-start">
+            <h3 class="developer-name">CELESTINO ONYANGO OTIENO</h3>
+            <p class="developer-role">FULL-STACK WEB DEVELOPER</p>
+            <p class="developer-description mb-3">
+              This voting system was designed and developed to streamline the election process for Lukenya British Curriculum Student Council.
+            </p>
+            <p class="developer-description mb-4">
+              The system ensures secure, transparent, and efficient elections with real-time results tracking and comprehensive administrative controls.
+            </p>
+            <div class="d-flex gap-3 mt-3">
+              <a href="https://www.linkedin.com/in/celestino-otieno-1146b1203" target="_blank" class="btn btn-outline-primary">
+                <i class="bi bi-linkedin me-1"></i> LinkedIn
+              </a>
+              <a href="#" class="btn btn-outline-primary" onclick="showSection('home')">
+                <i class="bi bi-house me-1"></i> Back to Home
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Bootstrap JS Bundle -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+    // Define positions
+    const positions = [
+      "Headboy", "Headgirl", "Boys' Dorm Prefect", "Girls' Dorm Prefect", 
+      "Boys' Entertainment", "Girls' Entertainment", "Boys' Sports and Co-curriculum", 
+      "Girls' Sports and Co-curriculum", "Boys' Dining", "Girls' Dining", 
+      "Boys' Chapel", "Girls' Chapel", "KS3 Prefect", "KS4 Prefect", 
+      "Girls' Academic Prefect", "Boys' Academic Prefect", "Principal's Award", 
+      "Library Prefect", "Laboratory Prefect", "Environmental Prefect"
+    ];
+
+    // Initialize data storage
+    let voters = { student: [], staff: [] };
+    let candidates = {};
+    let votes = {};
+    let maxVotes = {}; // Track max votes for progress bars
+    let currentVoter = null; // Track current voter
+    let systemLogo = null; // System logo
+    let developerPhoto = null; // Developer photo
+    let loginAttempts = []; // Track all login attempts
+
+    // Track all candidate names to prevent duplicates
+    let allCandidateNames = new Set();
+
+    // Initialize data structures
+    positions.forEach(pos => {
+      candidates[pos] = [];
+      votes[pos] = {};
+      maxVotes[pos] = 0;
+    });
+
+    // Load data from localStorage if available
+    function loadData() {
+      const savedVoters = localStorage.getItem('lukenyaVoters');
+      const savedCandidates = localStorage.getItem('lukenyaCandidates');
+      const savedVotes = localStorage.getItem('lukenyaVotes');
+      const savedMaxVotes = localStorage.getItem('lukenyaMaxVotes');
+      const savedLogo = localStorage.getItem('lukenyaLogo');
+      const savedDeveloperPhoto = localStorage.getItem('lukenyaDeveloperPhoto');
+      const savedLoginAttempts = localStorage.getItem('lukenyaLoginAttempts');
+      const savedTheme = localStorage.getItem('lukenyaTheme');
+      
+      if (savedVoters) voters = JSON.parse(savedVoters);
+      if (savedCandidates) {
+        candidates = JSON.parse(savedCandidates);
+        // Rebuild the candidate names set
+        allCandidateNames.clear();
+        positions.forEach(pos => {
+          if (candidates[pos]) {
+            candidates[pos].forEach(candidate => {
+              allCandidateNames.add(candidate.name.toLowerCase());
+            });
+          }
+        });
+      }
+      if (savedVotes) votes = JSON.parse(savedVotes);
+      if (savedMaxVotes) maxVotes = JSON.parse(savedMaxVotes);
+      if (savedLogo) {
+        systemLogo = savedLogo;
+        const logoImg = document.getElementById('systemLogo');
+        if (logoImg) {
+          logoImg.src = systemLogo;
+          logoImg.style.display = 'block';
+          document.getElementById('defaultLogo').style.display = 'none';
+        }
+      }
+      if (savedDeveloperPhoto) {
+        developerPhoto = savedDeveloperPhoto;
+        const devPhotoImg = document.getElementById('developerPhotoDisplay');
+        if (devPhotoImg) {
+          devPhotoImg.src = developerPhoto;
+        }
+      }
+      if (savedLoginAttempts) loginAttempts = JSON.parse(savedLoginAttempts);
+      if (savedTheme) {
+        document.body.setAttribute('data-theme', savedTheme);
+        if (savedTheme === 'dark') {
+          document.body.classList.add('dark-mode');
+        }
+      }
+    }
+
+    // Save data to localStorage
+    function saveData() {
+      localStorage.setItem('lukenyaVoters', JSON.stringify(voters));
+      localStorage.setItem('lukenyaCandidates', JSON.stringify(candidates));
+      localStorage.setItem('lukenyaVotes', JSON.stringify(votes));
+      localStorage.setItem('lukenyaMaxVotes', JSON.stringify(maxVotes));
+      localStorage.setItem('lukenyaLoginAttempts', JSON.stringify(loginAttempts));
+      if (systemLogo) {
+        localStorage.setItem('lukenyaLogo', systemLogo);
+      }
+      if (developerPhoto) {
+        localStorage.setItem('lukenyaDeveloperPhoto', developerPhoto);
+      }
+    }
+
+    // Record login attempt
+    function recordLoginAttempt(userType, name, id, status) {
+      const attempt = {
+        timestamp: new Date().toLocaleString(),
+        userType,
+        name,
+        id,
+        status
+      };
+      loginAttempts.unshift(attempt); // Add to beginning of array
+      saveData();
+    }
+
+    // Show/hide sections with animation
+    function showSection(id) {
+      // Hide all sections except settings modal
+      document.querySelectorAll('section').forEach(s => {
+        if (s.id !== 'settingsModal') {
+          s.classList.add('hidden');
+          s.classList.remove('fade-in');
+        }
+      });
+      
+      const targetSection = document.getElementById(id);
+      if (targetSection) {
+        targetSection.classList.remove('hidden');
+        
+        // Add fade-in effect after a brief delay
+        setTimeout(() => {
+          targetSection.classList.add('fade-in');
+        }, 50);
+      }
+    }
+
+    // Show voter choice section
+    function showVoterChoice() {
+      showSection('voterChoice');
+    }
+
+    // Show admin panel with all features
+    function showAdminPanel() {
+      showSection('adminPanel');
+      
+      // Show the admin actions section
+      const adminActionsSection = document.getElementById('adminActionsSection');
+      if (adminActionsSection) {
+        adminActionsSection.classList.remove('hidden');
+        
+        // Populate position dropdown
+        const posSel = document.getElementById('positionSelect');
+        if (posSel) {
+          posSel.innerHTML = positions.map(p => `<option value="${p}">${p}</option>`).join('');
+        }
+        
+        // Show/hide class field based on voter type
+        const voterTypeSelect = document.getElementById('voterType');
+        if (voterTypeSelect) {
+          // Remove existing event listener
+          const newVoterTypeSelect = voterTypeSelect.cloneNode(true);
+          voterTypeSelect.parentNode.replaceChild(newVoterTypeSelect, voterTypeSelect);
+          
+          // Add new event listener
+          newVoterTypeSelect.addEventListener('change', function() {
+            const classField = document.getElementById('classField');
+            if (classField) {
+              classField.style.display = this.value === 'student' ? 'block' : 'none';
+            }
+          });
+          
+          // Trigger change event to set initial state
+          setTimeout(() => {
+            newVoterTypeSelect.dispatchEvent(new Event('change'));
+          }, 100);
+        }
+        
+        // Setup file input listeners
+        setupFileInputListeners();
+      }
+    }
+
+    // Show developer information
+    function showDeveloperInfo() {
+      showSection('developerInfo');
+    }
+
+    // Show notification using Bootstrap toast
+    function showNotification(message, isError = false) {
+      // Remove existing notifications
+      const existingNotifications = document.querySelectorAll('.notification');
+      existingNotifications.forEach(n => n.remove());
+      
+      // Create notification element
+      const notification = document.createElement('div');
+      notification.className = `notification alert ${isError ? 'alert-danger' : 'alert-success'} alert-dismissible fade show`;
+      notification.innerHTML = `
+        <i class="bi ${isError ? 'bi-exclamation-triangle' : 'bi-check-circle'} me-2"></i>
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      `;
+      
+      document.body.appendChild(notification);
+      
+      // Auto remove after 5 seconds
+      setTimeout(() => {
+        if (notification.parentNode) {
+          notification.remove();
+        }
+      }, 5000);
+    }
+
+    // Verify student login
+    function verifyStudent() {
+      const name = document.getElementById('sName').value.trim();
+      const adm = document.getElementById('sAdm').value.trim();
+      const cls = document.getElementById('sClass').value.trim();
+      
+      if (!name || !adm || !cls) {
+        showNotification('Please fill in all fields', true);
+        recordLoginAttempt('student', name, adm, 'failed');
+        return;
+      }
+      
+      const found = voters.student.find(v => v.name === name && v.id === adm && v.class === cls);
+      if (found) {
+        if (found.hasVoted) {
+          showNotification('You have already voted. Each voter can only vote once.', true);
+          recordLoginAttempt('student', name, adm, 'failed');
+          return;
+        }
+        
+        currentVoter = { type: 'student', id: adm };
+        showNotification('Login successful!');
+        recordLoginAttempt('student', name, adm, 'success');
+        setTimeout(() => startVoting(), 1000);
+      } else {
+        showNotification('Student not registered. Please contact administrator.', true);
+        recordLoginAttempt('student', name, adm, 'failed');
+      }
+    }
+
+    // Verify staff login
+    function verifyStaff() {
+      const name = document.getElementById('tName').value.trim();
+      const id = document.getElementById('tID').value.trim();
+      
+      if (!name || !id) {
+        showNotification('Please fill in all fields', true);
+        recordLoginAttempt('staff', name, id, 'failed');
+        return;
+      }
+      
+      const found = voters.staff.find(v => v.name === name && v.id === id);
+      if (found) {
+        if (found.hasVoted) {
+          showNotification('You have already voted. Each voter can only vote once.', true);
+          recordLoginAttempt('staff', name, id, 'failed');
+          return;
+        }
+        
+        currentVoter = { type: 'staff', id: id };
+        showNotification('Login successful!');
+        recordLoginAttempt('staff', name, id, 'success');
+        setTimeout(() => startVoting(), 1000);
+      } else {
+        showNotification('Staff not registered. Please contact administrator.', true);
+        recordLoginAttempt('staff', name, id, 'failed');
+      }
+    }
+
+    // Start voting process
+    function startVoting() {
+      showSection('voteSection');
+      const form = document.getElementById('voteForm');
+      if (!form) return;
+      
+      form.innerHTML = '';
+      
+      positions.forEach(pos => {
+        if (candidates[pos] && candidates[pos].length > 0) {
+          const div = document.createElement('div');
+          div.className = 'mb-4';
+          
+          let candidatesHTML = `<label class="form-label fw-bold mb-3">${pos}</label>`;
+          candidates[pos].forEach(candidate => {
+            candidatesHTML += `
+              <div class="candidate-option p-3 mb-2" onclick="selectCandidate(this, '${pos}')">
+                <div class="form-check d-flex align-items-center">
+                  <input class="form-check-input me-3" type="radio" name="${pos}" value="${candidate.name}">
+                  <div class="candidate-with-photo d-flex align-items-center">
+                    ${candidate.photo ? `<img src="${candidate.photo}" class="candidate-photo me-3" alt="${candidate.name}">` : ''}
+                    <div class="candidate-info">
+                      <strong class="d-block">${candidate.name}</strong>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            `;
+          });
+          
+          div.innerHTML = candidatesHTML;
+          form.appendChild(div);
+        }
+      });
+    }
+
+    // Select candidate
+    function selectCandidate(element, position) {
+      if (!element) return;
+      
+      // Deselect all options for this position
+      const allOptions = document.querySelectorAll(`input[name="${position}"]`);
+      allOptions.forEach(opt => {
+        const parent = opt.closest('.candidate-option');
+        if (parent) {
+          parent.classList.remove('selected');
+        }
+      });
+      
+      // Select the clicked option
+      element.classList.add('selected');
+      const radio = element.querySelector('input[type="radio"]');
+      if (radio) {
+        radio.checked = true;
+      }
+    }
+
+    // Submit vote
+    function submitVote() {
+      let hasVoted = false;
+      
+      positions.forEach(pos => {
+        const selectedOption = document.querySelector(`input[name="${pos}"]:checked`);
+        if (selectedOption) {
+          const selectedCandidate = selectedOption.value;
+          votes[pos][selectedCandidate] = (votes[pos][selectedCandidate] || 0) + 1;
+          
+          // Update max votes for this position
+          if (votes[pos][selectedCandidate] > maxVotes[pos]) {
+            maxVotes[pos] = votes[pos][selectedCandidate];
+          }
+          
+          hasVoted = true;
+        }
+      });
+      
+      if (hasVoted) {
+        // Mark voter as having voted
+        if (currentVoter && currentVoter.type === 'student') {
+          const voterIndex = voters.student.findIndex(v => v.id === currentVoter.id);
+          if (voterIndex !== -1) {
+            voters.student[voterIndex].hasVoted = true;
+          }
+        } else if (currentVoter && currentVoter.type === 'staff') {
+          const voterIndex = voters.staff.findIndex(v => v.id === currentVoter.id);
+          if (voterIndex !== -1) {
+            voters.staff[voterIndex].hasVoted = true;
+          }
+        }
+        
+        saveData();
+        showNotification('Vote submitted successfully!');
+        setTimeout(() => showSection('home'), 1500);
+      } else {
+        showNotification('Please vote for at least one position', true);
+      }
+    }
+
+    // Admin access
+    function adminAccess() {
+      const passwordInput = document.getElementById('adminPass');
+      if (!passwordInput) return;
+      
+      const password = passwordInput.value;
+      
+      if (password === "Luk123enya") {
+        showNotification('Admin access granted');
+        recordLoginAttempt('admin', 'Administrator', 'N/A', 'success');
+        
+        setTimeout(() => showAdminPanel(), 1000);
+      } else {
+        showNotification('Wrong password. Access denied.', true);
+        recordLoginAttempt('admin', 'Unknown', 'N/A', 'failed');
+      }
+    }
+
+    // Set up file input listeners
+    function setupFileInputListeners() {
+      // Preview for candidate photo
+      const candidatePhotoInput = document.getElementById('candidatePhoto');
+      if (candidatePhotoInput) {
+        candidatePhotoInput.addEventListener('change', function(e) {
+          const file = e.target.files[0];
+          if (file) {
+            const reader = new FileReader();
+            reader.onload = function(event) {
+              const preview = document.getElementById('photoPreview');
+              if (preview) {
+                preview.src = event.target.result;
+                preview.style.display = 'block';
+              }
+            };
+            reader.readAsDataURL(file);
+          }
+        });
+      }
+      
+      // Preview for logo
+      const logoUploadInput = document.getElementById('logoUpload');
+      if (logoUploadInput) {
+        logoUploadInput.addEventListener('change', function(e) {
+          const file = e.target.files[0];
+          if (file) {
+            const reader = new FileReader();
+            reader.onload = function(event) {
+              const preview = document.getElementById('logoPreview');
+              if (preview) {
+                preview.src = event.target.result;
+                preview.style.display = 'block';
+              }
+            };
+            reader.readAsDataURL(file);
+          }
+        });
+      }
+
+      // Preview for developer photo
+      const developerPhotoInput = document.getElementById('developerPhotoUpload');
+      if (developerPhotoInput) {
+        developerPhotoInput.addEventListener('change', function(e) {
+          const file = e.target.files[0];
+          if (file) {
+            const reader = new FileReader();
+            reader.onload = function(event) {
+              const preview = document.getElementById('developerPhotoPreview');
+              if (preview) {
+                preview.src = event.target.result;
+                preview.style.display = 'block';
+              }
+            };
+            reader.readAsDataURL(file);
+          }
+        });
+      }
+    }
+
+    // Register voter
+    function registerVoter() {
+      const typeSelect = document.getElementById('voterType');
+      const nameInput = document.getElementById('voterName');
+      const idInput = document.getElementById('voterID');
+      const classInput = document.getElementById('voterClass');
+      
+      if (!typeSelect || !nameInput || !idInput) return;
+      
+      const type = typeSelect.value;
+      const name = nameInput.value.trim();
+      const id = idInput.value.trim();
+      const cls = classInput ? classInput.value.trim() : '';
+      
+      if (!name || !id) {
+        showNotification('Please fill in all required fields', true);
+        return;
+      }
+      
+      if (type === "student" && !cls) {
+        showNotification('Class is required for students', true);
+        return;
+      }
+      
+      // Check if voter already exists
+      const existingVoter = voters[type].find(v => v.id === id);
+      if (existingVoter) {
+        showNotification('Voter with this ID is already registered', true);
+        return;
+      }
+      
+      if (type === "student") {
+        voters.student.push({ name, id, class: cls, hasVoted: false });
+      } else {
+        voters.staff.push({ name, id, hasVoted: false });
+      }
+      
+      saveData();
+      showNotification(`${type.charAt(0).toUpperCase() + type.slice(1)} registered successfully`);
+      
+      // Clear form
+      nameInput.value = '';
+      idInput.value = '';
+      if (classInput) {
+        classInput.value = '';
+      }
+    }
+
+    // Add candidate - WITH DUPLICATE NAME PREVENTION
+    function addCandidate() {
+      const posSelect = document.getElementById('positionSelect');
+      const nameInput = document.getElementById('candidateName');
+      const photoInput = document.getElementById('candidatePhoto');
+      
+      if (!posSelect || !nameInput) return;
+      
+      const pos = posSelect.value;
+      const name = nameInput.value.trim();
+      const photoFile = photoInput && photoInput.files ? photoInput.files[0] : null;
+      
+      if (!name) {
+        showNotification('Please enter a candidate name', true);
+        return;
+      }
+      
+      // Check if candidate already exists for this position
+      const existingCandidate = candidates[pos].find(c => c.name.toLowerCase() === name.toLowerCase());
+      if (existingCandidate) {
+        showNotification('Candidate already exists for this position', true);
+        return;
+      }
+      
+      // Check if candidate name exists in ANY position (global duplicate prevention)
+      if (allCandidateNames.has(name.toLowerCase())) {
+        showNotification('Candidate name already exists in another position. Please use a different name.', true);
+        return;
+      }
+      
+      // Process photo if provided
+      if (photoFile) {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+          const candidate = { name, photo: event.target.result };
+          candidates[pos].push(candidate);
+          votes[pos][name] = 0;
+          allCandidateNames.add(name.toLowerCase()); // Add to global set
+          saveData();
+          showNotification(`Candidate "${name}" added to ${pos}`);
+          
+          // Clear form
+          nameInput.value = '';
+          if (photoInput) {
+            photoInput.value = '';
+          }
+          const preview = document.getElementById('photoPreview');
+          if (preview) {
+            preview.style.display = 'none';
+          }
+        };
+        reader.readAsDataURL(photoFile);
+      } else {
+        const candidate = { name, photo: null };
+        candidates[pos].push(candidate);
+        votes[pos][name] = 0;
+        allCandidateNames.add(name.toLowerCase()); // Add to global set
+        saveData();
+        showNotification(`Candidate "${name}" added to ${pos}`);
+        
+        // Clear form
+        nameInput.value = '';
+      }
+    }
+
+    // Upload system logo
+    function uploadLogo() {
+      const logoInput = document.getElementById('logoUpload');
+      if (!logoInput) return;
+      
+      const logoFile = logoInput.files[0];
+      
+      if (!logoFile) {
+        showNotification('Please select a logo file', true);
+        return;
+      }
+      
+      const reader = new FileReader();
+      reader.onload = function(event) {
+        systemLogo = event.target.result;
+        const logoImg = document.getElementById('systemLogo');
+        if (logoImg) {
+          logoImg.src = systemLogo;
+          logoImg.style.display = 'block';
+          document.getElementById('defaultLogo').style.display = 'none';
+        }
+        saveData();
+        showNotification('System logo updated successfully');
+        
+        // Clear form
+        logoInput.value = '';
+        const preview = document.getElementById('logoPreview');
+        if (preview) {
+          preview.style.display = 'none';
+        }
+      };
+      reader.readAsDataURL(logoFile);
+    }
+
+    // Upload developer photo
+    function uploadDeveloperPhoto() {
+      const photoInput = document.getElementById('developerPhotoUpload');
+      if (!photoInput) return;
+      
+      const photoFile = photoInput.files[0];
+      
+      if (!photoFile) {
+        showNotification('Please select a photo file', true);
+        return;
+      }
+      
+      const reader = new FileReader();
+      reader.onload = function(event) {
+        developerPhoto = event.target.result;
+        const devPhotoImg = document.getElementById('developerPhotoDisplay');
+        if (devPhotoImg) {
+          devPhotoImg.src = developerPhoto;
+        }
+        saveData();
+        showNotification('Developer photo updated successfully');
+        
+        // Clear form
+        photoInput.value = '';
+        const preview = document.getElementById('developerPhotoPreview');
+        if (preview) {
+          preview.style.display = 'none';
+        }
+      };
+      reader.readAsDataURL(photoFile);
+    }
+
+    // Show results with visual progress bars
+    function showResults() {
+      const res = document.getElementById('results');
+      if (!res) return;
+      
+      res.innerHTML = '';
+      
+      positions.forEach(pos => {
+        if (candidates[pos] && candidates[pos].length > 0) {
+          const resultCard = document.createElement('div');
+          resultCard.className = 'col-lg-4 col-md-6';
+          
+          let candidatesHTML = '';
+          candidates[pos].forEach(candidate => {
+            const voteCount = votes[pos][candidate.name] || 0;
+            const percentage = maxVotes[pos] > 0 ? (voteCount / maxVotes[pos]) * 100 : 0;
+            
+            candidatesHTML += `
+              <div class="candidate-with-photo d-flex align-items-center mb-3">
+                ${candidate.photo ? `<img src="${candidate.photo}" class="candidate-photo me-3" alt="${candidate.name}">` : ''}
+                <div class="candidate-info flex-grow-1">
+                  <div class="d-flex justify-content-between mb-1">
+                    <span class="fw-bold">${candidate.name}</span>
+                    <span class="vote-count text-primary fw-bold">${voteCount} votes</span>
+                  </div>
+                  <div class="progress-bar-custom">
+                    <div class="progress-custom" style="width: ${percentage}%"></div>
+                  </div>
+                </div>
+              </div>
+            `;
+          });
+          
+          resultCard.innerHTML = `
+            <div class="card result-card h-100">
+              <div class="card-body">
+                <h4 class="card-title text-primary mb-3">${pos}</h4>
+                ${candidatesHTML}
+              </div>
+            </div>
+          `;
+          
+          res.appendChild(resultCard);
+        }
+      });
+    }
+
+    // Show registered voters with separate tables for students and staff
+    function showRegistered() {
+      const reg = document.getElementById('registeredVoters');
+      if (!reg) return;
+      
+      reg.innerHTML = '';
+      
+      if (voters.student.length === 0 && voters.staff.length === 0) {
+        reg.innerHTML = '<p class="text-muted">No voters registered yet.</p>';
+        return;
+      }
+      
+      // Create student voter section
+      if (voters.student.length > 0) {
+        const studentSection = document.createElement('div');
+        studentSection.className = 'mb-4';
+        
+        studentSection.innerHTML = `
+          <h4 class="text-secondary mb-3"><i class="bi bi-person-circle me-2"></i>Student Voters</h4>
+          <p class="text-muted mb-3">Total: ${voters.student.length} students</p>
+        `;
+        
+        let studentTableHTML = `
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead class="table-primary">
+                <tr>
+                  <th>Name</th>
+                  <th>Admission No</th>
+                  <th>Class</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+        `;
+        
+        voters.student.forEach((v, index) => {
+          const status = v.hasVoted ? 
+            '<span class="badge bg-success">VOTED</span>' : 
+            '<span class="badge bg-danger">NOT VOTED</span>';
+          studentTableHTML += `
+            <tr>
+              <td>${v.name}</td>
+              <td>${v.id}</td>
+              <td>${v.class}</td>
+              <td>${status}</td>
+              <td>
+                <div class="btn-group btn-group-sm">
+                  <button class="btn btn-warning" onclick="editVoter('student', ${index})"><i class="bi bi-pencil"></i></button>
+                  <button class="btn btn-danger" onclick="deleteVoter('student', ${index})"><i class="bi bi-trash"></i></button>
+                </div>
+              </td>
+            </tr>
+          `;
+        });
+        
+        studentTableHTML += '</tbody></table></div>';
+        studentSection.innerHTML += studentTableHTML;
+        reg.appendChild(studentSection);
+      }
+      
+      // Create staff voter section
+      if (voters.staff.length > 0) {
+        const staffSection = document.createElement('div');
+        
+        staffSection.innerHTML = `
+          <h4 class="text-secondary mb-3"><i class="bi bi-person-workspace me-2"></i>Staff Voters</h4>
+          <p class="text-muted mb-3">Total: ${voters.staff.length} staff members</div>
+        `;
+        
+        let staffTableHTML = `
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead class="table-primary">
+                <tr>
+                  <th>Name</th>
+                  <th>Staff ID</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+        `;
+        
+        voters.staff.forEach((v, index) => {
+          const status = v.hasVoted ? 
+            '<span class="badge bg-success">VOTED</span>' : 
+            '<span class="badge bg-danger">NOT VOTED</span>';
+          staffTableHTML += `
+            <tr>
+              <td>${v.name}</td>
+              <td>${v.id}</td>
+              <td>${status}</td>
+              <td>
+                <div class="btn-group btn-group-sm">
+                  <button class="btn btn-warning" onclick="editVoter('staff', ${index})"><i class="bi bi-pencil"></i></button>
+                  <button class="btn btn-danger" onclick="deleteVoter('staff', ${index})"><i class="bi bi-trash"></i></button>
+                </div>
+              </td>
+            </tr>
+          `;
+        });
+        
+        staffTableHTML += '</tbody></table></div>';
+        staffSection.innerHTML += staffTableHTML;
+        reg.appendChild(staffSection);
+      }
+    }
+
+    // Edit voter
+    function editVoter(type, index) {
+      const voter = voters[type][index];
+      const newName = prompt(`Edit ${type} voter name:`, voter.name);
+      if (newName === null) return; // User cancelled
+      
+      const newID = prompt(`Edit ${type} voter ID:`, voter.id);
+      if (newID === null) return;
+      
+      let newClass = '';
+      if (type === 'student') {
+        newClass = prompt(`Edit ${type} voter class:`, voter.class);
+        if (newClass === null) return;
+      }
+      
+      // Check if the new ID already exists (excluding the current voter)
+      const existingVoter = voters[type].find((v, i) => v.id === newID && i !== index);
+      if (existingVoter) {
+        showNotification('A voter with this ID already exists', true);
+        return;
+      }
+      
+      // Update voter
+      voter.name = newName.trim();
+      voter.id = newID.trim();
+      if (type === 'student') {
+        voter.class = newClass.trim();
+      }
+      
+      saveData();
+      showNotification(`${type} voter updated successfully`);
+      showRegistered(); // Refresh the display
+    }
+
+    // Delete voter
+    function deleteVoter(type, index) {
+      const voter = voters[type][index];
+      const confirmDelete = confirm(`Are you sure you want to delete ${voter.name} (${voter.id})?`);
+      
+      if (confirmDelete) {
+        voters[type].splice(index, 1);
+        saveData();
+        showNotification(`${type} voter deleted successfully`);
+        showRegistered(); // Refresh the display
+      }
+    }
+
+    // Show candidates with edit/delete buttons
+    function showCandidates() {
+      const candidateDiv = document.getElementById('candidateManagement');
+      if (!candidateDiv) return;
+      
+      candidateDiv.innerHTML = '';
+      
+      let hasCandidates = false;
+      positions.forEach(pos => {
+        if (candidates[pos] && candidates[pos].length > 0) {
+          hasCandidates = true;
+        }
+      });
+      
+      if (!hasCandidates) {
+        candidateDiv.innerHTML = '<p class="text-muted">No candidates added yet.</p>';
+        return;
+      }
+      
+      let tableHTML = `
+        <div class="table-responsive">
+          <table class="table table-hover">
+            <thead class="table-primary">
+              <tr>
+                <th>Position</th>
+                <th>Candidate Name</th>
+                <th>Photo</th>
+                <th>Votes</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+      `;
+      
+      positions.forEach(pos => {
+        if (candidates[pos]) {
+          candidates[pos].forEach((candidate, index) => {
+            const voteCount = votes[pos][candidate.name] || 0;
+            tableHTML += `
+              <tr>
+                <td>${pos}</td>
+                <td>${candidate.name}</td>
+                <td>${candidate.photo ? '<i class="bi bi-check-circle-fill text-success"></i>' : '<i class="bi bi-x-circle-fill text-danger"></i>'}</td>
+                <td>${voteCount}</td>
+                <td>
+                  <div class="btn-group btn-group-sm">
+                    <button class="btn btn-warning" onclick="editCandidate('${pos}', ${index})"><i class="bi bi-pencil"></i></button>
+                    <button class="btn btn-danger" onclick="deleteCandidate('${pos}', ${index})"><i class="bi bi-trash"></i></button>
+                  </div>
+                </td>
+              </tr>
+            `;
+          });
+        }
+      });
+      
+      tableHTML += '</tbody></table></div>';
+      candidateDiv.innerHTML = tableHTML;
+    }
+
+    // Edit candidate
+    function editCandidate(position, index) {
+      const candidate = candidates[position][index];
+      const newName = prompt(`Edit candidate name for ${position}:`, candidate.name);
+      if (newName === null) return; // User cancelled
+      
+      // Check if the new name already exists (excluding the current candidate)
+      const existingCandidate = candidates[position].find((c, i) => 
+        c.name.toLowerCase() === newName.toLowerCase() && i !== index
+      );
+      
+      if (existingCandidate) {
+        showNotification('A candidate with this name already exists for this position', true);
+        return;
+      }
+      
+      // Check if candidate name exists in ANY position (global duplicate prevention)
+      if (newName.toLowerCase() !== candidate.name.toLowerCase() && allCandidateNames.has(newName.toLowerCase())) {
+        showNotification('Candidate name already exists in another position. Please use a different name.', true);
+        return;
+      }
+      
+      // Update candidate name and votes if name changed
+      if (newName !== candidate.name) {
+        // Update votes
+        const oldVoteCount = votes[position][candidate.name] || 0;
+        votes[position][newName] = oldVoteCount;
+        delete votes[position][candidate.name];
+        
+        // Update global name set
+        allCandidateNames.delete(candidate.name.toLowerCase());
+        allCandidateNames.add(newName.toLowerCase());
+        
+        // Update candidate
+        candidate.name = newName.trim();
+      }
+      
+      // Ask about photo update
+      const updatePhoto = confirm('Would you like to update the candidate photo?');
+      if (updatePhoto) {
+        // Create a file input for photo update
+        const fileInput = document.createElement('input');
+        fileInput.type = 'file';
+        fileInput.accept = 'image/*';
+        fileInput.onchange = function(e) {
+          const file = e.target.files[0];
+          if (file) {
+            const reader = new FileReader();
+            reader.onload = function(event) {
+              candidate.photo = event.target.result;
+              saveData();
+              showNotification('Candidate updated successfully');
+              showCandidates(); // Refresh the display
+            };
+            reader.readAsDataURL(file);
+          }
+        };
+        fileInput.click();
+      } else {
+        saveData();
+        showNotification('Candidate updated successfully');
+        showCandidates(); // Refresh the display
+      }
+    }
+
+    // Delete candidate
+    function deleteCandidate(position, index) {
+      const candidate = candidates[position][index];
+      const confirmDelete = confirm(`Are you sure you want to delete ${candidate.name} from ${position}?`);
+      
+      if (confirmDelete) {
+        // Remove from global name set
+        allCandidateNames.delete(candidate.name.toLowerCase());
+        
+        // Remove candidate from position
+        candidates[position].splice(index, 1);
+        
+        // Remove candidate's votes
+        delete votes[position][candidate.name];
+        
+        // Recalculate max votes for this position
+        maxVotes[position] = 0;
+        if (candidates[position]) {
+          candidates[position].forEach(c => {
+            if (votes[position][c.name] > maxVotes[position]) {
+              maxVotes[position] = votes[position][c.name];
+            }
+          });
+        }
+        
+        saveData();
+        showNotification('Candidate deleted successfully');
+        showCandidates(); // Refresh the display
+      }
+    }
+
+    // Show login attempts
+    function showLoginAttempts() {
+      const attemptsDiv = document.getElementById('loginAttempts');
+      if (!attemptsDiv) return;
+      
+      attemptsDiv.innerHTML = '';
+      
+      if (loginAttempts.length === 0) {
+        attemptsDiv.innerHTML = '<p class="text-muted">No login attempts recorded yet.</p>';
+        return;
+      }
+      
+      const table = document.createElement('div');
+      table.className = 'table-responsive';
+      
+      let tableHTML = `
+        <table class="table table-hover">
+          <thead class="table-primary">
+            <tr>
+              <th>Timestamp</th>
+              <th>User Type</th>
+              <th>Name</th>
+              <th>ID</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+      `;
+      
+      loginAttempts.forEach(attempt => {
+        const statusClass = attempt.status === 'success' ? 'text-success fw-bold' : 'text-danger fw-bold';
+        tableHTML += `
+          <tr>
+            <td>${attempt.timestamp}</td>
+            <td>${attempt.userType}</td>
+            <td>${attempt.name}</td>
+            <td>${attempt.id}</td>
+            <td class="${statusClass}">${attempt.status.toUpperCase()}</td>
+          </tr>
+        `;
+      });
+      
+      tableHTML += '</tbody></table>';
+      table.innerHTML = tableHTML;
+      attemptsDiv.appendChild(table);
+    }
+
+    // Download CSV data
+    function downloadCSV(type) {
+      let data = '', filename = '';
+      
+      if (type === 'voters') {
+        data = 'Type,Name,ID,Class,Has Voted\n';
+        voters.student.forEach(v => data += `Student,${v.name},${v.id},${v.class},${v.hasVoted ? 'Yes' : 'No'}\n`);
+        voters.staff.forEach(v => data += `Staff,${v.name},${v.id},,${v.hasVoted ? 'Yes' : 'No'}\n`);
+        filename = 'voters.csv';
+      } else if (type === 'candidates') {
+        data = 'Position,Candidate,Photo\n';
+        positions.forEach(p => {
+          if (candidates[p]) {
+            candidates[p].forEach(c => data += `${p},${c.name},${c.photo ? 'Yes' : 'No'}\n`);
+          }
+        });
+        filename = 'candidates.csv';
+      } else if (type === 'results') {
+        data = 'Position,Candidate,Votes\n';
+        positions.forEach(p => {
+          if (candidates[p]) {
+            candidates[p].forEach(c => data += `${p},${c.name},${votes[p][c.name] || 0}\n`);
+          }
+        });
+        filename = 'results.csv';
+      }
+      
+      const blob = new Blob([data], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      const url = URL.createObjectURL(blob);
+      link.setAttribute('href', url);
+      link.setAttribute('download', filename);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      showNotification(`Downloaded ${filename}`);
+    }
+
+    // Download PDF
+    function downloadPDF() {
+      if (!window.jspdf || !window.jspdf.jsPDF) {
+        showNotification('PDF library not loaded. Please check your internet connection.', true);
+        return;
+      }
+      
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+      
+      // Add logo if available
+      if (systemLogo) {
+        try {
+          doc.addImage(systemLogo, 'JPEG', 10, 10, 30, 20);
+        } catch (e) {
+          console.warn('Could not add logo to PDF:', e);
+        }
+      }
+      
+      // Title
+      doc.setFontSize(20);
+      doc.text('Lukenya Voting System - Election Results', 50, 20);
+      
+      let yPosition = 40;
+      
+      positions.forEach((pos, index) => {
+        if (candidates[pos] && candidates[pos].length > 0) {
+          // Add page if needed
+          if (yPosition > 250) {
+            doc.addPage();
+            yPosition = 20;
+          }
+          
+          // Position title
+          doc.setFontSize(16);
+          doc.text(pos, 10, yPosition);
+          yPosition += 10;
+          
+          // Candidates and votes
+          doc.setFontSize(12);
+          candidates[pos].forEach(candidate => {
+            const voteCount = votes[pos][candidate.name] || 0;
+            doc.text(`${candidate.name}: ${voteCount} votes`, 15, yPosition);
+            yPosition += 7;
+            
+            // Check if we need a new page
+            if (yPosition > 250) {
+              doc.addPage();
+              yPosition = 20;
+            }
+          });
+          
+          yPosition += 10;
+        }
+      });
+      
+      doc.save('election_results.pdf');
+      showNotification('PDF downloaded successfully');
+    }
+
+    // Toggle theme function
+    function toggleTheme() {
+      const currentTheme = document.body.getAttribute('data-theme');
+      if (currentTheme === 'dark') {
+        document.body.setAttribute('data-theme', 'light');
+        document.body.classList.remove('dark-mode');
+        localStorage.setItem('lukenyaTheme', 'light');
+        showNotification('Switched to light theme');
+      } else {
+        document.body.setAttribute('data-theme', 'dark');
+        document.body.classList.add('dark-mode');
+        localStorage.setItem('lukenyaTheme', 'dark');
+        showNotification('Switched to dark theme');
+      }
+    }
+
+    // Reset all data function
+    function resetAllData() {
+      const password = prompt('Enter admin password to reset all data:');
+      if (password === "Luk123enya") {
+        if (confirm('WARNING: This will delete ALL voting data, candidates, and voters. Are you sure?')) {
+          // Clear all data
+          voters = { student: [], staff: [] };
+          candidates = {};
+          votes = {};
+          maxVotes = {};
+          allCandidateNames.clear();
+          loginAttempts = [];
+          currentVoter = null;
+          
+          // Initialize data structures
+          positions.forEach(pos => {
+            candidates[pos] = [];
+            votes[pos] = {};
+            maxVotes[pos] = 0;
+          });
+          
+          // Clear localStorage
+          localStorage.clear();
+          
+          showNotification('All data has been reset successfully');
+          showSection('home');
+        }
+      } else {
+        showNotification('Invalid password. Reset cancelled.', true);
+      }
+    }
+
+    // Initialize data when page loads
+    window.onload = function() {
+      loadData();
+      
+      // If no data exists, start with empty system
+      if (!localStorage.getItem('lukenyaVoters')) {
+        saveData();
+      }
+    };
+  </script>
+</body>
+</html>
