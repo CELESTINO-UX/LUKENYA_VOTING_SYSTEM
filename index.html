@@ -32,6 +32,184 @@
       background: linear-gradient(135deg, #f4f4f4 0%, #e6e9f0 100%);
       min-height: 100vh;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Background elements */
+    .bg-element {
+      position: fixed;
+      z-index: -1;
+      opacity: 0.1;
+      pointer-events: none;
+    }
+
+    .ballot-box-bg {
+      width: 100px;
+      height: 120px;
+      background: linear-gradient(135deg, #4361ee 0%, #7209b7 100%);
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .ballot-box-bg:before {
+      content: '';
+      position: absolute;
+      top: -10px;
+      left: 20px;
+      width: 60px;
+      height: 10px;
+      background: #333;
+      border-radius: 5px 5px 0 0;
+    }
+
+    .person-voting-bg {
+      width: 60px;
+      height: 90px;
+      position: relative;
+    }
+
+    .person-voting-bg:before {
+      content: '🗳️';
+      font-size: 40px;
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+
+    .person-voting-bg:after {
+      content: '👤';
+      font-size: 30px;
+      position: absolute;
+      top: 40px;
+      left: 15px;
+    }
+
+    .checkmark-bg {
+      font-size: 40px;
+      color: #4cc9f0;
+    }
+
+    /* Background patterns */
+    .dots-pattern {
+      background-image: radial-gradient(#4361ee 2px, transparent 2px);
+      background-size: 30px 30px;
+    }
+
+    .lines-pattern {
+      background-image: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(67, 97, 238, 0.1) 10px, rgba(67, 97, 238, 0.1) 20px);
+    }
+
+    .grid-pattern {
+      background-image: linear-gradient(rgba(67, 97, 238, 0.1) 1px, transparent 1px),
+                        linear-gradient(90deg, rgba(67, 97, 238, 0.1) 1px, transparent 1px);
+      background-size: 30px 30px;
+    }
+
+    /* Background colors */
+    .bg-color-blue {
+      background: linear-gradient(135deg, #e6f7ff 0%, #f0f5ff 100%) !important;
+    }
+
+    .bg-color-white {
+      background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%) !important;
+    }
+
+    .bg-color-green {
+      background: linear-gradient(135deg, #f0fff4 0%, #e6fffa 100%) !important;
+    }
+
+    .bg-color-red {
+      background: linear-gradient(135deg, #fff5f5 0%, #fff0f6 100%) !important;
+    }
+
+    .bg-color-purple {
+      background: linear-gradient(135deg, #f9f0ff 0%, #f0f5ff 100%) !important;
+    }
+
+    .bg-color-gradient {
+      background: linear-gradient(135deg, #4361ee 0%, #7209b7 100%) !important;
+    }
+
+    .bg-color-gradient-light {
+      background: linear-gradient(135deg, #4cc9f0 0%, #4361ee 100%) !important;
+    }
+
+    /* Background toggle control */
+    .bg-toggle-control {
+      position: fixed;
+      bottom: 100px;
+      right: 20px;
+      z-index: 101;
+      background: var(--primary);
+      color: white;
+      border-radius: 25px;
+      padding: 10px 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .bg-toggle-control:hover {
+      background: var(--primary-dark);
+      transform: scale(1.05);
+    }
+
+    .bg-options-panel {
+      position: fixed;
+      bottom: 170px;
+      right: 20px;
+      z-index: 101;
+      background: white;
+      border-radius: 15px;
+      padding: 20px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      width: 250px;
+      display: none;
+    }
+
+    .bg-options-panel.show {
+      display: block;
+      animation: slideUp 0.3s ease;
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .bg-option {
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      margin: 5px;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: all 0.2s ease;
+    }
+
+    .bg-option:hover {
+      transform: scale(1.1);
+    }
+
+    .bg-option.active {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.3);
+    }
+
+    .bg-option-label {
+      font-size: 0.8rem;
+      margin-top: 5px;
+      text-align: center;
     }
 
     .custom-card {
@@ -39,6 +217,7 @@
       box-shadow: var(--shadow);
       border-left: 4px solid var(--primary);
       transition: var(--transition);
+      background: white;
     }
 
     .custom-card:hover {
@@ -592,6 +771,87 @@
   </style>
 </head>
 <body>
+  <!-- Background Elements -->
+  <div id="backgroundElements"></div>
+
+  <!-- Background Toggle Control -->
+  <div id="bgToggleControl" class="bg-toggle-control hidden">
+    <i class="bi bi-palette-fill me-2"></i> Background
+  </div>
+
+  <!-- Background Options Panel -->
+  <div id="bgOptionsPanel" class="bg-options-panel">
+    <h5 class="mb-3">Background Settings</h5>
+    <div class="row">
+      <div class="col-4 text-center">
+        <div class="bg-option bg-color-blue" onclick="setBackground('blue')"></div>
+        <div class="bg-option-label">Blue</div>
+      </div>
+      <div class="col-4 text-center">
+        <div class="bg-option bg-color-white" onclick="setBackground('white')"></div>
+        <div class="bg-option-label">White</div>
+      </div>
+      <div class="col-4 text-center">
+        <div class="bg-option bg-color-green" onclick="setBackground('green')"></div>
+        <div class="bg-option-label">Green</div>
+      </div>
+      <div class="col-4 text-center">
+        <div class="bg-option bg-color-red" onclick="setBackground('red')"></div>
+        <div class="bg-option-label">Red</div>
+      </div>
+      <div class="col-4 text-center">
+        <div class="bg-option bg-color-purple" onclick="setBackground('purple')"></div>
+        <div class="bg-option-label">Purple</div>
+      </div>
+      <div class="col-4 text-center">
+        <div class="bg-option" style="background: linear-gradient(135deg, #4361ee 0%, #7209b7 100%);" onclick="setBackground('gradient')"></div>
+        <div class="bg-option-label">Gradient</div>
+      </div>
+    </div>
+    
+    <div class="mt-3">
+      <h6 class="mb-2">Background Elements</h6>
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" id="toggleBallotBoxes" checked>
+        <label class="form-check-label" for="toggleBallotBoxes">
+          Show Ballot Boxes
+        </label>
+      </div>
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" id="toggleVotingPeople" checked>
+        <label class="form-check-label" for="toggleVotingPeople">
+          Show Voting People
+        </label>
+      </div>
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" id="toggleCheckmarks" checked>
+        <label class="form-check-label" for="toggleCheckmarks">
+          Show Checkmarks
+        </label>
+      </div>
+    </div>
+    
+    <div class="mt-3">
+      <h6 class="mb-2">Background Pattern</h6>
+      <div class="row">
+        <div class="col-4 text-center">
+          <div class="bg-option" style="background: #f8f9fa;" onclick="setPattern('none')"></div>
+          <div class="bg-option-label">None</div>
+        </div>
+        <div class="col-4 text-center">
+          <div class="bg-option dots-pattern" onclick="setPattern('dots')"></div>
+          <div class="bg-option-label">Dots</div>
+        </div>
+        <div class="col-4 text-center">
+          <div class="bg-option grid-pattern" onclick="setPattern('grid')"></div>
+          <div class="bg-option-label">Grid</div>
+        </div>
+      </div>
+    </div>
+    
+    <button class="btn btn-sm btn-primary w-100 mt-3" onclick="applyBackgroundSettings()">Apply</button>
+  </div>
+
   <!-- Admin Status Indicator -->
   <div id="adminStatusIndicator" class="admin-status hidden">
     <i class="bi bi-shield-check me-1"></i> Admin
@@ -662,6 +922,15 @@
               <div>
                 <h6 class="mb-1 text-danger">Reset All Data</h6>
                 <p class="mb-0 text-muted small">Clear all voting data (Admin only)</p>
+              </div>
+            </div>
+          </div>
+          <div class="settings-option" onclick="toggleBackgroundControl()" data-bs-dismiss="modal">
+            <div class="d-flex align-items-center">
+              <i class="bi bi-palette text-primary me-3 fs-5"></i>
+              <div>
+                <h6 class="mb-1">Background Settings</h6>
+                <p class="mb-0 text-muted small">Change background colors and elements</p>
               </div>
             </div>
           </div>
@@ -984,6 +1253,9 @@
               <div class="settings-tab" id="advancedTabBtn" onclick="showSettingsTab('advanced')">
                 <i class="bi bi-gear-wide me-2"></i>Advanced
               </div>
+              <div class="settings-tab" id="backgroundTabBtn" onclick="showSettingsTab('background')">
+                <i class="bi bi-brush me-2"></i>Background
+              </div>
             </div>
           </div>
           
@@ -1113,6 +1385,69 @@
               
               <button class="btn btn-primary" onclick="saveAdvancedSettings()">Save Advanced Settings</button>
             </div>
+            
+            <!-- Background Settings -->
+            <div id="backgroundTabContent" class="settings-tab-content hidden">
+              <h4 class="mb-3">Background Settings</h4>
+              
+              <div class="mb-4">
+                <label class="form-label">Background Color</label>
+                <div class="d-flex gap-2 flex-wrap">
+                  <div class="bg-option bg-color-blue" onclick="setBackground('blue')"></div>
+                  <div class="bg-option bg-color-white" onclick="setBackground('white')"></div>
+                  <div class="bg-option bg-color-green" onclick="setBackground('green')"></div>
+                  <div class="bg-option bg-color-red" onclick="setBackground('red')"></div>
+                  <div class="bg-option bg-color-purple" onclick="setBackground('purple')"></div>
+                  <div class="bg-option" style="background: linear-gradient(135deg, #4361ee 0%, #7209b7 100%);" onclick="setBackground('gradient')"></div>
+                </div>
+              </div>
+              
+              <div class="mb-4">
+                <label class="form-label">Background Pattern</label>
+                <div class="d-flex gap-2">
+                  <div class="bg-option" style="background: #f8f9fa;" onclick="setPattern('none')"></div>
+                  <div class="bg-option dots-pattern" onclick="setPattern('dots')"></div>
+                  <div class="bg-option grid-pattern" onclick="setPattern('grid')"></div>
+                  <div class="bg-option lines-pattern" onclick="setPattern('lines')"></div>
+                </div>
+              </div>
+              
+              <div class="mb-4">
+                <label class="form-label">Background Elements</label>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="bgBallotBoxes" checked>
+                  <label class="form-check-label" for="bgBallotBoxes">
+                    Show Ballot Boxes
+                  </label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="bgVotingPeople" checked>
+                  <label class="form-check-label" for="bgVotingPeople">
+                    Show Voting People
+                  </label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="bgCheckmarks" checked>
+                  <label class="form-check-label" for="bgCheckmarks">
+                    Show Checkmarks
+                  </label>
+                </div>
+              </div>
+              
+              <div class="mb-3">
+                <label for="elementOpacity" class="form-label">Element Opacity</label>
+                <input type="range" class="form-range" id="elementOpacity" min="1" max="100" value="10">
+                <div class="form-text">Adjust the transparency of background elements</div>
+              </div>
+              
+              <div class="mb-3">
+                <label for="elementCount" class="form-label">Element Count</label>
+                <input type="range" class="form-range" id="elementCount" min="5" max="30" value="15">
+                <div class="form-text">Adjust the number of background elements</div>
+              </div>
+              
+              <button class="btn btn-primary" onclick="saveBackgroundSettings()">Save Background Settings</button>
+            </div>
           </div>
         </div>
         
@@ -1235,6 +1570,17 @@
       enableMaintenance: false
     };
 
+    // Background configuration
+    let backgroundConfig = {
+      color: 'blue',
+      pattern: 'none',
+      showBallotBoxes: true,
+      showVotingPeople: true,
+      showCheckmarks: true,
+      elementOpacity: 10,
+      elementCount: 15
+    };
+
     // Timer variables
     let votingTimer;
     let votingEndTime;
@@ -1243,6 +1589,9 @@
     // Admin session state
     let isAdminLoggedIn = false;
     let adminSessionTimeout;
+
+    // Background elements
+    let backgroundElements = [];
 
     // Initialize data structures
     positions.forEach(pos => {
@@ -1260,6 +1609,7 @@
       const savedLogo = localStorage.getItem('lukenyaLogo');
       const savedLoginAttempts = localStorage.getItem('lukenyaLoginAttempts');
       const savedConfig = localStorage.getItem('lukenyaConfig');
+      const savedBackgroundConfig = localStorage.getItem('lukenyaBackgroundConfig');
       
       if (savedVoters) voters = JSON.parse(savedVoters);
       if (savedCandidates) {
@@ -1290,6 +1640,10 @@
         applySystemConfig();
         initializeElectionTimer();
       }
+      if (savedBackgroundConfig) {
+        backgroundConfig = JSON.parse(savedBackgroundConfig);
+        applyBackgroundSettings();
+      }
       
       // Check if admin session is still valid
       const adminSession = localStorage.getItem('lukenyaAdminSession');
@@ -1299,6 +1653,7 @@
           isAdminLoggedIn = true;
           updateAdminUI();
           startAdminSessionTimer();
+          showBackgroundControl();
         } else {
           localStorage.removeItem('lukenyaAdminSession');
         }
@@ -1313,6 +1668,7 @@
       localStorage.setItem('lukenyaMaxVotes', JSON.stringify(maxVotes));
       localStorage.setItem('lukenyaLoginAttempts', JSON.stringify(loginAttempts));
       localStorage.setItem('lukenyaConfig', JSON.stringify(systemConfig));
+      localStorage.setItem('lukenyaBackgroundConfig', JSON.stringify(backgroundConfig));
       if (systemLogo) {
         localStorage.setItem('lukenyaLogo', systemLogo);
       }
@@ -1399,6 +1755,142 @@
       
       systemConfig.theme = themeName;
       saveData();
+    }
+
+    // Apply background settings
+    function applyBackgroundSettings() {
+      // Apply background color
+      document.body.classList.remove('bg-color-blue', 'bg-color-white', 'bg-color-green', 'bg-color-red', 'bg-color-purple', 'bg-color-gradient');
+      document.body.classList.add(`bg-color-${backgroundConfig.color}`);
+      
+      // Apply pattern
+      document.body.classList.remove('dots-pattern', 'lines-pattern', 'grid-pattern');
+      if (backgroundConfig.pattern !== 'none') {
+        document.body.classList.add(`${backgroundConfig.pattern}-pattern`);
+      }
+      
+      // Update UI elements
+      document.getElementById('elementOpacity').value = backgroundConfig.elementOpacity;
+      document.getElementById('elementCount').value = backgroundConfig.elementCount;
+      document.getElementById('bgBallotBoxes').checked = backgroundConfig.showBallotBoxes;
+      document.getElementById('bgVotingPeople').checked = backgroundConfig.showVotingPeople;
+      document.getElementById('bgCheckmarks').checked = backgroundConfig.showCheckmarks;
+      
+      // Also update the toggle panel
+      document.getElementById('toggleBallotBoxes').checked = backgroundConfig.showBallotBoxes;
+      document.getElementById('toggleVotingPeople').checked = backgroundConfig.showVotingPeople;
+      document.getElementById('toggleCheckmarks').checked = backgroundConfig.showCheckmarks;
+      
+      // Create background elements
+      createBackgroundElements();
+    }
+
+    // Create background elements
+    function createBackgroundElements() {
+      const container = document.getElementById('backgroundElements');
+      if (!container) return;
+      
+      // Clear existing elements
+      container.innerHTML = '';
+      backgroundElements = [];
+      
+      const elementCount = backgroundConfig.elementCount;
+      const opacity = backgroundConfig.elementOpacity / 100;
+      
+      for (let i = 0; i < elementCount; i++) {
+        const element = document.createElement('div');
+        element.className = 'bg-element';
+        element.style.opacity = opacity;
+        
+        // Random position
+        const top = Math.random() * 100;
+        const left = Math.random() * 100;
+        element.style.top = `${top}%`;
+        element.style.left = `${left}%`;
+        
+        // Random size variation
+        const sizeMultiplier = 0.5 + Math.random() * 1.5;
+        
+        // Random element type
+        const elementType = Math.random();
+        if (elementType < 0.33 && backgroundConfig.showBallotBoxes) {
+          element.classList.add('ballot-box-bg');
+          element.style.width = `${100 * sizeMultiplier}px`;
+          element.style.height = `${120 * sizeMultiplier}px`;
+        } else if (elementType < 0.66 && backgroundConfig.showVotingPeople) {
+          element.classList.add('person-voting-bg');
+          element.style.width = `${60 * sizeMultiplier}px`;
+          element.style.height = `${90 * sizeMultiplier}px`;
+        } else if (backgroundConfig.showCheckmarks) {
+          element.classList.add('checkmark-bg');
+          element.innerHTML = '✓';
+          element.style.fontSize = `${40 * sizeMultiplier}px`;
+          element.style.color = `rgba(76, 201, 240, ${opacity})`;
+        }
+        
+        container.appendChild(element);
+        backgroundElements.push(element);
+      }
+    }
+
+    // Toggle background control
+    function toggleBackgroundControl() {
+      if (!isAdminLoggedIn) {
+        showNotification('Please login as admin to access background settings', true);
+        showSection('adminLogin');
+        return;
+      }
+      
+      const panel = document.getElementById('bgOptionsPanel');
+      panel.classList.toggle('show');
+    }
+
+    // Show background control
+    function showBackgroundControl() {
+      const control = document.getElementById('bgToggleControl');
+      control.classList.remove('hidden');
+    }
+
+    // Set background color
+    function setBackground(color) {
+      backgroundConfig.color = color;
+      applyBackgroundSettings();
+      
+      // Update active state
+      document.querySelectorAll('.bg-option').forEach(option => {
+        option.classList.remove('active');
+      });
+      event.target.classList.add('active');
+    }
+
+    // Set background pattern
+    function setPattern(pattern) {
+      backgroundConfig.pattern = pattern;
+      applyBackgroundSettings();
+    }
+
+    // Apply background settings from panel
+    function applyBackgroundSettingsFromPanel() {
+      backgroundConfig.showBallotBoxes = document.getElementById('toggleBallotBoxes').checked;
+      backgroundConfig.showVotingPeople = document.getElementById('toggleVotingPeople').checked;
+      backgroundConfig.showCheckmarks = document.getElementById('toggleCheckmarks').checked;
+      
+      applyBackgroundSettings();
+      saveData();
+      showNotification('Background settings applied');
+    }
+
+    // Save background settings
+    function saveBackgroundSettings() {
+      backgroundConfig.showBallotBoxes = document.getElementById('bgBallotBoxes').checked;
+      backgroundConfig.showVotingPeople = document.getElementById('bgVotingPeople').checked;
+      backgroundConfig.showCheckmarks = document.getElementById('bgCheckmarks').checked;
+      backgroundConfig.elementOpacity = document.getElementById('elementOpacity').value;
+      backgroundConfig.elementCount = document.getElementById('elementCount').value;
+      
+      applyBackgroundSettings();
+      saveData();
+      showNotification('Background settings saved');
     }
 
     // Show settings tab - FIXED VERSION
@@ -1588,6 +2080,9 @@
         });
         document.getElementById('appearanceTabBtn').classList.add('active');
       }
+      
+      // Close background panel when switching sections
+      document.getElementById('bgOptionsPanel').classList.remove('show');
     }
 
     // Show system settings (with admin check)
@@ -1643,6 +2138,7 @@
     function updateAdminUI() {
       const adminStatusIndicator = document.getElementById('adminStatusIndicator');
       const adminLogoutOption = document.getElementById('adminLogoutOption');
+      const bgToggleControl = document.getElementById('bgToggleControl');
       
       if (isAdminLoggedIn) {
         if (adminStatusIndicator) {
@@ -1653,12 +2149,18 @@
         if (adminLogoutOption) {
           adminLogoutOption.classList.remove('hidden');
         }
+        if (bgToggleControl) {
+          bgToggleControl.classList.remove('hidden');
+        }
       } else {
         if (adminStatusIndicator) {
           adminStatusIndicator.classList.add('hidden');
         }
         if (adminLogoutOption) {
           adminLogoutOption.classList.add('hidden');
+        }
+        if (bgToggleControl) {
+          bgToggleControl.classList.add('hidden');
         }
       }
     }
@@ -1929,6 +2431,7 @@
         saveAdminSession();
         startAdminSessionTimer();
         updateAdminUI();
+        showBackgroundControl();
         
         showNotification('Admin access granted');
         recordLoginAttempt('admin', 'Administrator', 'N/A', 'success');
@@ -2813,6 +3316,7 @@
       
       // Apply initial configuration
       applySystemConfig();
+      applyBackgroundSettings();
       
       // Initialize election timer
       initializeElectionTimer();
@@ -2826,6 +3330,19 @@
       
       // Update admin UI
       updateAdminUI();
+      
+      // Setup background toggle control
+      document.getElementById('bgToggleControl').addEventListener('click', toggleBackgroundControl);
+      
+      // Close background panel when clicking outside
+      document.addEventListener('click', function(event) {
+        const bgPanel = document.getElementById('bgOptionsPanel');
+        const bgControl = document.getElementById('bgToggleControl');
+        
+        if (!bgPanel.contains(event.target) && !bgControl.contains(event.target)) {
+          bgPanel.classList.remove('show');
+        }
+      });
     };
   </script>
 </body>
