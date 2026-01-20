@@ -79,14 +79,6 @@
       background-color: #e8f5e8;
     }
 
-    .candidate-photo {
-      width: 80px;
-      height: 80px;
-      border-radius: 50%;
-      object-fit: cover;
-      border: 3px solid var(--primary);
-    }
-
     .photo-preview {
       max-width: 150px;
       max-height: 150px;
@@ -205,6 +197,14 @@
       box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
     }
     
+    .vote-btn:disabled {
+      background: #cccccc;
+      color: #666666;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+    
     .settings-btn {
       position: fixed;
       bottom: 20px;
@@ -318,9 +318,285 @@
       margin-bottom: 1rem;
       box-shadow: var(--shadow);
     }
+    
+    /* New Styles for Enhanced Features */
+    .voter-number {
+      font-family: 'Courier New', monospace;
+      background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+      padding: 5px 10px;
+      border-radius: 5px;
+      border: 1px solid #dee2e6;
+      font-weight: bold;
+    }
+    
+    .stu-voter {
+      color: #4361ee;
+      border-left: 4px solid #4361ee;
+    }
+    
+    .sta-voter {
+      color: #7209b7;
+      border-left: 4px solid #7209b7;
+    }
+    
+    .toggle-btn {
+      cursor: pointer;
+      user-select: none;
+    }
+    
+    .toggle-content {
+      transition: max-height 0.3s ease;
+      overflow: hidden;
+    }
+    
+    .settings-tab {
+      border-radius: 8px;
+      padding: 10px 15px;
+      margin-bottom: 5px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border: 1px solid #dee2e6;
+    }
+    
+    .settings-tab:hover {
+      background-color: #f8f9fa;
+      border-color: var(--primary);
+    }
+    
+    .settings-tab.active {
+      background-color: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+    
+    .theme-option {
+      width: 50px;
+      height: 50px;
+      border-radius: 8px;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: all 0.2s ease;
+    }
+    
+    .theme-option:hover {
+      transform: scale(1.1);
+    }
+    
+    .theme-option.selected {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.3);
+    }
+    
+    .system-rule {
+      background: #f8f9fa;
+      border-left: 4px solid var(--primary);
+      padding: 10px 15px;
+      margin-bottom: 10px;
+      border-radius: 4px;
+    }
+    
+    .voter-count-badge {
+      font-size: 0.8rem;
+      padding: 5px 10px;
+      border-radius: 20px;
+    }
+    
+    /* Enhanced Voting System Styles */
+    .ballot-box {
+      background: white;
+      border-radius: 15px;
+      padding: 20px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      border: 2px solid #e9ecef;
+    }
+    
+    .voting-booth {
+      background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 20px;
+      border: 1px solid #dee2e6;
+    }
+    
+    .election-seal {
+      width: 80px;
+      height: 80px;
+      background: var(--gradient);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: bold;
+      margin: 0 auto 20px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    }
+    
+    .voter-type-indicator {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      font-size: 0.7rem;
+      padding: 3px 8px;
+      border-radius: 12px;
+      font-weight: bold;
+    }
+    
+    .system-rules-container {
+      max-height: 400px;
+      overflow-y: auto;
+      padding: 15px;
+      background: #f8f9fa;
+      border-radius: 10px;
+      border: 1px solid #dee2e6;
+    }
+    
+    .rule-item {
+      padding: 10px;
+      margin-bottom: 8px;
+      background: white;
+      border-radius: 6px;
+      border-left: 3px solid var(--primary);
+      transition: all 0.2s ease;
+    }
+    
+    .rule-item:hover {
+      transform: translateX(5px);
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+    }
+    
+    /* Election Timer Styles */
+    .election-timer {
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(10px);
+      border-radius: 15px;
+      padding: 20px;
+      margin: 20px auto;
+      max-width: 600px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+    }
+    
+    .timer-title {
+      font-size: 1.5rem;
+      font-weight: bold;
+      margin-bottom: 15px;
+      text-align: center;
+    }
+    
+    .timer-display {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-bottom: 15px;
+    }
+    
+    .timer-unit {
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 10px;
+      padding: 15px;
+      min-width: 80px;
+      text-align: center;
+    }
+    
+    .timer-value {
+      font-size: 2.5rem;
+      font-weight: bold;
+      display: block;
+      line-height: 1;
+    }
+    
+    .timer-label {
+      font-size: 0.9rem;
+      opacity: 0.9;
+      margin-top: 5px;
+    }
+    
+    .timer-status {
+      text-align: center;
+      font-size: 1.2rem;
+      font-weight: bold;
+      padding: 10px;
+      border-radius: 8px;
+      margin-top: 15px;
+    }
+    
+    .voting-active {
+      background-color: rgba(76, 201, 240, 0.3);
+      color: #4cc9f0;
+    }
+    
+    .voting-ended {
+      background-color: rgba(247, 37, 133, 0.3);
+      color: #f72585;
+    }
+    
+    .voting-pending {
+      background-color: rgba(248, 150, 30, 0.3);
+      color: #f8961e;
+    }
+    
+    .voting-info {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      padding: 15px;
+      margin-top: 20px;
+      text-align: center;
+    }
+    
+    .info-item {
+      margin: 5px 0;
+      font-size: 0.9rem;
+    }
+    
+    .candidate-symbol {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: var(--primary);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 1.2rem;
+      margin-right: 15px;
+    }
+    
+    .settings-tab-content {
+      transition: all 0.3s ease;
+    }
+    
+    .settings-tabs {
+      position: sticky;
+      top: 20px;
+    }
+    
+    /* Admin Status Indicator */
+    .admin-status {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      z-index: 100;
+      background: var(--primary);
+      color: white;
+      border-radius: 20px;
+      padding: 5px 15px;
+      font-size: 0.9rem;
+      font-weight: bold;
+      box-shadow: var(--shadow);
+    }
+    
+    .admin-logged-in {
+      background: var(--success);
+    }
   </style>
 </head>
 <body>
+  <!-- Admin Status Indicator -->
+  <div id="adminStatusIndicator" class="admin-status hidden">
+    <i class="bi bi-shield-check me-1"></i> Admin
+  </div>
+
   <!-- Settings Button -->
   <div class="settings-btn" data-bs-toggle="modal" data-bs-target="#settingsModal">
     <i class="bi bi-gear-fill fs-4"></i>
@@ -353,6 +629,15 @@
               </div>
             </div>
           </div>
+          <div class="settings-option" onclick="showSystemSettings()" data-bs-dismiss="modal">
+            <div class="d-flex align-items-center">
+              <i class="bi bi-sliders text-primary me-3 fs-5"></i>
+              <div>
+                <h6 class="mb-1">System Settings</h6>
+                <p class="mb-0 text-muted small">Configure system rules and appearance</p>
+              </div>
+            </div>
+          </div>
           <div class="settings-option" onclick="showSection('home')" data-bs-dismiss="modal">
             <div class="d-flex align-items-center">
               <i class="bi bi-house text-primary me-3 fs-5"></i>
@@ -371,12 +656,21 @@
               </div>
             </div>
           </div>
-          <div class="settings-option" onclick="resetAllData()" data-bs-dismiss="modal">
+          <div class="settings-option" onclick="showResetSection()" data-bs-dismiss="modal">
             <div class="d-flex align-items-center">
               <i class="bi bi-arrow-clockwise text-danger me-3 fs-5"></i>
               <div>
                 <h6 class="mb-1 text-danger">Reset All Data</h6>
                 <p class="mb-0 text-muted small">Clear all voting data (Admin only)</p>
+              </div>
+            </div>
+          </div>
+          <div id="adminLogoutOption" class="settings-option hidden" onclick="adminLogout()" data-bs-dismiss="modal">
+            <div class="d-flex align-items-center">
+              <i class="bi bi-box-arrow-right text-danger me-3 fs-5"></i>
+              <div>
+                <h6 class="mb-1 text-danger">Logout Admin</h6>
+                <p class="mb-0 text-muted small">End admin session</p>
               </div>
             </div>
           </div>
@@ -388,22 +682,56 @@
   <div class="container py-4">
     <header class="text-center mb-5">
       <div class="logo-container mb-3">
-        <!-- Logo Display Area - Centered -->
         <img id="systemLogo" class="system-logo" src="" alt="System Logo" style="display: none;">
         <div id="defaultLogo" class="logo-placeholder">
           <i class="bi bi-person-badge fs-1 text-white"></i>
         </div>
-        <h1 class="system-title display-4 mt-2">Lukenya Voting System</h1>
+        <h1 id="systemTitle" class="system-title display-4 mt-2">Lukenya Voting System</h1>
+        <div id="systemSubtitle" class="subtitle text-secondary fs-5">British Curriculum Student Council Elections</div>
       </div>
-      <p class="subtitle text-secondary fs-5">British Curriculum Student Council Elections</p>
     </header>
 
     <!-- Home Section -->
     <section id="home" class="fade-in mb-4">
       <div class="hero-section">
-        <h2 class="welcome-text">WELCOME TO LUKENYA BRITISH CURRICULUM SCHOOL</h2>
-        <p class="sub-welcome-text">STUDENT ELECTION</p>
-        <button class="btn vote-btn" onclick="showVoterChoice()">
+        <h2 class="welcome-text" id="welcomeText">WELCOME TO LUKENYA BRITISH CURRICULUM SCHOOL</h2>
+        <p class="sub-welcome-text" id="electionTitle">STUDENT ELECTION</p>
+        <div class="election-seal mb-4">
+          <i class="bi bi-shield-check fs-4"></i>
+        </div>
+        
+        <!-- Election Timer -->
+        <div class="election-timer">
+          <div class="timer-title" id="timerTitle">Voting Countdown</div>
+          <div class="timer-display">
+            <div class="timer-unit">
+              <span class="timer-value" id="days">00</span>
+              <span class="timer-label">DAYS</span>
+            </div>
+            <div class="timer-unit">
+              <span class="timer-value" id="hours">00</span>
+              <span class="timer-label">HOURS</span>
+            </div>
+            <div class="timer-unit">
+              <span class="timer-value" id="minutes">00</span>
+              <span class="timer-label">MINUTES</span>
+            </div>
+            <div class="timer-unit">
+              <span class="timer-value" id="seconds">00</span>
+              <span class="timer-label">SECONDS</span>
+            </div>
+          </div>
+          <div class="timer-status" id="votingStatus">
+            Loading voting status...
+          </div>
+          <div class="voting-info">
+            <div class="info-item" id="electionDateInfo">Election Date: Loading...</div>
+            <div class="info-item" id="votingTimeInfo">Voting Hours: Loading...</div>
+            <div class="info-item" id="votingDurationInfo">Duration: Loading...</div>
+          </div>
+        </div>
+        
+        <button class="btn vote-btn" id="voteButton" onclick="showVoterChoice()">
           <i class="bi bi-check-circle me-2"></i>CAST YOUR VOTE
         </button>
       </div>
@@ -419,6 +747,7 @@
           <div class="col-md-6">
             <div class="card voter-choice-card" onclick="showSection('studentLogin')">
               <div class="card-body text-center py-5">
+                <span class="voter-type-indicator bg-primary text-white">STUDENT</span>
                 <i class="bi bi-person-circle fs-1 text-primary mb-3"></i>
                 <h3 class="card-title">Student Voter</h3>
                 <p class="card-text">Vote as a registered student</p>
@@ -430,6 +759,7 @@
           <div class="col-md-6">
             <div class="card voter-choice-card" onclick="showSection('staffLogin')">
               <div class="card-body text-center py-5">
+                <span class="voter-type-indicator bg-secondary text-white">STAFF</span>
                 <i class="bi bi-person-workspace fs-1 text-primary mb-3"></i>
                 <h3 class="card-title">Staff Voter</h3>
                 <p class="card-text">Vote as a staff member</p>
@@ -449,19 +779,22 @@
     <section id="studentLogin" class="card custom-card hidden mb-4">
       <div class="card-body">
         <h2 class="card-title text-secondary mb-4"><i class="bi bi-person-circle me-2"></i>Student Login</h2>
-        <div class="mb-3">
-          <label for="sName" class="form-label">First Name</label>
-          <input type="text" class="form-control" id="sName" placeholder="Enter your first name">
+        <div class="ballot-box">
+          <div class="mb-3">
+            <label for="sName" class="form-label">First Name</label>
+            <input type="text" class="form-control" id="sName" placeholder="Enter your first name">
+          </div>
+          <div class="mb-3">
+            <label for="sAdm" class="form-label">Student Voter Number</label>
+            <input type="text" class="form-control" id="sAdm" placeholder="Enter your student voter number">
+            <small class="text-muted">Format: STU followed by numbers (e.g., STU001)</small>
+          </div>
+          <div class="mb-3">
+            <label for="sClass" class="form-label">Class</label>
+            <input type="text" class="form-control" id="sClass" placeholder="Enter your class">
+          </div>
+          <button class="btn custom-btn-primary w-100 text-white mb-3" onclick="verifyStudent()">Login to Vote</button>
         </div>
-        <div class="mb-3">
-          <label for="sAdm" class="form-label">Admission Number</label>
-          <input type="text" class="form-control" id="sAdm" placeholder="Enter your admission number">
-        </div>
-        <div class="mb-3">
-          <label for="sClass" class="form-label">Class</label>
-          <input type="text" class="form-control" id="sClass" placeholder="Enter your class">
-        </div>
-        <button class="btn custom-btn-primary w-100 text-white mb-3" onclick="verifyStudent()">Login to Vote</button>
         <div class="d-flex gap-2">
           <button class="btn btn-outline-primary" onclick="showSection('voterChoice')"><i class="bi bi-arrow-left me-1"></i>Back to Voter Choice</button>
           <button class="btn btn-outline-secondary" onclick="showSection('home')"><i class="bi bi-house me-1"></i>Home</button>
@@ -473,15 +806,18 @@
     <section id="staffLogin" class="card custom-card hidden mb-4">
       <div class="card-body">
         <h2 class="card-title text-secondary mb-4"><i class="bi bi-person-workspace me-2"></i>Staff Login</h2>
-        <div class="mb-3">
-          <label for="tName" class="form-label">First Name</label>
-          <input type="text" class="form-control" id="tName" placeholder="Enter your first name">
+        <div class="ballot-box">
+          <div class="mb-3">
+            <label for="tName" class="form-label">First Name</label>
+            <input type="text" class="form-control" id="tName" placeholder="Enter your first name">
+          </div>
+          <div class="mb-3">
+            <label for="tID" class="form-label">Staff Voter Number</label>
+            <input type="text" class="form-control" id="tID" placeholder="Enter your staff voter number">
+            <small class="text-muted">Format: STA followed by numbers (e.g., STA001)</small>
+          </div>
+          <button class="btn custom-btn-primary w-100 text-white mb-3" onclick="verifyStaff()">Login to Vote</button>
         </div>
-        <div class="mb-3">
-          <label for="tID" class="form-label">Staff ID</label>
-          <input type="text" class="form-control" id="tID" placeholder="Enter your staff ID">
-        </div>
-        <button class="btn custom-btn-primary w-100 text-white mb-3" onclick="verifyStaff()">Login to Vote</button>
         <div class="d-flex gap-2">
           <button class="btn btn-outline-primary" onclick="showSection('voterChoice')"><i class="bi bi-arrow-left me-1"></i>Back to Voter Choice</button>
           <button class="btn btn-outline-secondary" onclick="showSection('home')"><i class="bi bi-house me-1"></i>Home</button>
@@ -493,9 +829,11 @@
     <section id="voteSection" class="card custom-card hidden mb-4">
       <div class="card-body">
         <h2 class="card-title text-secondary mb-4"><i class="bi bi-check-circle me-2"></i>Cast Your Vote</h2>
-        <p class="card-text mb-4">Please select your preferred candidate for each position:</p>
-        <div id="voteForm"></div>
-        <button class="btn custom-btn-success w-100 text-white mb-3" onclick="submitVote()"><i class="bi bi-send me-1"></i>Submit Vote</button>
+        <div class="voting-booth">
+          <p class="card-text mb-4">Please select your preferred candidate for each position:</p>
+          <div id="voteForm"></div>
+          <button class="btn custom-btn-success w-100 text-white mb-3" onclick="submitVote()"><i class="bi bi-send me-1"></i>Submit Vote</button>
+        </div>
         <div class="d-flex gap-2">
           <button class="btn btn-outline-primary" onclick="showSection('home')"><i class="bi bi-arrow-left me-1"></i>Back to Home</button>
         </div>
@@ -506,11 +844,13 @@
     <section id="adminLogin" class="card custom-card hidden mb-4">
       <div class="card-body">
         <h2 class="card-title text-secondary mb-4"><i class="bi bi-shield-lock me-2"></i>Admin Login</h2>
-        <div class="mb-3">
-          <label for="adminPass" class="form-label">Administrator Password</label>
-          <input type="password" class="form-control" id="adminPass" placeholder="Enter administrator password">
+        <div class="ballot-box">
+          <div class="mb-3">
+            <label for="adminPass" class="form-label">Administrator Password</label>
+            <input type="password" class="form-control" id="adminPass" placeholder="Enter administrator password">
+          </div>
+          <button class="btn custom-btn-primary w-100 text-white mb-3" onclick="adminAccess()">Login to Admin Panel</button>
         </div>
-        <button class="btn custom-btn-primary w-100 text-white mb-3" onclick="adminAccess()">Login to Admin Panel</button>
         <div class="d-flex gap-2">
           <button class="btn btn-outline-primary" onclick="showSection('home')"><i class="bi bi-arrow-left me-1"></i>Back to Home</button>
         </div>
@@ -525,7 +865,7 @@
         <!-- Admin Actions Section - Initially Hidden -->
         <div id="adminActionsSection" class="hidden">
           <div class="row g-4 mb-4">
-            <div class="col-lg-3 col-md-6">
+            <div class="col-lg-4 col-md-6">
               <div class="card action-card h-100">
                 <div class="card-body">
                   <h3 class="card-title h5"><i class="bi bi-person-plus me-2"></i>Register Voter</h3>
@@ -541,8 +881,9 @@
                     <input type="text" class="form-control" id="voterName" placeholder="Enter first name">
                   </div>
                   <div class="mb-3">
-                    <label for="voterID" class="form-label">ID Number</label>
-                    <input type="text" class="form-control" id="voterID" placeholder="Admission No / Staff ID">
+                    <label for="voterID" class="form-label">Voter Number</label>
+                    <input type="text" class="form-control" id="voterID" placeholder="STU001 or STA001">
+                    <small class="text-muted">Format: STU for students, STA for staff</small>
                   </div>
                   <div class="mb-3" id="classField">
                     <label for="voterClass" class="form-label">Class</label>
@@ -553,7 +894,7 @@
               </div>
             </div>
             
-            <div class="col-lg-3 col-md-6">
+            <div class="col-lg-4 col-md-6">
               <div class="card action-card h-100">
                 <div class="card-body">
                   <h3 class="card-title h5"><i class="bi bi-person-plus me-2"></i>Add Candidate</h3>
@@ -565,17 +906,12 @@
                     <label for="candidateName" class="form-label">Candidate Name</label>
                     <input type="text" class="form-control" id="candidateName" placeholder="Enter candidate name">
                   </div>
-                  <div class="mb-3">
-                    <label for="candidatePhoto" class="form-label">Candidate Photo</label>
-                    <input type="file" class="form-control" id="candidatePhoto" accept="image/*">
-                    <img id="photoPreview" class="photo-preview mt-2" alt="Photo Preview">
-                  </div>
                   <button class="btn custom-btn-primary w-100 text-white" onclick="addCandidate()">Add Candidate</button>
                 </div>
               </div>
             </div>
             
-            <div class="col-lg-3 col-md-6">
+            <div class="col-lg-4 col-md-6">
               <div class="card action-card h-100">
                 <div class="card-body">
                   <h3 class="card-title h5"><i class="bi bi-image me-2"></i>System Logo</h3>
@@ -588,24 +924,15 @@
                 </div>
               </div>
             </div>
-
-            <div class="col-lg-3 col-md-6">
-              <div class="card action-card h-100">
-                <div class="card-body">
-                  <h3 class="card-title h5"><i class="bi bi-person me-2"></i>Developer Photo</h3>
-                  <div class="mb-3">
-                    <label for="developerPhotoUpload" class="form-label">Upload Developer Photo</label>
-                    <input type="file" class="form-control" id="developerPhotoUpload" accept="image/*">
-                    <img id="developerPhotoPreview" class="photo-preview mt-2" alt="Developer Photo Preview">
-                  </div>
-                  <button class="btn custom-btn-primary w-100 text-white" onclick="uploadDeveloperPhoto()">Set Developer Photo</button>
-                </div>
-              </div>
-            </div>
           </div>
           
           <h3 class="h4 mb-3"><i class="bi bi-people me-2"></i>Voter Management</h3>
-          <button class="btn btn-outline-primary mb-3" onclick="showRegistered()">Show Registered Voters</button>
+          <div class="d-flex gap-2 mb-3">
+            <button class="btn btn-outline-primary" onclick="showRegistered('all')">Show All Registered Voters</button>
+            <button class="btn btn-outline-primary" onclick="showRegistered('student')">Show Student Voters</button>
+            <button class="btn btn-outline-primary" onclick="showRegistered('staff')">Show Staff Voters</button>
+            <button class="btn btn-outline-primary" onclick="downloadVoterData()">Download Voter Data</button>
+          </div>
           <div id="registeredVoters"></div>
           
           <h3 class="h4 mt-4 mb-3"><i class="bi bi-person-badge me-2"></i>Candidate Management</h3>
@@ -622,7 +949,9 @@
           
           <h3 class="h4 mt-4 mb-3"><i class="bi bi-download me-2"></i>Data Export</h3>
           <div class="d-flex flex-wrap gap-2 mb-3">
-            <button class="btn btn-outline-primary" onclick="downloadCSV('voters')">Download Voters CSV</button>
+            <button class="btn btn-outline-primary" onclick="downloadCSV('voters')">Download All Voters CSV</button>
+            <button class="btn btn-outline-primary" onclick="downloadStudentVoters()">Download Student Voters CSV</button>
+            <button class="btn btn-outline-primary" onclick="downloadStaffVoters()">Download Staff Voters CSV</button>
             <button class="btn btn-outline-primary" onclick="downloadCSV('candidates')">Download Candidates CSV</button>
             <button class="btn btn-outline-primary" onclick="downloadCSV('results')">Download Results CSV</button>
             <button class="btn btn-outline-primary" onclick="downloadPDF()">Download Results PDF</button>
@@ -635,12 +964,204 @@
       </div>
     </section>
 
+    <!-- System Settings Section -->
+    <section id="systemSettings" class="card custom-card hidden mb-4">
+      <div class="card-body">
+        <h2 class="card-title text-secondary mb-4"><i class="bi bi-sliders me-2"></i>System Settings</h2>
+        
+        <div class="row">
+          <div class="col-md-3">
+            <div class="settings-tabs">
+              <div class="settings-tab active" id="appearanceTabBtn" onclick="showSettingsTab('appearance')">
+                <i class="bi bi-palette me-2"></i>Appearance
+              </div>
+              <div class="settings-tab" id="rulesTabBtn" onclick="showSettingsTab('rules')">
+                <i class="bi bi-list-check me-2"></i>System Rules
+              </div>
+              <div class="settings-tab" id="electionTabBtn" onclick="showSettingsTab('election')">
+                <i class="bi bi-clipboard-check me-2"></i>Election Settings
+              </div>
+              <div class="settings-tab" id="advancedTabBtn" onclick="showSettingsTab('advanced')">
+                <i class="bi bi-gear-wide me-2"></i>Advanced
+              </div>
+            </div>
+          </div>
+          
+          <div class="col-md-9">
+            <!-- Appearance Settings -->
+            <div id="appearanceTabContent" class="settings-tab-content">
+              <h4 class="mb-3">System Appearance</h4>
+              
+              <div class="mb-4">
+                <label class="form-label">System Theme</label>
+                <div class="d-flex gap-3">
+                  <div class="theme-option" style="background: linear-gradient(135deg, #4361ee 0%, #7209b7 100%);" onclick="applyTheme('default')" data-theme="default"></div>
+                  <div class="theme-option" style="background: linear-gradient(135deg, #2b9348 0%, #007f5f 100%);" onclick="applyTheme('green')" data-theme="green"></div>
+                  <div class="theme-option" style="background: linear-gradient(135deg, #e63946 0%, #9d0208 100%);" onclick="applyTheme('red')" data-theme="red"></div>
+                  <div class="theme-option" style="background: linear-gradient(135deg, #ff9e00 0%, #ff5400 100%);" onclick="applyTheme('orange')" data-theme="orange"></div>
+                  <div class="theme-option" style="background: linear-gradient(135deg, #7209b7 0%, #3a0ca3 100%);" onclick="applyTheme('purple')" data-theme="purple"></div>
+                </div>
+              </div>
+              
+              <div class="mb-3">
+                <label for="systemTitleInput" class="form-label">System Title</label>
+                <input type="text" class="form-control" id="systemTitleInput" placeholder="Enter system title">
+              </div>
+              
+              <div class="mb-3">
+                <label for="systemSubtitleInput" class="form-label">System Subtitle</label>
+                <input type="text" class="form-control" id="systemSubtitleInput" placeholder="Enter system subtitle">
+              </div>
+              
+              <div class="mb-3">
+                <label for="welcomeTextInput" class="form-label">Welcome Text</label>
+                <input type="text" class="form-control" id="welcomeTextInput" placeholder="Enter welcome text">
+              </div>
+              
+              <div class="mb-3">
+                <label for="electionTitleInput" class="form-label">Election Title</label>
+                <input type="text" class="form-control" id="electionTitleInput" placeholder="Enter election title">
+              </div>
+              
+              <button class="btn btn-primary" onclick="saveAppearanceSettings()">Save Appearance Settings</button>
+            </div>
+            
+            <!-- System Rules Settings -->
+            <div id="rulesTabContent" class="settings-tab-content hidden">
+              <h4 class="mb-3">System Rules</h4>
+              
+              <div class="system-rules-container mb-3">
+                <div id="systemRulesList"></div>
+              </div>
+              
+              <div class="mb-3">
+                <label for="newRuleInput" class="form-label">Add New Rule</label>
+                <input type="text" class="form-control" id="newRuleInput" placeholder="Enter new rule">
+              </div>
+              
+              <div class="d-flex gap-2">
+                <button class="btn btn-primary" onclick="addSystemRule()">Add Rule</button>
+                <button class="btn btn-outline-primary" onclick="resetSystemRules()">Reset to Default Rules</button>
+              </div>
+            </div>
+            
+            <!-- Election Settings -->
+            <div id="electionTabContent" class="settings-tab-content hidden">
+              <h4 class="mb-3">Election Configuration</h4>
+              
+              <div class="mb-3">
+                <label for="electionDate" class="form-label">Election Date</label>
+                <input type="date" class="form-control" id="electionDate">
+              </div>
+              
+              <div class="mb-3">
+                <label for="votingStart" class="form-label">Voting Start Time</label>
+                <input type="time" class="form-control" id="votingStart" placeholder="Start Time">
+              </div>
+              
+              <div class="mb-3">
+                <label for="votingDuration" class="form-label">Voting Duration (hours)</label>
+                <input type="number" class="form-control" id="votingDuration" min="1" max="24" value="8" placeholder="Duration in hours">
+              </div>
+              
+              <div class="mb-3">
+                <label for="votingInstructions" class="form-label">Voting Instructions</label>
+                <textarea class="form-control" id="votingInstructions" rows="3" placeholder="Enter voting instructions"></textarea>
+              </div>
+              
+              <div class="mb-3 form-check">
+                <input type="checkbox" class="form-check-input" id="allowVoteChange">
+                <label class="form-check-label" for="allowVoteChange">Allow voters to change their vote</label>
+              </div>
+              
+              <div class="mb-3 form-check">
+                <input type="checkbox" class="form-check-input" id="enableTimer">
+                <label class="form-check-label" for="enableTimer">Enable voting countdown timer</label>
+              </div>
+              
+              <button class="btn btn-primary" onclick="saveElectionSettings()">Save Election Settings</button>
+            </div>
+            
+            <!-- Advanced Settings -->
+            <div id="advancedTabContent" class="settings-tab-content hidden">
+              <h4 class="mb-3">Advanced Settings</h4>
+              
+              <div class="mb-3">
+                <label for="adminPassword" class="form-label">Change Admin Password</label>
+                <input type="password" class="form-control" id="adminPassword" placeholder="Enter new admin password">
+              </div>
+              
+              <div class="mb-3">
+                <label for="sessionTimeout" class="form-label">Session Timeout (minutes)</label>
+                <input type="number" class="form-control" id="sessionTimeout" min="1" max="60" value="30">
+              </div>
+              
+              <div class="mb-3 form-check">
+                <input type="checkbox" class="form-check-input" id="autoLogout">
+                <label class="form-check-label" for="autoLogout">Enable auto logout after voting</label>
+              </div>
+              
+              <div class="mb-3 form-check">
+                <input type="checkbox" class="form-check-input" id="showVoterCount">
+                <label class="form-check-label" for="showVoterCount">Show live voter count</label>
+              </div>
+              
+              <div class="mb-3 form-check">
+                <input type="checkbox" class="form-check-input" id="enableMaintenance">
+                <label class="form-check-label" for="enableMaintenance">Enable maintenance mode</label>
+              </div>
+              
+              <button class="btn btn-primary" onclick="saveAdvancedSettings()">Save Advanced Settings</button>
+            </div>
+          </div>
+        </div>
+        
+        <div class="d-flex gap-2 mt-4">
+          <button class="btn btn-outline-primary" onclick="showSection('home')"><i class="bi bi-arrow-left me-1"></i>Back to Home</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Data Reset Section (Only visible after admin login) -->
+    <section id="dataReset" class="card custom-card hidden mb-4">
+      <div class="card-body">
+        <h2 class="card-title text-danger mb-4"><i class="bi bi-exclamation-triangle me-2"></i>Data Reset</h2>
+        
+        <div class="alert alert-danger">
+          <h5 class="alert-heading">Warning!</h5>
+          <p>This action will permanently delete all voting data. This cannot be undone.</p>
+        </div>
+        
+        <div class="mb-3">
+          <label for="resetPassword" class="form-label">Admin Password</label>
+          <input type="password" class="form-control" id="resetPassword" placeholder="Enter admin password to confirm">
+        </div>
+        
+        <div class="mb-3">
+          <label for="resetType" class="form-label">Reset Type</label>
+          <select class="form-select" id="resetType">
+            <option value="all">Reset All Data</option>
+            <option value="votes">Reset Votes Only</option>
+            <option value="voters">Reset Voters Only</option>
+            <option value="candidates">Reset Candidates Only</option>
+          </select>
+        </div>
+        
+        <div class="d-flex gap-2">
+          <button class="btn btn-danger" onclick="performDataReset()">Reset Data</button>
+          <button class="btn btn-outline-secondary" onclick="showSection('adminPanel')">Cancel</button>
+        </div>
+      </div>
+    </section>
+
     <!-- Developer Information Section -->
     <section id="developerInfo" class="card custom-card hidden mt-4">
       <div class="card-body">
         <h2 class="card-title text-secondary mb-4">System Developer</h2>
         <div class="d-flex flex-column flex-md-row align-items-center justify-content-center gap-4">
-          <img id="developerPhotoDisplay" class="developer-photo" src="https://media.licdn.com/dms/image/v2/D4D03AQE4Mxq98eAj3A/profile-displayphoto-shrink_400_400/profile-displayphoto-shrink_400_400/0/1713035735123?e=1737590400&v=beta&t=gnppxVAT9pxyyhD1l_TfQ77P55Im3O7BZ6ArfnsYfes" alt="Developer Photo - Celestino Otieno">
+          <div class="developer-photo bg-primary text-white d-flex align-items-center justify-content-center">
+            <i class="bi bi-code-slash fs-1"></i>
+          </div>
           <div class="developer-details text-center text-md-start">
             <h3 class="developer-name">CELESTINO ONYANGO OTIENO</h3>
             <p class="developer-role">FULL-STACK WEB DEVELOPER</p>
@@ -682,14 +1203,46 @@
     let voters = { student: [], staff: [] };
     let candidates = {};
     let votes = {};
-    let maxVotes = {}; // Track max votes for progress bars
-    let currentVoter = null; // Track current voter
-    let systemLogo = null; // System logo
-    let developerPhoto = null; // Developer photo
-    let loginAttempts = []; // Track all login attempts
-
-    // Track all candidate names to prevent duplicates
+    let maxVotes = {};
+    let currentVoter = null;
+    let systemLogo = null;
+    let loginAttempts = [];
     let allCandidateNames = new Set();
+    
+    // New: System configuration
+    let systemConfig = {
+      theme: 'default',
+      title: 'Lukenya Voting System',
+      subtitle: 'British Curriculum Student Council Elections',
+      welcomeText: 'WELCOME TO LUKENYA BRITISH CURRICULUM SCHOOL',
+      electionTitle: 'STUDENT ELECTION',
+      rules: [
+        'Each voter can only vote once',
+        'Voting is confidential',
+        'No campaigning in the voting area',
+        'Results will be announced after voting closes',
+        'Voters must be registered to participate'
+      ],
+      electionDate: new Date().toISOString().split('T')[0],
+      votingStart: '08:00',
+      votingDuration: 8, // hours
+      votingInstructions: 'Please select one candidate for each position.',
+      allowVoteChange: false,
+      sessionTimeout: 30,
+      autoLogout: true,
+      showVoterCount: true,
+      enableTimer: true,
+      enableMaintenance: false
+    };
+
+    // Timer variables
+    let votingTimer;
+    let votingEndTime;
+    let votingStartTime;
+
+    // Admin session state
+    let isAdminLoggedIn = false;
+    let adminSessionTimeout;
 
     // Initialize data structures
     positions.forEach(pos => {
@@ -698,21 +1251,19 @@
       maxVotes[pos] = 0;
     });
 
-    // Load data from localStorage if available
+    // Load data from localStorage
     function loadData() {
       const savedVoters = localStorage.getItem('lukenyaVoters');
       const savedCandidates = localStorage.getItem('lukenyaCandidates');
       const savedVotes = localStorage.getItem('lukenyaVotes');
       const savedMaxVotes = localStorage.getItem('lukenyaMaxVotes');
       const savedLogo = localStorage.getItem('lukenyaLogo');
-      const savedDeveloperPhoto = localStorage.getItem('lukenyaDeveloperPhoto');
       const savedLoginAttempts = localStorage.getItem('lukenyaLoginAttempts');
-      const savedTheme = localStorage.getItem('lukenyaTheme');
+      const savedConfig = localStorage.getItem('lukenyaConfig');
       
       if (savedVoters) voters = JSON.parse(savedVoters);
       if (savedCandidates) {
         candidates = JSON.parse(savedCandidates);
-        // Rebuild the candidate names set
         allCandidateNames.clear();
         positions.forEach(pos => {
           if (candidates[pos]) {
@@ -733,18 +1284,23 @@
           document.getElementById('defaultLogo').style.display = 'none';
         }
       }
-      if (savedDeveloperPhoto) {
-        developerPhoto = savedDeveloperPhoto;
-        const devPhotoImg = document.getElementById('developerPhotoDisplay');
-        if (devPhotoImg) {
-          devPhotoImg.src = developerPhoto;
-        }
-      }
       if (savedLoginAttempts) loginAttempts = JSON.parse(savedLoginAttempts);
-      if (savedTheme) {
-        document.body.setAttribute('data-theme', savedTheme);
-        if (savedTheme === 'dark') {
-          document.body.classList.add('dark-mode');
+      if (savedConfig) {
+        systemConfig = JSON.parse(savedConfig);
+        applySystemConfig();
+        initializeElectionTimer();
+      }
+      
+      // Check if admin session is still valid
+      const adminSession = localStorage.getItem('lukenyaAdminSession');
+      if (adminSession) {
+        const sessionData = JSON.parse(adminSession);
+        if (sessionData.expires > Date.now()) {
+          isAdminLoggedIn = true;
+          updateAdminUI();
+          startAdminSessionTimer();
+        } else {
+          localStorage.removeItem('lukenyaAdminSession');
         }
       }
     }
@@ -756,12 +1312,226 @@
       localStorage.setItem('lukenyaVotes', JSON.stringify(votes));
       localStorage.setItem('lukenyaMaxVotes', JSON.stringify(maxVotes));
       localStorage.setItem('lukenyaLoginAttempts', JSON.stringify(loginAttempts));
+      localStorage.setItem('lukenyaConfig', JSON.stringify(systemConfig));
       if (systemLogo) {
         localStorage.setItem('lukenyaLogo', systemLogo);
       }
-      if (developerPhoto) {
-        localStorage.setItem('lukenyaDeveloperPhoto', developerPhoto);
+    }
+
+    // Apply system configuration
+    function applySystemConfig() {
+      document.getElementById('systemTitle').textContent = systemConfig.title;
+      document.getElementById('systemSubtitle').textContent = systemConfig.subtitle;
+      document.getElementById('welcomeText').textContent = systemConfig.welcomeText;
+      document.getElementById('electionTitle').textContent = systemConfig.electionTitle;
+      
+      // Apply theme
+      applyTheme(systemConfig.theme);
+      
+      // Update settings form values
+      document.getElementById('systemTitleInput').value = systemConfig.title;
+      document.getElementById('systemSubtitleInput').value = systemConfig.subtitle;
+      document.getElementById('welcomeTextInput').value = systemConfig.welcomeText;
+      document.getElementById('electionTitleInput').value = systemConfig.electionTitle;
+      document.getElementById('electionDate').value = systemConfig.electionDate;
+      document.getElementById('votingStart').value = systemConfig.votingStart;
+      document.getElementById('votingDuration').value = systemConfig.votingDuration;
+      document.getElementById('votingInstructions').value = systemConfig.votingInstructions;
+      document.getElementById('allowVoteChange').checked = systemConfig.allowVoteChange;
+      document.getElementById('enableTimer').checked = systemConfig.enableTimer;
+      document.getElementById('adminPassword').value = '';
+      document.getElementById('sessionTimeout').value = systemConfig.sessionTimeout;
+      document.getElementById('autoLogout').checked = systemConfig.autoLogout;
+      document.getElementById('showVoterCount').checked = systemConfig.showVoterCount;
+      document.getElementById('enableMaintenance').checked = systemConfig.enableMaintenance;
+      
+      // Update rules list
+      updateRulesList();
+    }
+
+    // Apply theme
+    function applyTheme(themeName) {
+      const root = document.documentElement;
+      
+      // Remove existing theme classes
+      document.body.classList.remove('theme-green', 'theme-red', 'theme-orange', 'theme-purple');
+      
+      // Update selected theme in UI
+      document.querySelectorAll('.theme-option').forEach(option => {
+        option.classList.remove('selected');
+        if (option.dataset.theme === themeName) {
+          option.classList.add('selected');
+        }
+      });
+      
+      // Apply theme colors
+      switch(themeName) {
+        case 'green':
+          root.style.setProperty('--primary', '#2b9348');
+          root.style.setProperty('--primary-dark', '#007f5f');
+          root.style.setProperty('--secondary', '#007f5f');
+          document.body.classList.add('theme-green');
+          break;
+        case 'red':
+          root.style.setProperty('--primary', '#e63946');
+          root.style.setProperty('--primary-dark', '#9d0208');
+          root.style.setProperty('--secondary', '#9d0208');
+          document.body.classList.add('theme-red');
+          break;
+        case 'orange':
+          root.style.setProperty('--primary', '#ff9e00');
+          root.style.setProperty('--primary-dark', '#ff5400');
+          root.style.setProperty('--secondary', '#ff5400');
+          document.body.classList.add('theme-orange');
+          break;
+        case 'purple':
+          root.style.setProperty('--primary', '#7209b7');
+          root.style.setProperty('--primary-dark', '#3a0ca3');
+          root.style.setProperty('--secondary', '#3a0ca3');
+          document.body.classList.add('theme-purple');
+          break;
+        default: // default theme
+          root.style.setProperty('--primary', '#4361ee');
+          root.style.setProperty('--primary-dark', '#3a56d4');
+          root.style.setProperty('--secondary', '#7209b7');
+          break;
       }
+      
+      systemConfig.theme = themeName;
+      saveData();
+    }
+
+    // Show settings tab - FIXED VERSION
+    function showSettingsTab(tabName) {
+      console.log('Switching to tab:', tabName);
+      
+      // Update tab navigation
+      document.querySelectorAll('.settings-tab').forEach(tab => {
+        tab.classList.remove('active');
+      });
+      
+      // Hide all tab contents
+      document.querySelectorAll('.settings-tab-content').forEach(content => {
+        content.classList.add('hidden');
+      });
+      
+      // Activate clicked tab
+      const activeTabBtn = document.getElementById(tabName + 'TabBtn');
+      if (activeTabBtn) {
+        activeTabBtn.classList.add('active');
+      }
+      
+      // Show corresponding content
+      const activeContent = document.getElementById(tabName + 'TabContent');
+      if (activeContent) {
+        activeContent.classList.remove('hidden');
+      }
+    }
+
+    // Initialize election timer
+    function initializeElectionTimer() {
+      if (!systemConfig.enableTimer) {
+        document.getElementById('timerTitle').textContent = 'Voting Timer Disabled';
+        document.querySelector('.timer-display').innerHTML = '<div class="text-center">Timer is disabled in settings</div>';
+        return;
+      }
+      
+      // Clear existing timer
+      if (votingTimer) {
+        clearInterval(votingTimer);
+      }
+      
+      // Parse election date and time
+      const electionDate = new Date(systemConfig.electionDate);
+      const [startHours, startMinutes] = systemConfig.votingStart.split(':').map(Number);
+      votingStartTime = new Date(electionDate);
+      votingStartTime.setHours(startHours, startMinutes, 0, 0);
+      
+      // Calculate end time based on duration
+      votingEndTime = new Date(votingStartTime);
+      votingEndTime.setHours(votingEndTime.getHours() + systemConfig.votingDuration);
+      
+      // Update timer information display
+      updateTimerInfo();
+      
+      // Start the timer
+      updateElectionTimer();
+      votingTimer = setInterval(updateElectionTimer, 1000);
+    }
+
+    // Update election timer
+    function updateElectionTimer() {
+      const now = new Date();
+      let timeRemaining;
+      let statusText = '';
+      let statusClass = '';
+      let voteButton = document.getElementById('voteButton');
+      
+      // Check if voting has started
+      if (now < votingStartTime) {
+        // Voting hasn't started yet
+        timeRemaining = votingStartTime - now;
+        statusText = 'Voting starts in';
+        statusClass = 'voting-pending';
+        if (voteButton) voteButton.disabled = true;
+      } else if (now >= votingStartTime && now <= votingEndTime) {
+        // Voting is active
+        timeRemaining = votingEndTime - now;
+        statusText = 'Voting ends in';
+        statusClass = 'voting-active';
+        if (voteButton) voteButton.disabled = false;
+      } else {
+        // Voting has ended
+        timeRemaining = 0;
+        statusText = 'Voting has ended';
+        statusClass = 'voting-ended';
+        if (voteButton) voteButton.disabled = true;
+      }
+      
+      // Update status display
+      document.getElementById('votingStatus').textContent = statusText;
+      document.getElementById('votingStatus').className = `timer-status ${statusClass}`;
+      
+      // Calculate time units
+      const days = Math.floor(timeRemaining / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((timeRemaining % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((timeRemaining % (1000 * 60)) / 1000);
+      
+      // Update display
+      document.getElementById('days').textContent = days.toString().padStart(2, '0');
+      document.getElementById('hours').textContent = hours.toString().padStart(2, '0');
+      document.getElementById('minutes').textContent = minutes.toString().padStart(2, '0');
+      document.getElementById('seconds').textContent = seconds.toString().padStart(2, '0');
+    }
+
+    // Update timer information
+    function updateTimerInfo() {
+      const electionDate = new Date(systemConfig.electionDate);
+      const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+      const formattedDate = electionDate.toLocaleDateString('en-US', options);
+      
+      const [startHours, startMinutes] = systemConfig.votingStart.split(':').map(Number);
+      const startTime = new Date(electionDate);
+      startTime.setHours(startHours, startMinutes);
+      
+      const endTime = new Date(startTime);
+      endTime.setHours(endTime.getHours() + systemConfig.votingDuration);
+      
+      document.getElementById('electionDateInfo').textContent = `Election Date: ${formattedDate}`;
+      document.getElementById('votingTimeInfo').textContent = `Voting Hours: ${formatTime(startTime)} - ${formatTime(endTime)}`;
+      document.getElementById('votingDurationInfo').textContent = `Duration: ${systemConfig.votingDuration} hours`;
+    }
+
+    // Format time to HH:MM AM/PM
+    function formatTime(date) {
+      let hours = date.getHours();
+      let minutes = date.getMinutes();
+      const ampm = hours >= 12 ? 'PM' : 'AM';
+      hours = hours % 12;
+      hours = hours ? hours : 12; // the hour '0' should be '12'
+      minutes = minutes < 10 ? '0' + minutes : minutes;
+      return `${hours}:${minutes} ${ampm}`;
     }
 
     // Record login attempt
@@ -773,13 +1543,12 @@
         id,
         status
       };
-      loginAttempts.unshift(attempt); // Add to beginning of array
+      loginAttempts.unshift(attempt);
       saveData();
     }
 
-    // Show/hide sections with animation
+    // Show/hide sections
     function showSection(id) {
-      // Hide all sections except settings modal
       document.querySelectorAll('section').forEach(s => {
         if (s.id !== 'settingsModal') {
           s.classList.add('hidden');
@@ -790,58 +1559,63 @@
       const targetSection = document.getElementById(id);
       if (targetSection) {
         targetSection.classList.remove('hidden');
-        
-        // Add fade-in effect after a brief delay
         setTimeout(() => {
           targetSection.classList.add('fade-in');
         }, 50);
+      }
+      
+      // If showing admin panel, show admin actions section
+      if (id === 'adminPanel') {
+        const adminActionsSection = document.getElementById('adminActionsSection');
+        if (adminActionsSection) {
+          adminActionsSection.classList.remove('hidden');
+          populateAdminDropdowns();
+          setupFileInputListeners();
+        }
+      }
+      
+      // If showing system settings, initialize the tabs
+      if (id === 'systemSettings') {
+        // Make sure only the first tab is visible
+        document.querySelectorAll('.settings-tab-content').forEach(content => {
+          content.classList.add('hidden');
+        });
+        document.getElementById('appearanceTabContent').classList.remove('hidden');
+        
+        // Update tab buttons
+        document.querySelectorAll('.settings-tab').forEach(tab => {
+          tab.classList.remove('active');
+        });
+        document.getElementById('appearanceTabBtn').classList.add('active');
+      }
+    }
+
+    // Show system settings (with admin check)
+    function showSystemSettings() {
+      if (!isAdminLoggedIn) {
+        showNotification('Please login as admin to access system settings', true);
+        showSection('adminLogin');
+      } else {
+        showSection('systemSettings');
       }
     }
 
     // Show voter choice section
     function showVoterChoice() {
+      const now = new Date();
+      if (now < votingStartTime) {
+        showNotification('Voting has not started yet. Please wait for the voting period.', true);
+        return;
+      } else if (now > votingEndTime) {
+        showNotification('Voting has ended. You can no longer cast your vote.', true);
+        return;
+      }
       showSection('voterChoice');
     }
 
-    // Show admin panel with all features
+    // Show admin panel
     function showAdminPanel() {
       showSection('adminPanel');
-      
-      // Show the admin actions section
-      const adminActionsSection = document.getElementById('adminActionsSection');
-      if (adminActionsSection) {
-        adminActionsSection.classList.remove('hidden');
-        
-        // Populate position dropdown
-        const posSel = document.getElementById('positionSelect');
-        if (posSel) {
-          posSel.innerHTML = positions.map(p => `<option value="${p}">${p}</option>`).join('');
-        }
-        
-        // Show/hide class field based on voter type
-        const voterTypeSelect = document.getElementById('voterType');
-        if (voterTypeSelect) {
-          // Remove existing event listener
-          const newVoterTypeSelect = voterTypeSelect.cloneNode(true);
-          voterTypeSelect.parentNode.replaceChild(newVoterTypeSelect, voterTypeSelect);
-          
-          // Add new event listener
-          newVoterTypeSelect.addEventListener('change', function() {
-            const classField = document.getElementById('classField');
-            if (classField) {
-              classField.style.display = this.value === 'student' ? 'block' : 'none';
-            }
-          });
-          
-          // Trigger change event to set initial state
-          setTimeout(() => {
-            newVoterTypeSelect.dispatchEvent(new Event('change'));
-          }, 100);
-        }
-        
-        // Setup file input listeners
-        setupFileInputListeners();
-      }
     }
 
     // Show developer information
@@ -849,13 +1623,88 @@
       showSection('developerInfo');
     }
 
-    // Show notification using Bootstrap toast
+    // Show reset section
+    function showResetSection() {
+      // Only show reset section if admin is logged in
+      if (isAdminLoggedIn) {
+        showSection('dataReset');
+      } else {
+        showNotification('Please login as admin first', true);
+        showSection('adminLogin');
+      }
+    }
+
+    // Check if admin is logged in (for backward compatibility)
+    function checkAdminLoggedIn() {
+      return isAdminLoggedIn;
+    }
+
+    // Update admin UI based on login status
+    function updateAdminUI() {
+      const adminStatusIndicator = document.getElementById('adminStatusIndicator');
+      const adminLogoutOption = document.getElementById('adminLogoutOption');
+      
+      if (isAdminLoggedIn) {
+        if (adminStatusIndicator) {
+          adminStatusIndicator.classList.remove('hidden');
+          adminStatusIndicator.classList.add('admin-logged-in');
+          adminStatusIndicator.innerHTML = '<i class="bi bi-shield-check me-1"></i> Admin Logged In';
+        }
+        if (adminLogoutOption) {
+          adminLogoutOption.classList.remove('hidden');
+        }
+      } else {
+        if (adminStatusIndicator) {
+          adminStatusIndicator.classList.add('hidden');
+        }
+        if (adminLogoutOption) {
+          adminLogoutOption.classList.add('hidden');
+        }
+      }
+    }
+
+    // Start admin session timer
+    function startAdminSessionTimer() {
+      // Clear existing timeout
+      if (adminSessionTimeout) {
+        clearTimeout(adminSessionTimeout);
+      }
+      
+      // Set session timeout (30 minutes)
+      adminSessionTimeout = setTimeout(() => {
+        adminLogout();
+        showNotification('Admin session has expired. Please login again.', true);
+      }, 30 * 60 * 1000); // 30 minutes
+    }
+
+    // Save admin session
+    function saveAdminSession() {
+      const sessionData = {
+        loggedIn: true,
+        expires: Date.now() + (30 * 60 * 1000) // 30 minutes from now
+      };
+      localStorage.setItem('lukenyaAdminSession', JSON.stringify(sessionData));
+    }
+
+    // Admin logout
+    function adminLogout() {
+      isAdminLoggedIn = false;
+      localStorage.removeItem('lukenyaAdminSession');
+      
+      if (adminSessionTimeout) {
+        clearTimeout(adminSessionTimeout);
+      }
+      
+      updateAdminUI();
+      showNotification('Admin logged out successfully');
+      showSection('home');
+    }
+
+    // Show notification
     function showNotification(message, isError = false) {
-      // Remove existing notifications
       const existingNotifications = document.querySelectorAll('.notification');
       existingNotifications.forEach(n => n.remove());
       
-      // Create notification element
       const notification = document.createElement('div');
       notification.className = `notification alert ${isError ? 'alert-danger' : 'alert-success'} alert-dismissible fade show`;
       notification.innerHTML = `
@@ -866,7 +1715,6 @@
       
       document.body.appendChild(notification);
       
-      // Auto remove after 5 seconds
       setTimeout(() => {
         if (notification.parentNode) {
           notification.remove();
@@ -876,6 +1724,15 @@
 
     // Verify student login
     function verifyStudent() {
+      const now = new Date();
+      if (now < votingStartTime) {
+        showNotification('Voting has not started yet. Please wait for the voting period.', true);
+        return;
+      } else if (now > votingEndTime) {
+        showNotification('Voting has ended. You can no longer cast your vote.', true);
+        return;
+      }
+      
       const name = document.getElementById('sName').value.trim();
       const adm = document.getElementById('sAdm').value.trim();
       const cls = document.getElementById('sClass').value.trim();
@@ -883,6 +1740,12 @@
       if (!name || !adm || !cls) {
         showNotification('Please fill in all fields', true);
         recordLoginAttempt('student', name, adm, 'failed');
+        return;
+      }
+      
+      // Validate voter number format
+      if (!adm.toUpperCase().startsWith('STU')) {
+        showNotification('Invalid student voter number format. Must start with STU', true);
         return;
       }
       
@@ -906,12 +1769,27 @@
 
     // Verify staff login
     function verifyStaff() {
+      const now = new Date();
+      if (now < votingStartTime) {
+        showNotification('Voting has not started yet. Please wait for the voting period.', true);
+        return;
+      } else if (now > votingEndTime) {
+        showNotification('Voting has ended. You can no longer cast your vote.', true);
+        return;
+      }
+      
       const name = document.getElementById('tName').value.trim();
       const id = document.getElementById('tID').value.trim();
       
       if (!name || !id) {
         showNotification('Please fill in all fields', true);
         recordLoginAttempt('staff', name, id, 'failed');
+        return;
+      }
+      
+      // Validate voter number format
+      if (!id.toUpperCase().startsWith('STA')) {
+        showNotification('Invalid staff voter number format. Must start with STA', true);
         return;
       }
       
@@ -947,13 +1825,16 @@
           div.className = 'mb-4';
           
           let candidatesHTML = `<label class="form-label fw-bold mb-3">${pos}</label>`;
-          candidates[pos].forEach(candidate => {
+          candidates[pos].forEach((candidate, index) => {
+            const candidateInitial = candidate.name.charAt(0).toUpperCase();
             candidatesHTML += `
               <div class="candidate-option p-3 mb-2" onclick="selectCandidate(this, '${pos}')">
                 <div class="form-check d-flex align-items-center">
                   <input class="form-check-input me-3" type="radio" name="${pos}" value="${candidate.name}">
                   <div class="candidate-with-photo d-flex align-items-center">
-                    ${candidate.photo ? `<img src="${candidate.photo}" class="candidate-photo me-3" alt="${candidate.name}">` : ''}
+                    <div class="candidate-symbol">
+                      ${candidateInitial}
+                    </div>
                     <div class="candidate-info">
                       <strong class="d-block">${candidate.name}</strong>
                     </div>
@@ -973,7 +1854,6 @@
     function selectCandidate(element, position) {
       if (!element) return;
       
-      // Deselect all options for this position
       const allOptions = document.querySelectorAll(`input[name="${position}"]`);
       allOptions.forEach(opt => {
         const parent = opt.closest('.candidate-option');
@@ -982,7 +1862,6 @@
         }
       });
       
-      // Select the clicked option
       element.classList.add('selected');
       const radio = element.querySelector('input[type="radio"]');
       if (radio) {
@@ -992,6 +1871,15 @@
 
     // Submit vote
     function submitVote() {
+      const now = new Date();
+      if (now < votingStartTime) {
+        showNotification('Voting has not started yet. Please wait for the voting period.', true);
+        return;
+      } else if (now > votingEndTime) {
+        showNotification('Voting has ended. You can no longer cast your vote.', true);
+        return;
+      }
+      
       let hasVoted = false;
       
       positions.forEach(pos => {
@@ -1000,7 +1888,6 @@
           const selectedCandidate = selectedOption.value;
           votes[pos][selectedCandidate] = (votes[pos][selectedCandidate] || 0) + 1;
           
-          // Update max votes for this position
           if (votes[pos][selectedCandidate] > maxVotes[pos]) {
             maxVotes[pos] = votes[pos][selectedCandidate];
           }
@@ -1010,7 +1897,6 @@
       });
       
       if (hasVoted) {
-        // Mark voter as having voted
         if (currentVoter && currentVoter.type === 'student') {
           const voterIndex = voters.student.findIndex(v => v.id === currentVoter.id);
           if (voterIndex !== -1) {
@@ -1039,6 +1925,11 @@
       const password = passwordInput.value;
       
       if (password === "Luk123enya") {
+        isAdminLoggedIn = true;
+        saveAdminSession();
+        startAdminSessionTimer();
+        updateAdminUI();
+        
         showNotification('Admin access granted');
         recordLoginAttempt('admin', 'Administrator', 'N/A', 'success');
         
@@ -1049,28 +1940,8 @@
       }
     }
 
-    // Set up file input listeners
+    // Setup file input listeners
     function setupFileInputListeners() {
-      // Preview for candidate photo
-      const candidatePhotoInput = document.getElementById('candidatePhoto');
-      if (candidatePhotoInput) {
-        candidatePhotoInput.addEventListener('change', function(e) {
-          const file = e.target.files[0];
-          if (file) {
-            const reader = new FileReader();
-            reader.onload = function(event) {
-              const preview = document.getElementById('photoPreview');
-              if (preview) {
-                preview.src = event.target.result;
-                preview.style.display = 'block';
-              }
-            };
-            reader.readAsDataURL(file);
-          }
-        });
-      }
-      
-      // Preview for logo
       const logoUploadInput = document.getElementById('logoUpload');
       if (logoUploadInput) {
         logoUploadInput.addEventListener('change', function(e) {
@@ -1088,24 +1959,30 @@
           }
         });
       }
+    }
 
-      // Preview for developer photo
-      const developerPhotoInput = document.getElementById('developerPhotoUpload');
-      if (developerPhotoInput) {
-        developerPhotoInput.addEventListener('change', function(e) {
-          const file = e.target.files[0];
-          if (file) {
-            const reader = new FileReader();
-            reader.onload = function(event) {
-              const preview = document.getElementById('developerPhotoPreview');
-              if (preview) {
-                preview.src = event.target.result;
-                preview.style.display = 'block';
-              }
-            };
-            reader.readAsDataURL(file);
+    // Populate admin dropdowns
+    function populateAdminDropdowns() {
+      const posSel = document.getElementById('positionSelect');
+      if (posSel) {
+        posSel.innerHTML = positions.map(p => `<option value="${p}">${p}</option>`).join('');
+      }
+      
+      const voterTypeSelect = document.getElementById('voterType');
+      if (voterTypeSelect) {
+        const newVoterTypeSelect = voterTypeSelect.cloneNode(true);
+        voterTypeSelect.parentNode.replaceChild(newVoterTypeSelect, voterTypeSelect);
+        
+        newVoterTypeSelect.addEventListener('change', function() {
+          const classField = document.getElementById('classField');
+          if (classField) {
+            classField.style.display = this.value === 'student' ? 'block' : 'none';
           }
         });
+        
+        setTimeout(() => {
+          newVoterTypeSelect.dispatchEvent(new Event('change'));
+        }, 100);
       }
     }
 
@@ -1128,12 +2005,22 @@
         return;
       }
       
+      // Validate voter number format
+      if (type === 'student' && !id.toUpperCase().startsWith('STU')) {
+        showNotification('Student voter number must start with STU', true);
+        return;
+      }
+      
+      if (type === 'staff' && !id.toUpperCase().startsWith('STA')) {
+        showNotification('Staff voter number must start with STA', true);
+        return;
+      }
+      
       if (type === "student" && !cls) {
         showNotification('Class is required for students', true);
         return;
       }
       
-      // Check if voter already exists
       const existingVoter = voters[type].find(v => v.id === id);
       if (existingVoter) {
         showNotification('Voter with this ID is already registered', true);
@@ -1149,7 +2036,6 @@
       saveData();
       showNotification(`${type.charAt(0).toUpperCase() + type.slice(1)} registered successfully`);
       
-      // Clear form
       nameInput.value = '';
       idInput.value = '';
       if (classInput) {
@@ -1157,69 +2043,40 @@
       }
     }
 
-    // Add candidate - WITH DUPLICATE NAME PREVENTION
+    // Add candidate
     function addCandidate() {
       const posSelect = document.getElementById('positionSelect');
       const nameInput = document.getElementById('candidateName');
-      const photoInput = document.getElementById('candidatePhoto');
       
       if (!posSelect || !nameInput) return;
       
       const pos = posSelect.value;
       const name = nameInput.value.trim();
-      const photoFile = photoInput && photoInput.files ? photoInput.files[0] : null;
       
       if (!name) {
         showNotification('Please enter a candidate name', true);
         return;
       }
       
-      // Check if candidate already exists for this position
       const existingCandidate = candidates[pos].find(c => c.name.toLowerCase() === name.toLowerCase());
       if (existingCandidate) {
         showNotification('Candidate already exists for this position', true);
         return;
       }
       
-      // Check if candidate name exists in ANY position (global duplicate prevention)
       if (allCandidateNames.has(name.toLowerCase())) {
         showNotification('Candidate name already exists in another position. Please use a different name.', true);
         return;
       }
       
-      // Process photo if provided
-      if (photoFile) {
-        const reader = new FileReader();
-        reader.onload = function(event) {
-          const candidate = { name, photo: event.target.result };
-          candidates[pos].push(candidate);
-          votes[pos][name] = 0;
-          allCandidateNames.add(name.toLowerCase()); // Add to global set
-          saveData();
-          showNotification(`Candidate "${name}" added to ${pos}`);
-          
-          // Clear form
-          nameInput.value = '';
-          if (photoInput) {
-            photoInput.value = '';
-          }
-          const preview = document.getElementById('photoPreview');
-          if (preview) {
-            preview.style.display = 'none';
-          }
-        };
-        reader.readAsDataURL(photoFile);
-      } else {
-        const candidate = { name, photo: null };
-        candidates[pos].push(candidate);
-        votes[pos][name] = 0;
-        allCandidateNames.add(name.toLowerCase()); // Add to global set
-        saveData();
-        showNotification(`Candidate "${name}" added to ${pos}`);
-        
-        // Clear form
-        nameInput.value = '';
-      }
+      const candidate = { name };
+      candidates[pos].push(candidate);
+      votes[pos][name] = 0;
+      allCandidateNames.add(name.toLowerCase());
+      saveData();
+      showNotification(`Candidate "${name}" added to ${pos}`);
+      
+      nameInput.value = '';
     }
 
     // Upload system logo
@@ -1246,7 +2103,6 @@
         saveData();
         showNotification('System logo updated successfully');
         
-        // Clear form
         logoInput.value = '';
         const preview = document.getElementById('logoPreview');
         if (preview) {
@@ -1256,87 +2112,8 @@
       reader.readAsDataURL(logoFile);
     }
 
-    // Upload developer photo
-    function uploadDeveloperPhoto() {
-      const photoInput = document.getElementById('developerPhotoUpload');
-      if (!photoInput) return;
-      
-      const photoFile = photoInput.files[0];
-      
-      if (!photoFile) {
-        showNotification('Please select a photo file', true);
-        return;
-      }
-      
-      const reader = new FileReader();
-      reader.onload = function(event) {
-        developerPhoto = event.target.result;
-        const devPhotoImg = document.getElementById('developerPhotoDisplay');
-        if (devPhotoImg) {
-          devPhotoImg.src = developerPhoto;
-        }
-        saveData();
-        showNotification('Developer photo updated successfully');
-        
-        // Clear form
-        photoInput.value = '';
-        const preview = document.getElementById('developerPhotoPreview');
-        if (preview) {
-          preview.style.display = 'none';
-        }
-      };
-      reader.readAsDataURL(photoFile);
-    }
-
-    // Show results with visual progress bars
-    function showResults() {
-      const res = document.getElementById('results');
-      if (!res) return;
-      
-      res.innerHTML = '';
-      
-      positions.forEach(pos => {
-        if (candidates[pos] && candidates[pos].length > 0) {
-          const resultCard = document.createElement('div');
-          resultCard.className = 'col-lg-4 col-md-6';
-          
-          let candidatesHTML = '';
-          candidates[pos].forEach(candidate => {
-            const voteCount = votes[pos][candidate.name] || 0;
-            const percentage = maxVotes[pos] > 0 ? (voteCount / maxVotes[pos]) * 100 : 0;
-            
-            candidatesHTML += `
-              <div class="candidate-with-photo d-flex align-items-center mb-3">
-                ${candidate.photo ? `<img src="${candidate.photo}" class="candidate-photo me-3" alt="${candidate.name}">` : ''}
-                <div class="candidate-info flex-grow-1">
-                  <div class="d-flex justify-content-between mb-1">
-                    <span class="fw-bold">${candidate.name}</span>
-                    <span class="vote-count text-primary fw-bold">${voteCount} votes</span>
-                  </div>
-                  <div class="progress-bar-custom">
-                    <div class="progress-custom" style="width: ${percentage}%"></div>
-                  </div>
-                </div>
-              </div>
-            `;
-          });
-          
-          resultCard.innerHTML = `
-            <div class="card result-card h-100">
-              <div class="card-body">
-                <h4 class="card-title text-primary mb-3">${pos}</h4>
-                ${candidatesHTML}
-              </div>
-            </div>
-          `;
-          
-          res.appendChild(resultCard);
-        }
-      });
-    }
-
-    // Show registered voters with separate tables for students and staff
-    function showRegistered() {
+    // Show registered voters with toggle functionality
+    function showRegistered(type = 'all') {
       const reg = document.getElementById('registeredVoters');
       if (!reg) return;
       
@@ -1347,101 +2124,100 @@
         return;
       }
       
-      // Create student voter section
-      if (voters.student.length > 0) {
-        const studentSection = document.createElement('div');
-        studentSection.className = 'mb-4';
+      // Helper function to create voter card
+      function createVoterCard(voter, voterType, index) {
+        const voterNumberClass = voterType === 'student' ? 'stu-voter' : 'sta-voter';
+        const voterTypeBadge = voterType === 'student' ? 'bg-primary' : 'bg-secondary';
+        const status = voter.hasVoted ? 
+          '<span class="badge bg-success">VOTED</span>' : 
+          '<span class="badge bg-danger">NOT VOTED</span>';
         
-        studentSection.innerHTML = `
-          <h4 class="text-secondary mb-3"><i class="bi bi-person-circle me-2"></i>Student Voters</h4>
-          <p class="text-muted mb-3">Total: ${voters.student.length} students</p>
-        `;
-        
-        let studentTableHTML = `
-          <div class="table-responsive">
-            <table class="table table-hover">
-              <thead class="table-primary">
-                <tr>
-                  <th>Name</th>
-                  <th>Admission No</th>
-                  <th>Class</th>
-                  <th>Status</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-        `;
-        
-        voters.student.forEach((v, index) => {
-          const status = v.hasVoted ? 
-            '<span class="badge bg-success">VOTED</span>' : 
-            '<span class="badge bg-danger">NOT VOTED</span>';
-          studentTableHTML += `
-            <tr>
-              <td>${v.name}</td>
-              <td>${v.id}</td>
-              <td>${v.class}</td>
-              <td>${status}</td>
-              <td>
-                <div class="btn-group btn-group-sm">
-                  <button class="btn btn-warning" onclick="editVoter('student', ${index})"><i class="bi bi-pencil"></i></button>
-                  <button class="btn btn-danger" onclick="deleteVoter('student', ${index})"><i class="bi bi-trash"></i></button>
+        return `
+          <div class="card mb-2 ${voterNumberClass}">
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-center">
+                <div>
+                  <h6 class="mb-1">${voter.name}</h6>
+                  <div class="d-flex gap-3 align-items-center">
+                    <span class="voter-number">${voter.id}</span>
+                    ${voterType === 'student' ? `<span class="badge ${voterTypeBadge}">${voter.class}</span>` : ''}
+                    ${status}
+                  </div>
                 </div>
-              </td>
-            </tr>
-          `;
-        });
-        
-        studentTableHTML += '</tbody></table></div>';
-        studentSection.innerHTML += studentTableHTML;
-        reg.appendChild(studentSection);
+                <div class="btn-group btn-group-sm">
+                  <button class="btn btn-warning" onclick="editVoter('${voterType}', ${index})"><i class="bi bi-pencil"></i></button>
+                  <button class="btn btn-danger" onclick="deleteVoter('${voterType}', ${index})"><i class="bi bi-trash"></i></button>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
       }
       
-      // Create staff voter section
-      if (voters.staff.length > 0) {
-        const staffSection = document.createElement('div');
-        
-        staffSection.innerHTML = `
-          <h4 class="text-secondary mb-3"><i class="bi bi-person-workspace me-2"></i>Staff Voters</h4>
-          <p class="text-muted mb-3">Total: ${voters.staff.length} staff members</div>
-        `;
-        
-        let staffTableHTML = `
-          <div class="table-responsive">
-            <table class="table table-hover">
-              <thead class="table-primary">
-                <tr>
-                  <th>Name</th>
-                  <th>Staff ID</th>
-                  <th>Status</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-        `;
-        
-        voters.staff.forEach((v, index) => {
-          const status = v.hasVoted ? 
-            '<span class="badge bg-success">VOTED</span>' : 
-            '<span class="badge bg-danger">NOT VOTED</span>';
-          staffTableHTML += `
-            <tr>
-              <td>${v.name}</td>
-              <td>${v.id}</td>
-              <td>${status}</td>
-              <td>
-                <div class="btn-group btn-group-sm">
-                  <button class="btn btn-warning" onclick="editVoter('staff', ${index})"><i class="bi bi-pencil"></i></button>
-                  <button class="btn btn-danger" onclick="deleteVoter('staff', ${index})"><i class="bi bi-trash"></i></button>
-                </div>
-              </td>
-            </tr>
+      // Show all voters or specific type
+      if (type === 'all' || type === 'student') {
+        if (voters.student.length > 0) {
+          const studentSection = document.createElement('div');
+          studentSection.className = 'mb-4';
+          
+          studentSection.innerHTML = `
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <h5 class="text-primary mb-0"><i class="bi bi-person-circle me-2"></i>Student Voters 
+                <span class="badge voter-count-badge bg-primary">${voters.student.length} students</span>
+              </h5>
+              <button class="btn btn-sm btn-outline-primary toggle-btn" onclick="toggleVoterList('studentList')">
+                <i class="bi bi-chevron-down"></i> Show/Hide
+              </button>
+            </div>
+            <div id="studentList" class="toggle-content">
           `;
-        });
-        
-        staffTableHTML += '</tbody></table></div>';
-        staffSection.innerHTML += staffTableHTML;
-        reg.appendChild(staffSection);
+          
+          voters.student.forEach((v, index) => {
+            studentSection.innerHTML += createVoterCard(v, 'student', index);
+          });
+          
+          studentSection.innerHTML += '</div>';
+          reg.appendChild(studentSection);
+        }
+      }
+      
+      if (type === 'all' || type === 'staff') {
+        if (voters.staff.length > 0) {
+          const staffSection = document.createElement('div');
+          
+          staffSection.innerHTML = `
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <h5 class="text-secondary mb-0"><i class="bi bi-person-workspace me-2"></i>Staff Voters 
+                <span class="badge voter-count-badge bg-secondary">${voters.staff.length} staff</span>
+              </h5>
+              <button class="btn btn-sm btn-outline-secondary toggle-btn" onclick="toggleVoterList('staffList')">
+                <i class="bi bi-chevron-down"></i> Show/Hide
+              </button>
+            </div>
+            <div id="staffList" class="toggle-content">
+          `;
+          
+          voters.staff.forEach((v, index) => {
+            staffSection.innerHTML += createVoterCard(v, 'staff', index);
+          });
+          
+          staffSection.innerHTML += '</div>';
+          reg.appendChild(staffSection);
+        }
+      }
+    }
+
+    // Toggle voter list visibility
+    function toggleVoterList(listId) {
+      const list = document.getElementById(listId);
+      const toggleBtn = document.querySelector(`[onclick="toggleVoterList('${listId}')"]`);
+      
+      if (list.style.maxHeight && list.style.maxHeight !== '0px') {
+        list.style.maxHeight = '0px';
+        toggleBtn.innerHTML = '<i class="bi bi-chevron-down"></i> Show';
+      } else {
+        list.style.maxHeight = list.scrollHeight + 'px';
+        toggleBtn.innerHTML = '<i class="bi bi-chevron-up"></i> Hide';
       }
     }
 
@@ -1449,9 +2225,9 @@
     function editVoter(type, index) {
       const voter = voters[type][index];
       const newName = prompt(`Edit ${type} voter name:`, voter.name);
-      if (newName === null) return; // User cancelled
+      if (newName === null) return;
       
-      const newID = prompt(`Edit ${type} voter ID:`, voter.id);
+      const newID = prompt(`Edit ${type} voter number:`, voter.id);
       if (newID === null) return;
       
       let newClass = '';
@@ -1460,14 +2236,23 @@
         if (newClass === null) return;
       }
       
-      // Check if the new ID already exists (excluding the current voter)
+      // Validate voter number format
+      if (type === 'student' && !newID.toUpperCase().startsWith('STU')) {
+        showNotification('Student voter number must start with STU', true);
+        return;
+      }
+      
+      if (type === 'staff' && !newID.toUpperCase().startsWith('STA')) {
+        showNotification('Staff voter number must start with STA', true);
+        return;
+      }
+      
       const existingVoter = voters[type].find((v, i) => v.id === newID && i !== index);
       if (existingVoter) {
         showNotification('A voter with this ID already exists', true);
         return;
       }
       
-      // Update voter
       voter.name = newName.trim();
       voter.id = newID.trim();
       if (type === 'student') {
@@ -1476,7 +2261,7 @@
       
       saveData();
       showNotification(`${type} voter updated successfully`);
-      showRegistered(); // Refresh the display
+      showRegistered('all');
     }
 
     // Delete voter
@@ -1488,11 +2273,11 @@
         voters[type].splice(index, 1);
         saveData();
         showNotification(`${type} voter deleted successfully`);
-        showRegistered(); // Refresh the display
+        showRegistered('all');
       }
     }
 
-    // Show candidates with edit/delete buttons
+    // Show candidates
     function showCandidates() {
       const candidateDiv = document.getElementById('candidateManagement');
       if (!candidateDiv) return;
@@ -1518,7 +2303,6 @@
               <tr>
                 <th>Position</th>
                 <th>Candidate Name</th>
-                <th>Photo</th>
                 <th>Votes</th>
                 <th>Actions</th>
               </tr>
@@ -1534,7 +2318,6 @@
               <tr>
                 <td>${pos}</td>
                 <td>${candidate.name}</td>
-                <td>${candidate.photo ? '<i class="bi bi-check-circle-fill text-success"></i>' : '<i class="bi bi-x-circle-fill text-danger"></i>'}</td>
                 <td>${voteCount}</td>
                 <td>
                   <div class="btn-group btn-group-sm">
@@ -1556,9 +2339,8 @@
     function editCandidate(position, index) {
       const candidate = candidates[position][index];
       const newName = prompt(`Edit candidate name for ${position}:`, candidate.name);
-      if (newName === null) return; // User cancelled
+      if (newName === null) return;
       
-      // Check if the new name already exists (excluding the current candidate)
       const existingCandidate = candidates[position].find((c, i) => 
         c.name.toLowerCase() === newName.toLowerCase() && i !== index
       );
@@ -1568,53 +2350,25 @@
         return;
       }
       
-      // Check if candidate name exists in ANY position (global duplicate prevention)
       if (newName.toLowerCase() !== candidate.name.toLowerCase() && allCandidateNames.has(newName.toLowerCase())) {
         showNotification('Candidate name already exists in another position. Please use a different name.', true);
         return;
       }
       
-      // Update candidate name and votes if name changed
       if (newName !== candidate.name) {
-        // Update votes
         const oldVoteCount = votes[position][candidate.name] || 0;
         votes[position][newName] = oldVoteCount;
         delete votes[position][candidate.name];
         
-        // Update global name set
         allCandidateNames.delete(candidate.name.toLowerCase());
         allCandidateNames.add(newName.toLowerCase());
         
-        // Update candidate
         candidate.name = newName.trim();
       }
       
-      // Ask about photo update
-      const updatePhoto = confirm('Would you like to update the candidate photo?');
-      if (updatePhoto) {
-        // Create a file input for photo update
-        const fileInput = document.createElement('input');
-        fileInput.type = 'file';
-        fileInput.accept = 'image/*';
-        fileInput.onchange = function(e) {
-          const file = e.target.files[0];
-          if (file) {
-            const reader = new FileReader();
-            reader.onload = function(event) {
-              candidate.photo = event.target.result;
-              saveData();
-              showNotification('Candidate updated successfully');
-              showCandidates(); // Refresh the display
-            };
-            reader.readAsDataURL(file);
-          }
-        };
-        fileInput.click();
-      } else {
-        saveData();
-        showNotification('Candidate updated successfully');
-        showCandidates(); // Refresh the display
-      }
+      saveData();
+      showNotification('Candidate updated successfully');
+      showCandidates();
     }
 
     // Delete candidate
@@ -1623,16 +2377,10 @@
       const confirmDelete = confirm(`Are you sure you want to delete ${candidate.name} from ${position}?`);
       
       if (confirmDelete) {
-        // Remove from global name set
         allCandidateNames.delete(candidate.name.toLowerCase());
-        
-        // Remove candidate from position
         candidates[position].splice(index, 1);
-        
-        // Remove candidate's votes
         delete votes[position][candidate.name];
         
-        // Recalculate max votes for this position
         maxVotes[position] = 0;
         if (candidates[position]) {
           candidates[position].forEach(c => {
@@ -1644,8 +2392,58 @@
         
         saveData();
         showNotification('Candidate deleted successfully');
-        showCandidates(); // Refresh the display
+        showCandidates();
       }
+    }
+
+    // Show results
+    function showResults() {
+      const res = document.getElementById('results');
+      if (!res) return;
+      
+      res.innerHTML = '';
+      
+      positions.forEach(pos => {
+        if (candidates[pos] && candidates[pos].length > 0) {
+          const resultCard = document.createElement('div');
+          resultCard.className = 'col-lg-4 col-md-6';
+          
+          let candidatesHTML = '';
+          candidates[pos].forEach((candidate, index) => {
+            const voteCount = votes[pos][candidate.name] || 0;
+            const percentage = maxVotes[pos] > 0 ? (voteCount / maxVotes[pos]) * 100 : 0;
+            const candidateInitial = candidate.name.charAt(0).toUpperCase();
+            
+            candidatesHTML += `
+              <div class="candidate-with-photo d-flex align-items-center mb-3">
+                <div class="candidate-symbol">
+                  ${candidateInitial}
+                </div>
+                <div class="candidate-info flex-grow-1">
+                  <div class="d-flex justify-content-between mb-1">
+                    <span class="fw-bold">${candidate.name}</span>
+                    <span class="vote-count text-primary fw-bold">${voteCount} votes</span>
+                  </div>
+                  <div class="progress-bar-custom">
+                    <div class="progress-custom" style="width: ${percentage}%"></div>
+                  </div>
+                </div>
+              </div>
+            `;
+          });
+          
+          resultCard.innerHTML = `
+            <div class="card result-card h-100">
+              <div class="card-body">
+                <h4 class="card-title text-primary mb-3">${pos}</h4>
+                ${candidatesHTML}
+              </div>
+            </div>
+          `;
+          
+          res.appendChild(resultCard);
+        }
+      });
     }
 
     // Show login attempts
@@ -1700,15 +2498,15 @@
       let data = '', filename = '';
       
       if (type === 'voters') {
-        data = 'Type,Name,ID,Class,Has Voted\n';
+        data = 'Type,Name,Voter Number,Class,Has Voted\n';
         voters.student.forEach(v => data += `Student,${v.name},${v.id},${v.class},${v.hasVoted ? 'Yes' : 'No'}\n`);
         voters.staff.forEach(v => data += `Staff,${v.name},${v.id},,${v.hasVoted ? 'Yes' : 'No'}\n`);
-        filename = 'voters.csv';
+        filename = 'all_voters.csv';
       } else if (type === 'candidates') {
-        data = 'Position,Candidate,Photo\n';
+        data = 'Position,Candidate\n';
         positions.forEach(p => {
           if (candidates[p]) {
-            candidates[p].forEach(c => data += `${p},${c.name},${c.photo ? 'Yes' : 'No'}\n`);
+            candidates[p].forEach(c => data += `${p},${c.name}\n`);
           }
         });
         filename = 'candidates.csv';
@@ -1722,7 +2520,34 @@
         filename = 'results.csv';
       }
       
-      const blob = new Blob([data], { type: 'text/csv;charset=utf-8;' });
+      downloadFile(data, filename, 'text/csv');
+    }
+
+    // Download student voters
+    function downloadStudentVoters() {
+      let data = 'Name,Voter Number,Class,Has Voted\n';
+      voters.student.forEach(v => data += `${v.name},${v.id},${v.class},${v.hasVoted ? 'Yes' : 'No'}\n`);
+      downloadFile(data, 'student_voters.csv', 'text/csv');
+    }
+
+    // Download staff voters
+    function downloadStaffVoters() {
+      let data = 'Name,Voter Number,Has Voted\n';
+      voters.staff.forEach(v => data += `${v.name},${v.id},${v.hasVoted ? 'Yes' : 'No'}\n`);
+      downloadFile(data, 'staff_voters.csv', 'text/csv');
+    }
+
+    // Download voter data
+    function downloadVoterData() {
+      let data = 'Type,Name,Voter Number,Class,Has Voted\n';
+      voters.student.forEach(v => data += `Student,${v.name},${v.id},${v.class},${v.hasVoted ? 'Yes' : 'No'}\n`);
+      voters.staff.forEach(v => data += `Staff,${v.name},${v.id},,${v.hasVoted ? 'Yes' : 'No'}\n`);
+      downloadFile(data, 'voter_data.csv', 'text/csv');
+    }
+
+    // Download file helper
+    function downloadFile(data, filename, type) {
+      const blob = new Blob([data], { type: `${type};charset=utf-8;` });
       const link = document.createElement('a');
       const url = URL.createObjectURL(blob);
       link.setAttribute('href', url);
@@ -1745,7 +2570,6 @@
       const { jsPDF } = window.jspdf;
       const doc = new jsPDF();
       
-      // Add logo if available
       if (systemLogo) {
         try {
           doc.addImage(systemLogo, 'JPEG', 10, 10, 30, 20);
@@ -1754,7 +2578,6 @@
         }
       }
       
-      // Title
       doc.setFontSize(20);
       doc.text('Lukenya Voting System - Election Results', 50, 20);
       
@@ -1762,25 +2585,21 @@
       
       positions.forEach((pos, index) => {
         if (candidates[pos] && candidates[pos].length > 0) {
-          // Add page if needed
           if (yPosition > 250) {
             doc.addPage();
             yPosition = 20;
           }
           
-          // Position title
           doc.setFontSize(16);
           doc.text(pos, 10, yPosition);
           yPosition += 10;
           
-          // Candidates and votes
           doc.setFontSize(12);
           candidates[pos].forEach(candidate => {
             const voteCount = votes[pos][candidate.name] || 0;
             doc.text(`${candidate.name}: ${voteCount} votes`, 15, yPosition);
             yPosition += 7;
             
-            // Check if we need a new page
             if (yPosition > 250) {
               doc.addPage();
               yPosition = 20;
@@ -1795,7 +2614,7 @@
       showNotification('PDF downloaded successfully');
     }
 
-    // Toggle theme function
+    // Toggle theme
     function toggleTheme() {
       const currentTheme = document.body.getAttribute('data-theme');
       if (currentTheme === 'dark') {
@@ -1811,35 +2630,176 @@
       }
     }
 
-    // Reset all data function
-    function resetAllData() {
-      const password = prompt('Enter admin password to reset all data:');
-      if (password === "Luk123enya") {
-        if (confirm('WARNING: This will delete ALL voting data, candidates, and voters. Are you sure?')) {
-          // Clear all data
-          voters = { student: [], staff: [] };
-          candidates = {};
-          votes = {};
-          maxVotes = {};
-          allCandidateNames.clear();
-          loginAttempts = [];
-          currentVoter = null;
-          
-          // Initialize data structures
-          positions.forEach(pos => {
-            candidates[pos] = [];
-            votes[pos] = {};
-            maxVotes[pos] = 0;
-          });
-          
-          // Clear localStorage
-          localStorage.clear();
-          
-          showNotification('All data has been reset successfully');
-          showSection('home');
-        }
-      } else {
+    // Update rules list
+    function updateRulesList() {
+      const rulesList = document.getElementById('systemRulesList');
+      if (!rulesList) return;
+      
+      rulesList.innerHTML = '';
+      
+      systemConfig.rules.forEach((rule, index) => {
+        const ruleItem = document.createElement('div');
+        ruleItem.className = 'rule-item d-flex justify-content-between align-items-center';
+        ruleItem.innerHTML = `
+          <span>${rule}</span>
+          <button class="btn btn-sm btn-danger" onclick="deleteSystemRule(${index})">
+            <i class="bi bi-trash"></i>
+          </button>
+        `;
+        rulesList.appendChild(ruleItem);
+      });
+    }
+
+    // Add system rule
+    function addSystemRule() {
+      const newRuleInput = document.getElementById('newRuleInput');
+      if (!newRuleInput) return;
+      
+      const rule = newRuleInput.value.trim();
+      if (!rule) {
+        showNotification('Please enter a rule', true);
+        return;
+      }
+      
+      systemConfig.rules.push(rule);
+      saveData();
+      updateRulesList();
+      newRuleInput.value = '';
+      showNotification('Rule added successfully');
+    }
+
+    // Delete system rule
+    function deleteSystemRule(index) {
+      if (confirm('Are you sure you want to delete this rule?')) {
+        systemConfig.rules.splice(index, 1);
+        saveData();
+        updateRulesList();
+        showNotification('Rule deleted successfully');
+      }
+    }
+
+    // Reset system rules
+    function resetSystemRules() {
+      if (confirm('Reset to default rules? This will remove all custom rules.')) {
+        systemConfig.rules = [
+          'Each voter can only vote once',
+          'Voting is confidential',
+          'No campaigning in the voting area',
+          'Results will be announced after voting closes',
+          'Voters must be registered to participate'
+        ];
+        saveData();
+        updateRulesList();
+        showNotification('Rules reset to default');
+      }
+    }
+
+    // Save appearance settings
+    function saveAppearanceSettings() {
+      systemConfig.title = document.getElementById('systemTitleInput').value || systemConfig.title;
+      systemConfig.subtitle = document.getElementById('systemSubtitleInput').value || systemConfig.subtitle;
+      systemConfig.welcomeText = document.getElementById('welcomeTextInput').value || systemConfig.welcomeText;
+      systemConfig.electionTitle = document.getElementById('electionTitleInput').value || systemConfig.electionTitle;
+      
+      saveData();
+      applySystemConfig();
+      showNotification('Appearance settings saved');
+    }
+
+    // Save election settings
+    function saveElectionSettings() {
+      systemConfig.electionDate = document.getElementById('electionDate').value || systemConfig.electionDate;
+      systemConfig.votingStart = document.getElementById('votingStart').value || systemConfig.votingStart;
+      systemConfig.votingDuration = parseInt(document.getElementById('votingDuration').value) || 8;
+      systemConfig.votingInstructions = document.getElementById('votingInstructions').value || systemConfig.votingInstructions;
+      systemConfig.allowVoteChange = document.getElementById('allowVoteChange').checked;
+      systemConfig.enableTimer = document.getElementById('enableTimer').checked;
+      
+      saveData();
+      initializeElectionTimer();
+      showNotification('Election settings saved');
+    }
+
+    // Save advanced settings
+    function saveAdvancedSettings() {
+      const newPassword = document.getElementById('adminPassword').value;
+      if (newPassword) {
+        showNotification('Password change would require backend implementation in a real system', true);
+      }
+      
+      systemConfig.sessionTimeout = parseInt(document.getElementById('sessionTimeout').value) || 30;
+      systemConfig.autoLogout = document.getElementById('autoLogout').checked;
+      systemConfig.showVoterCount = document.getElementById('showVoterCount').checked;
+      systemConfig.enableMaintenance = document.getElementById('enableMaintenance').checked;
+      
+      saveData();
+      showNotification('Advanced settings saved');
+    }
+
+    // Perform data reset
+    function performDataReset() {
+      const password = document.getElementById('resetPassword').value;
+      const resetType = document.getElementById('resetType').value;
+      
+      if (password !== "Luk123enya") {
         showNotification('Invalid password. Reset cancelled.', true);
+        return;
+      }
+      
+      let confirmMessage = '';
+      switch(resetType) {
+        case 'votes':
+          confirmMessage = 'Reset all votes? This will clear all voting results.';
+          break;
+        case 'voters':
+          confirmMessage = 'Reset all voters? This will delete all registered voters.';
+          break;
+        case 'candidates':
+          confirmMessage = 'Reset all candidates? This will delete all candidates.';
+          break;
+        default:
+          confirmMessage = 'Reset all data? This will delete ALL voting data.';
+      }
+      
+      if (confirm(confirmMessage)) {
+        switch(resetType) {
+          case 'votes':
+            positions.forEach(pos => {
+              votes[pos] = {};
+              maxVotes[pos] = 0;
+            });
+            // Reset voter voting status
+            voters.student.forEach(v => v.hasVoted = false);
+            voters.staff.forEach(v => v.hasVoted = false);
+            break;
+          case 'voters':
+            voters = { student: [], staff: [] };
+            break;
+          case 'candidates':
+            positions.forEach(pos => {
+              candidates[pos] = [];
+              votes[pos] = {};
+              maxVotes[pos] = 0;
+            });
+            allCandidateNames.clear();
+            break;
+          default: // all
+            voters = { student: [], staff: [] };
+            candidates = {};
+            votes = {};
+            maxVotes = {};
+            allCandidateNames.clear();
+            positions.forEach(pos => {
+              candidates[pos] = [];
+              votes[pos] = {};
+              maxVotes[pos] = 0;
+            });
+            break;
+        }
+        
+        saveData();
+        showNotification(`Data reset successful: ${resetType}`);
+        showSection('adminPanel');
       }
     }
 
@@ -1847,10 +2807,25 @@
     window.onload = function() {
       loadData();
       
-      // If no data exists, start with empty system
       if (!localStorage.getItem('lukenyaVoters')) {
         saveData();
       }
+      
+      // Apply initial configuration
+      applySystemConfig();
+      
+      // Initialize election timer
+      initializeElectionTimer();
+      
+      // Initialize all toggle lists to be visible
+      setTimeout(() => {
+        document.querySelectorAll('.toggle-content').forEach(content => {
+          content.style.maxHeight = content.scrollHeight + 'px';
+        });
+      }, 100);
+      
+      // Update admin UI
+      updateAdminUI();
     };
   </script>
 </body>
