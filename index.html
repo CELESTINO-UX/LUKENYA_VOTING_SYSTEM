@@ -768,6 +768,47 @@
     .admin-logged-in {
       background: var(--success);
     }
+
+    /* Position Management Styles */
+    .position-item {
+      padding: 10px 15px;
+      margin-bottom: 8px;
+      background: white;
+      border-radius: 6px;
+      border-left: 3px solid var(--primary);
+      transition: all 0.2s ease;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .position-item:hover {
+      transform: translateX(5px);
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+    }
+    
+    .position-actions {
+      display: flex;
+      gap: 5px;
+    }
+    
+    .position-count {
+      font-size: 0.8rem;
+      color: var(--primary);
+      background: rgba(67, 97, 238, 0.1);
+      padding: 2px 8px;
+      border-radius: 12px;
+      margin-left: 10px;
+    }
+    
+    /* Add Position Form */
+    .add-position-form {
+      background: #f8f9fa;
+      padding: 20px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      border: 1px solid #dee2e6;
+    }
   </style>
 </head>
 <body>
@@ -1208,6 +1249,10 @@
           <button class="btn btn-outline-primary mb-3" onclick="showCandidates()">Show Candidates</button>
           <div id="candidateManagement"></div>
           
+          <h3 class="h4 mt-4 mb-3"><i class="bi bi-postcard me-2"></i>Position Management</h3>
+          <button class="btn btn-outline-primary mb-3" onclick="showPositions()">Manage Positions</button>
+          <div id="positionManagement"></div>
+          
           <h3 class="h4 mt-4 mb-3"><i class="bi bi-bar-chart me-2"></i>Election Results</h3>
           <button class="btn btn-outline-primary mb-3" onclick="showResults()">Show Results</button>
           <div id="results" class="row g-3"></div>
@@ -1223,6 +1268,7 @@
             <button class="btn btn-outline-primary" onclick="downloadStaffVoters()">Download Staff Voters CSV</button>
             <button class="btn btn-outline-primary" onclick="downloadCSV('candidates')">Download Candidates CSV</button>
             <button class="btn btn-outline-primary" onclick="downloadCSV('results')">Download Results CSV</button>
+            <button class="btn btn-outline-primary" onclick="downloadCSV('positions')">Download Positions CSV</button>
             <button class="btn btn-outline-primary" onclick="downloadPDF()">Download Results PDF</button>
           </div>
         </div>
@@ -1246,6 +1292,9 @@
               </div>
               <div class="settings-tab" id="rulesTabBtn" onclick="showSettingsTab('rules')">
                 <i class="bi bi-list-check me-2"></i>System Rules
+              </div>
+              <div class="settings-tab" id="positionsTabBtn" onclick="showSettingsTab('positions')">
+                <i class="bi bi-postcard me-2"></i>Position Management
               </div>
               <div class="settings-tab" id="electionTabBtn" onclick="showSettingsTab('election')">
                 <i class="bi bi-clipboard-check me-2"></i>Election Settings
@@ -1314,6 +1363,28 @@
               <div class="d-flex gap-2">
                 <button class="btn btn-primary" onclick="addSystemRule()">Add Rule</button>
                 <button class="btn btn-outline-primary" onclick="resetSystemRules()">Reset to Default Rules</button>
+              </div>
+            </div>
+            
+            <!-- Position Management Settings -->
+            <div id="positionsTabContent" class="settings-tab-content hidden">
+              <h4 class="mb-3">Position Management</h4>
+              
+              <div class="add-position-form">
+                <h5 class="mb-3">Add New Position</h5>
+                <div class="mb-3">
+                  <label for="newPositionName" class="form-label">Position Name</label>
+                  <input type="text" class="form-control" id="newPositionName" placeholder="Enter position name (e.g., President)">
+                </div>
+                <div class="d-flex gap-2">
+                  <button class="btn btn-primary" onclick="addPosition()">Add Position</button>
+                  <button class="btn btn-outline-secondary" onclick="resetPositions()">Reset to Default Positions</button>
+                </div>
+              </div>
+              
+              <div class="mt-4">
+                <h5 class="mb-3">Current Positions</h5>
+                <div id="positionsList" class="system-rules-container"></div>
               </div>
             </div>
             
@@ -1479,6 +1550,7 @@
             <option value="votes">Reset Votes Only</option>
             <option value="voters">Reset Voters Only</option>
             <option value="candidates">Reset Candidates Only</option>
+            <option value="positions">Reset Positions Only</option>
           </select>
         </div>
         
@@ -1524,8 +1596,8 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 
   <script>
-    // Define positions
-    const positions = [
+    // Initialize positions array
+    let positions = [
       "Headboy", "Headgirl", "Boys' Dorm Prefect", "Girls' Dorm Prefect", 
       "Boys' Entertainment", "Girls' Entertainment", "Boys' Sports and Co-curriculum", 
       "Girls' Sports and Co-curriculum", "Boys' Dining", "Girls' Dining", 
@@ -1594,11 +1666,19 @@
     let backgroundElements = [];
 
     // Initialize data structures
-    positions.forEach(pos => {
-      candidates[pos] = [];
-      votes[pos] = {};
-      maxVotes[pos] = 0;
-    });
+    function initializeDataStructures() {
+      positions.forEach(pos => {
+        if (!candidates[pos]) {
+          candidates[pos] = [];
+        }
+        if (!votes[pos]) {
+          votes[pos] = {};
+        }
+        if (!maxVotes[pos]) {
+          maxVotes[pos] = 0;
+        }
+      });
+    }
 
     // Load data from localStorage
     function loadData() {
@@ -1610,6 +1690,7 @@
       const savedLoginAttempts = localStorage.getItem('lukenyaLoginAttempts');
       const savedConfig = localStorage.getItem('lukenyaConfig');
       const savedBackgroundConfig = localStorage.getItem('lukenyaBackgroundConfig');
+      const savedPositions = localStorage.getItem('lukenyaPositions');
       
       if (savedVoters) voters = JSON.parse(savedVoters);
       if (savedCandidates) {
@@ -1644,6 +1725,12 @@
         backgroundConfig = JSON.parse(savedBackgroundConfig);
         applyBackgroundSettings();
       }
+      if (savedPositions) {
+        positions = JSON.parse(savedPositions);
+        initializeDataStructures();
+      } else {
+        initializeDataStructures();
+      }
       
       // Check if admin session is still valid
       const adminSession = localStorage.getItem('lukenyaAdminSession');
@@ -1669,6 +1756,7 @@
       localStorage.setItem('lukenyaLoginAttempts', JSON.stringify(loginAttempts));
       localStorage.setItem('lukenyaConfig', JSON.stringify(systemConfig));
       localStorage.setItem('lukenyaBackgroundConfig', JSON.stringify(backgroundConfig));
+      localStorage.setItem('lukenyaPositions', JSON.stringify(positions));
       if (systemLogo) {
         localStorage.setItem('lukenyaLogo', systemLogo);
       }
@@ -1703,6 +1791,8 @@
       
       // Update rules list
       updateRulesList();
+      // Update positions list
+      updatePositionsList();
     }
 
     // Apply theme
@@ -1893,7 +1983,7 @@
       showNotification('Background settings saved');
     }
 
-    // Show settings tab - FIXED VERSION
+    // Show settings tab
     function showSettingsTab(tabName) {
       console.log('Switching to tab:', tabName);
       
@@ -2079,6 +2169,9 @@
           tab.classList.remove('active');
         });
         document.getElementById('appearanceTabBtn').classList.add('active');
+        
+        // Update positions list
+        updatePositionsList();
       }
       
       // Close background panel when switching sections
@@ -2838,6 +2931,55 @@
       candidateDiv.innerHTML = tableHTML;
     }
 
+    // Show positions management
+    function showPositions() {
+      const positionDiv = document.getElementById('positionManagement');
+      if (!positionDiv) return;
+      
+      positionDiv.innerHTML = '';
+      
+      if (positions.length === 0) {
+        positionDiv.innerHTML = '<p class="text-muted">No positions added yet.</p>';
+        return;
+      }
+      
+      let positionsHTML = `
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title mb-3">Current Election Positions</h5>
+            <div class="system-rules-container">
+      `;
+      
+      positions.forEach((position, index) => {
+        const candidateCount = candidates[position] ? candidates[position].length : 0;
+        positionsHTML += `
+          <div class="position-item">
+            <div>
+              <strong>${position}</strong>
+              <span class="position-count">${candidateCount} candidate${candidateCount !== 1 ? 's' : ''}</span>
+            </div>
+            <div class="position-actions">
+              <button class="btn btn-sm btn-warning" onclick="editPosition(${index})"><i class="bi bi-pencil"></i></button>
+              <button class="btn btn-sm btn-danger" onclick="deletePosition(${index})"><i class="bi bi-trash"></i></button>
+            </div>
+          </div>
+        `;
+      });
+      
+      positionsHTML += `
+            </div>
+            <div class="mt-3">
+              <button class="btn btn-primary" onclick="addNewPosition()">
+                <i class="bi bi-plus-circle me-1"></i>Add New Position
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+      
+      positionDiv.innerHTML = positionsHTML;
+    }
+
     // Edit candidate
     function editCandidate(position, index) {
       const candidate = candidates[position][index];
@@ -3021,6 +3163,13 @@
           }
         });
         filename = 'results.csv';
+      } else if (type === 'positions') {
+        data = 'Position,Candidate Count\n';
+        positions.forEach(p => {
+          const candidateCount = candidates[p] ? candidates[p].length : 0;
+          data += `${p},${candidateCount}\n`;
+        });
+        filename = 'positions.csv';
       }
       
       downloadFile(data, filename, 'text/csv');
@@ -3153,6 +3302,31 @@
       });
     }
 
+    // Update positions list
+    function updatePositionsList() {
+      const positionsList = document.getElementById('positionsList');
+      if (!positionsList) return;
+      
+      positionsList.innerHTML = '';
+      
+      positions.forEach((position, index) => {
+        const candidateCount = candidates[position] ? candidates[position].length : 0;
+        const positionItem = document.createElement('div');
+        positionItem.className = 'position-item';
+        positionItem.innerHTML = `
+          <div>
+            <strong>${position}</strong>
+            <span class="position-count">${candidateCount} candidate${candidateCount !== 1 ? 's' : ''}</span>
+          </div>
+          <div class="position-actions">
+            <button class="btn btn-sm btn-warning" onclick="editPosition(${index})"><i class="bi bi-pencil"></i></button>
+            <button class="btn btn-sm btn-danger" onclick="deletePosition(${index})"><i class="bi bi-trash"></i></button>
+          </div>
+        `;
+        positionsList.appendChild(positionItem);
+      });
+    }
+
     // Add system rule
     function addSystemRule() {
       const newRuleInput = document.getElementById('newRuleInput');
@@ -3195,6 +3369,155 @@
         updateRulesList();
         showNotification('Rules reset to default');
       }
+    }
+
+    // Add position
+    function addPosition() {
+      const newPositionInput = document.getElementById('newPositionName');
+      if (!newPositionInput) return;
+      
+      const positionName = newPositionInput.value.trim();
+      if (!positionName) {
+        showNotification('Please enter a position name', true);
+        return;
+      }
+      
+      // Check if position already exists
+      if (positions.some(p => p.toLowerCase() === positionName.toLowerCase())) {
+        showNotification('Position already exists', true);
+        return;
+      }
+      
+      positions.push(positionName);
+      candidates[positionName] = [];
+      votes[positionName] = {};
+      maxVotes[positionName] = 0;
+      
+      saveData();
+      updatePositionsList();
+      newPositionInput.value = '';
+      populateAdminDropdowns();
+      showNotification(`Position "${positionName}" added successfully`);
+    }
+
+    // Edit position
+    function editPosition(index) {
+      const currentPosition = positions[index];
+      const newPositionName = prompt('Edit position name:', currentPosition);
+      
+      if (!newPositionName || newPositionName.trim() === '') {
+        return;
+      }
+      
+      const trimmedName = newPositionName.trim();
+      
+      // Check if position already exists (excluding current one)
+      if (positions.some((p, i) => p.toLowerCase() === trimmedName.toLowerCase() && i !== index)) {
+        showNotification('Position already exists', true);
+        return;
+      }
+      
+      // Update position name
+      positions[index] = trimmedName;
+      
+      // Update candidates and votes if position name changed
+      if (currentPosition !== trimmedName) {
+        candidates[trimmedName] = candidates[currentPosition] || [];
+        votes[trimmedName] = votes[currentPosition] || {};
+        maxVotes[trimmedName] = maxVotes[currentPosition] || 0;
+        
+        delete candidates[currentPosition];
+        delete votes[currentPosition];
+        delete maxVotes[currentPosition];
+      }
+      
+      saveData();
+      updatePositionsList();
+      populateAdminDropdowns();
+      showNotification('Position updated successfully');
+    }
+
+    // Delete position
+    function deletePosition(index) {
+      const positionToDelete = positions[index];
+      const candidateCount = candidates[positionToDelete] ? candidates[positionToDelete].length : 0;
+      
+      if (confirm(`Are you sure you want to delete "${positionToDelete}"? This will also remove ${candidateCount} candidate${candidateCount !== 1 ? 's' : ''} from this position.`)) {
+        // Remove candidates from allCandidateNames set
+        if (candidates[positionToDelete]) {
+          candidates[positionToDelete].forEach(candidate => {
+            allCandidateNames.delete(candidate.name.toLowerCase());
+          });
+        }
+        
+        // Remove position
+        positions.splice(index, 1);
+        delete candidates[positionToDelete];
+        delete votes[positionToDelete];
+        delete maxVotes[positionToDelete];
+        
+        saveData();
+        updatePositionsList();
+        populateAdminDropdowns();
+        showNotification('Position deleted successfully');
+      }
+    }
+
+    // Reset positions to default
+    function resetPositions() {
+      if (confirm('Reset to default positions? This will remove all custom positions and their candidates.')) {
+        const defaultPositions = [
+          "Headboy", "Headgirl", "Boys' Dorm Prefect", "Girls' Dorm Prefect", 
+          "Boys' Entertainment", "Girls' Entertainment", "Boys' Sports and Co-curriculum", 
+          "Girls' Sports and Co-curriculum", "Boys' Dining", "Girls' Dining", 
+          "Boys' Chapel", "Girls' Chapel", "KS3 Prefect", "KS4 Prefect", 
+          "Girls' Academic Prefect", "Boys' Academic Prefect", "Principal's Award", 
+          "Library Prefect", "Laboratory Prefect", "Environmental Prefect"
+        ];
+        
+        // Clear all candidate names
+        allCandidateNames.clear();
+        
+        // Reset positions and data structures
+        positions = [...defaultPositions];
+        candidates = {};
+        votes = {};
+        maxVotes = {};
+        
+        // Reinitialize data structures
+        initializeDataStructures();
+        
+        saveData();
+        updatePositionsList();
+        populateAdminDropdowns();
+        showNotification('Positions reset to default');
+      }
+    }
+
+    // Add new position from admin panel
+    function addNewPosition() {
+      const positionName = prompt('Enter new position name:');
+      if (!positionName || positionName.trim() === '') {
+        return;
+      }
+      
+      const trimmedName = positionName.trim();
+      
+      // Check if position already exists
+      if (positions.some(p => p.toLowerCase() === trimmedName.toLowerCase())) {
+        showNotification('Position already exists', true);
+        return;
+      }
+      
+      positions.push(trimmedName);
+      candidates[trimmedName] = [];
+      votes[trimmedName] = {};
+      maxVotes[trimmedName] = 0;
+      
+      saveData();
+      showPositions();
+      populateAdminDropdowns();
+      showNotification(`Position "${trimmedName}" added successfully`);
     }
 
     // Save appearance settings
@@ -3260,6 +3583,9 @@
         case 'candidates':
           confirmMessage = 'Reset all candidates? This will delete all candidates.';
           break;
+        case 'positions':
+          confirmMessage = 'Reset all positions? This will delete all custom positions and reset to defaults.';
+          break;
         default:
           confirmMessage = 'Reset all data? This will delete ALL voting data.';
       }
@@ -3286,17 +3612,24 @@
             });
             allCandidateNames.clear();
             break;
+          case 'positions':
+            resetPositions();
+            break;
           default: // all
             voters = { student: [], staff: [] };
             candidates = {};
             votes = {};
             maxVotes = {};
             allCandidateNames.clear();
-            positions.forEach(pos => {
-              candidates[pos] = [];
-              votes[pos] = {};
-              maxVotes[pos] = 0;
-            });
+            positions = [
+              "Headboy", "Headgirl", "Boys' Dorm Prefect", "Girls' Dorm Prefect", 
+              "Boys' Entertainment", "Girls' Entertainment", "Boys' Sports and Co-curriculum", 
+              "Girls' Sports and Co-curriculum", "Boys' Dining", "Girls' Dining", 
+              "Boys' Chapel", "Girls' Chapel", "KS3 Prefect", "KS4 Prefect", 
+              "Girls' Academic Prefect", "Boys' Academic Prefect", "Principal's Award", 
+              "Library Prefect", "Laboratory Prefect", "Environmental Prefect"
+            ];
+            initializeDataStructures();
             break;
         }
         
@@ -3343,6 +3676,11 @@
           bgPanel.classList.remove('show');
         }
       });
+      
+      // Apply background settings from panel
+      window.applyBackgroundSettings = function() {
+        applyBackgroundSettingsFromPanel();
+      };
     };
   </script>
 </body>
