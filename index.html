@@ -29,187 +29,24 @@
     }
 
     body {
-      background: linear-gradient(135deg, #f4f4f4 0%, #e6e9f0 100%);
+      background: white;
       min-height: 100vh;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       position: relative;
       overflow-x: hidden;
     }
 
-    /* Background elements */
-    .bg-element {
-      position: fixed;
-      z-index: -1;
-      opacity: 0.1;
-      pointer-events: none;
+    .hidden {
+      display: none !important;
     }
-
-    .ballot-box-bg {
-      width: 100px;
-      height: 120px;
-      background: linear-gradient(135deg, #4361ee 0%, #7209b7 100%);
-      border-radius: 10px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    
+    .fade-in {
+      animation: fadeIn 0.5s ease-in;
     }
-
-    .ballot-box-bg:before {
-      content: '';
-      position: absolute;
-      top: -10px;
-      left: 20px;
-      width: 60px;
-      height: 10px;
-      background: #333;
-      border-radius: 5px 5px 0 0;
-    }
-
-    .person-voting-bg {
-      width: 60px;
-      height: 90px;
-      position: relative;
-    }
-
-    .person-voting-bg:before {
-      content: '🗳️';
-      font-size: 40px;
-      position: absolute;
-      top: 0;
-      left: 0;
-    }
-
-    .person-voting-bg:after {
-      content: '👤';
-      font-size: 30px;
-      position: absolute;
-      top: 40px;
-      left: 15px;
-    }
-
-    .checkmark-bg {
-      font-size: 40px;
-      color: #4cc9f0;
-    }
-
-    /* Background patterns */
-    .dots-pattern {
-      background-image: radial-gradient(#4361ee 2px, transparent 2px);
-      background-size: 30px 30px;
-    }
-
-    .lines-pattern {
-      background-image: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(67, 97, 238, 0.1) 10px, rgba(67, 97, 238, 0.1) 20px);
-    }
-
-    .grid-pattern {
-      background-image: linear-gradient(rgba(67, 97, 238, 0.1) 1px, transparent 1px),
-                        linear-gradient(90deg, rgba(67, 97, 238, 0.1) 1px, transparent 1px);
-      background-size: 30px 30px;
-    }
-
-    /* Background colors */
-    .bg-color-blue {
-      background: linear-gradient(135deg, #e6f7ff 0%, #f0f5ff 100%) !important;
-    }
-
-    .bg-color-white {
-      background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%) !important;
-    }
-
-    .bg-color-green {
-      background: linear-gradient(135deg, #f0fff4 0%, #e6fffa 100%) !important;
-    }
-
-    .bg-color-red {
-      background: linear-gradient(135deg, #fff5f5 0%, #fff0f6 100%) !important;
-    }
-
-    .bg-color-purple {
-      background: linear-gradient(135deg, #f9f0ff 0%, #f0f5ff 100%) !important;
-    }
-
-    .bg-color-gradient {
-      background: linear-gradient(135deg, #4361ee 0%, #7209b7 100%) !important;
-    }
-
-    .bg-color-gradient-light {
-      background: linear-gradient(135deg, #4cc9f0 0%, #4361ee 100%) !important;
-    }
-
-    /* Background toggle control */
-    .bg-toggle-control {
-      position: fixed;
-      bottom: 100px;
-      right: 20px;
-      z-index: 101;
-      background: var(--primary);
-      color: white;
-      border-radius: 25px;
-      padding: 10px 15px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-      transition: all 0.3s ease;
-      cursor: pointer;
-    }
-
-    .bg-toggle-control:hover {
-      background: var(--primary-dark);
-      transform: scale(1.05);
-    }
-
-    .bg-options-panel {
-      position: fixed;
-      bottom: 170px;
-      right: 20px;
-      z-index: 101;
-      background: white;
-      border-radius: 15px;
-      padding: 20px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-      width: 250px;
-      display: none;
-    }
-
-    .bg-options-panel.show {
-      display: block;
-      animation: slideUp 0.3s ease;
-    }
-
-    @keyframes slideUp {
-      from {
-        opacity: 0;
-        transform: translateY(20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    .bg-option {
-      width: 40px;
-      height: 40px;
-      border-radius: 8px;
-      margin: 5px;
-      cursor: pointer;
-      border: 2px solid transparent;
-      transition: all 0.2s ease;
-    }
-
-    .bg-option:hover {
-      transform: scale(1.1);
-    }
-
-    .bg-option.active {
-      border-color: var(--primary);
-      box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.3);
-    }
-
-    .bg-option-label {
-      font-size: 0.8rem;
-      margin-top: 5px;
-      text-align: center;
+    
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
     }
 
     .custom-card {
@@ -344,10 +181,6 @@
     .custom-btn-warning {
       background: var(--warning);
       border-color: var(--warning);
-    }
-    
-    .hidden {
-      display: none !important;
     }
     
     .hero-section {
@@ -526,6 +359,7 @@
     .toggle-content {
       transition: max-height 0.3s ease;
       overflow: hidden;
+      max-height: 0;
     }
     
     .settings-tab {
@@ -809,90 +643,20 @@
       margin-bottom: 20px;
       border: 1px solid #dee2e6;
     }
+    
+    /* Position Management Container */
+    .position-management-container {
+      max-height: 400px;
+      overflow-y: auto;
+    }
+    
+    /* Ensure admin actions are visible when admin is logged in */
+    #adminActionsSection {
+      transition: all 0.3s ease;
+    }
   </style>
 </head>
 <body>
-  <!-- Background Elements -->
-  <div id="backgroundElements"></div>
-
-  <!-- Background Toggle Control -->
-  <div id="bgToggleControl" class="bg-toggle-control hidden">
-    <i class="bi bi-palette-fill me-2"></i> Background
-  </div>
-
-  <!-- Background Options Panel -->
-  <div id="bgOptionsPanel" class="bg-options-panel">
-    <h5 class="mb-3">Background Settings</h5>
-    <div class="row">
-      <div class="col-4 text-center">
-        <div class="bg-option bg-color-blue" onclick="setBackground('blue')"></div>
-        <div class="bg-option-label">Blue</div>
-      </div>
-      <div class="col-4 text-center">
-        <div class="bg-option bg-color-white" onclick="setBackground('white')"></div>
-        <div class="bg-option-label">White</div>
-      </div>
-      <div class="col-4 text-center">
-        <div class="bg-option bg-color-green" onclick="setBackground('green')"></div>
-        <div class="bg-option-label">Green</div>
-      </div>
-      <div class="col-4 text-center">
-        <div class="bg-option bg-color-red" onclick="setBackground('red')"></div>
-        <div class="bg-option-label">Red</div>
-      </div>
-      <div class="col-4 text-center">
-        <div class="bg-option bg-color-purple" onclick="setBackground('purple')"></div>
-        <div class="bg-option-label">Purple</div>
-      </div>
-      <div class="col-4 text-center">
-        <div class="bg-option" style="background: linear-gradient(135deg, #4361ee 0%, #7209b7 100%);" onclick="setBackground('gradient')"></div>
-        <div class="bg-option-label">Gradient</div>
-      </div>
-    </div>
-    
-    <div class="mt-3">
-      <h6 class="mb-2">Background Elements</h6>
-      <div class="form-check">
-        <input class="form-check-input" type="checkbox" id="toggleBallotBoxes" checked>
-        <label class="form-check-label" for="toggleBallotBoxes">
-          Show Ballot Boxes
-        </label>
-      </div>
-      <div class="form-check">
-        <input class="form-check-input" type="checkbox" id="toggleVotingPeople" checked>
-        <label class="form-check-label" for="toggleVotingPeople">
-          Show Voting People
-        </label>
-      </div>
-      <div class="form-check">
-        <input class="form-check-input" type="checkbox" id="toggleCheckmarks" checked>
-        <label class="form-check-label" for="toggleCheckmarks">
-          Show Checkmarks
-        </label>
-      </div>
-    </div>
-    
-    <div class="mt-3">
-      <h6 class="mb-2">Background Pattern</h6>
-      <div class="row">
-        <div class="col-4 text-center">
-          <div class="bg-option" style="background: #f8f9fa;" onclick="setPattern('none')"></div>
-          <div class="bg-option-label">None</div>
-        </div>
-        <div class="col-4 text-center">
-          <div class="bg-option dots-pattern" onclick="setPattern('dots')"></div>
-          <div class="bg-option-label">Dots</div>
-        </div>
-        <div class="col-4 text-center">
-          <div class="bg-option grid-pattern" onclick="setPattern('grid')"></div>
-          <div class="bg-option-label">Grid</div>
-        </div>
-      </div>
-    </div>
-    
-    <button class="btn btn-sm btn-primary w-100 mt-3" onclick="applyBackgroundSettings()">Apply</button>
-  </div>
-
   <!-- Admin Status Indicator -->
   <div id="adminStatusIndicator" class="admin-status hidden">
     <i class="bi bi-shield-check me-1"></i> Admin
@@ -963,15 +727,6 @@
               <div>
                 <h6 class="mb-1 text-danger">Reset All Data</h6>
                 <p class="mb-0 text-muted small">Clear all voting data (Admin only)</p>
-              </div>
-            </div>
-          </div>
-          <div class="settings-option" onclick="toggleBackgroundControl()" data-bs-dismiss="modal">
-            <div class="d-flex align-items-center">
-              <i class="bi bi-palette text-primary me-3 fs-5"></i>
-              <div>
-                <h6 class="mb-1">Background Settings</h6>
-                <p class="mb-0 text-muted small">Change background colors and elements</p>
               </div>
             </div>
           </div>
@@ -1174,6 +929,13 @@
         
         <!-- Admin Actions Section - Initially Hidden -->
         <div id="adminActionsSection" class="hidden">
+          <!-- Test Button -->
+          <div class="mb-3">
+            <button class="btn btn-info" onclick="testPositionManagement()">
+              <i class="bi bi-gear me-1"></i>Test Position Management
+            </button>
+          </div>
+          
           <div class="row g-4 mb-4">
             <div class="col-lg-4 col-md-6">
               <div class="card action-card h-100">
@@ -1302,9 +1064,6 @@
               <div class="settings-tab" id="advancedTabBtn" onclick="showSettingsTab('advanced')">
                 <i class="bi bi-gear-wide me-2"></i>Advanced
               </div>
-              <div class="settings-tab" id="backgroundTabBtn" onclick="showSettingsTab('background')">
-                <i class="bi bi-brush me-2"></i>Background
-              </div>
             </div>
           </div>
           
@@ -1377,7 +1136,7 @@
                   <input type="text" class="form-control" id="newPositionName" placeholder="Enter position name (e.g., President)">
                 </div>
                 <div class="d-flex gap-2">
-                  <button class="btn btn-primary" onclick="addPosition()">Add Position</button>
+                  <button class="btn btn-primary" onclick="addNewPositionFromInput()">Add Position</button>
                   <button class="btn btn-outline-secondary" onclick="resetPositions()">Reset to Default Positions</button>
                 </div>
               </div>
@@ -1455,69 +1214,6 @@
               </div>
               
               <button class="btn btn-primary" onclick="saveAdvancedSettings()">Save Advanced Settings</button>
-            </div>
-            
-            <!-- Background Settings -->
-            <div id="backgroundTabContent" class="settings-tab-content hidden">
-              <h4 class="mb-3">Background Settings</h4>
-              
-              <div class="mb-4">
-                <label class="form-label">Background Color</label>
-                <div class="d-flex gap-2 flex-wrap">
-                  <div class="bg-option bg-color-blue" onclick="setBackground('blue')"></div>
-                  <div class="bg-option bg-color-white" onclick="setBackground('white')"></div>
-                  <div class="bg-option bg-color-green" onclick="setBackground('green')"></div>
-                  <div class="bg-option bg-color-red" onclick="setBackground('red')"></div>
-                  <div class="bg-option bg-color-purple" onclick="setBackground('purple')"></div>
-                  <div class="bg-option" style="background: linear-gradient(135deg, #4361ee 0%, #7209b7 100%);" onclick="setBackground('gradient')"></div>
-                </div>
-              </div>
-              
-              <div class="mb-4">
-                <label class="form-label">Background Pattern</label>
-                <div class="d-flex gap-2">
-                  <div class="bg-option" style="background: #f8f9fa;" onclick="setPattern('none')"></div>
-                  <div class="bg-option dots-pattern" onclick="setPattern('dots')"></div>
-                  <div class="bg-option grid-pattern" onclick="setPattern('grid')"></div>
-                  <div class="bg-option lines-pattern" onclick="setPattern('lines')"></div>
-                </div>
-              </div>
-              
-              <div class="mb-4">
-                <label class="form-label">Background Elements</label>
-                <div class="form-check">
-                  <input class="form-check-input" type="checkbox" id="bgBallotBoxes" checked>
-                  <label class="form-check-label" for="bgBallotBoxes">
-                    Show Ballot Boxes
-                  </label>
-                </div>
-                <div class="form-check">
-                  <input class="form-check-input" type="checkbox" id="bgVotingPeople" checked>
-                  <label class="form-check-label" for="bgVotingPeople">
-                    Show Voting People
-                  </label>
-                </div>
-                <div class="form-check">
-                  <input class="form-check-input" type="checkbox" id="bgCheckmarks" checked>
-                  <label class="form-check-label" for="bgCheckmarks">
-                    Show Checkmarks
-                  </label>
-                </div>
-              </div>
-              
-              <div class="mb-3">
-                <label for="elementOpacity" class="form-label">Element Opacity</label>
-                <input type="range" class="form-range" id="elementOpacity" min="1" max="100" value="10">
-                <div class="form-text">Adjust the transparency of background elements</div>
-              </div>
-              
-              <div class="mb-3">
-                <label for="elementCount" class="form-label">Element Count</label>
-                <input type="range" class="form-range" id="elementCount" min="5" max="30" value="15">
-                <div class="form-text">Adjust the number of background elements</div>
-              </div>
-              
-              <button class="btn btn-primary" onclick="saveBackgroundSettings()">Save Background Settings</button>
             </div>
           </div>
         </div>
@@ -1642,17 +1338,6 @@
       enableMaintenance: false
     };
 
-    // Background configuration
-    let backgroundConfig = {
-      color: 'blue',
-      pattern: 'none',
-      showBallotBoxes: true,
-      showVotingPeople: true,
-      showCheckmarks: true,
-      elementOpacity: 10,
-      elementCount: 15
-    };
-
     // Timer variables
     let votingTimer;
     let votingEndTime;
@@ -1661,9 +1346,6 @@
     // Admin session state
     let isAdminLoggedIn = false;
     let adminSessionTimeout;
-
-    // Background elements
-    let backgroundElements = [];
 
     // Initialize data structures
     function initializeDataStructures() {
@@ -1689,7 +1371,6 @@
       const savedLogo = localStorage.getItem('lukenyaLogo');
       const savedLoginAttempts = localStorage.getItem('lukenyaLoginAttempts');
       const savedConfig = localStorage.getItem('lukenyaConfig');
-      const savedBackgroundConfig = localStorage.getItem('lukenyaBackgroundConfig');
       const savedPositions = localStorage.getItem('lukenyaPositions');
       
       if (savedVoters) voters = JSON.parse(savedVoters);
@@ -1721,10 +1402,6 @@
         applySystemConfig();
         initializeElectionTimer();
       }
-      if (savedBackgroundConfig) {
-        backgroundConfig = JSON.parse(savedBackgroundConfig);
-        applyBackgroundSettings();
-      }
       if (savedPositions) {
         positions = JSON.parse(savedPositions);
         initializeDataStructures();
@@ -1740,7 +1417,6 @@
           isAdminLoggedIn = true;
           updateAdminUI();
           startAdminSessionTimer();
-          showBackgroundControl();
         } else {
           localStorage.removeItem('lukenyaAdminSession');
         }
@@ -1755,7 +1431,6 @@
       localStorage.setItem('lukenyaMaxVotes', JSON.stringify(maxVotes));
       localStorage.setItem('lukenyaLoginAttempts', JSON.stringify(loginAttempts));
       localStorage.setItem('lukenyaConfig', JSON.stringify(systemConfig));
-      localStorage.setItem('lukenyaBackgroundConfig', JSON.stringify(backgroundConfig));
       localStorage.setItem('lukenyaPositions', JSON.stringify(positions));
       if (systemLogo) {
         localStorage.setItem('lukenyaLogo', systemLogo);
@@ -1847,166 +1522,32 @@
       saveData();
     }
 
-    // Apply background settings
-    function applyBackgroundSettings() {
-      // Apply background color
-      document.body.classList.remove('bg-color-blue', 'bg-color-white', 'bg-color-green', 'bg-color-red', 'bg-color-purple', 'bg-color-gradient');
-      document.body.classList.add(`bg-color-${backgroundConfig.color}`);
-      
-      // Apply pattern
-      document.body.classList.remove('dots-pattern', 'lines-pattern', 'grid-pattern');
-      if (backgroundConfig.pattern !== 'none') {
-        document.body.classList.add(`${backgroundConfig.pattern}-pattern`);
-      }
-      
-      // Update UI elements
-      document.getElementById('elementOpacity').value = backgroundConfig.elementOpacity;
-      document.getElementById('elementCount').value = backgroundConfig.elementCount;
-      document.getElementById('bgBallotBoxes').checked = backgroundConfig.showBallotBoxes;
-      document.getElementById('bgVotingPeople').checked = backgroundConfig.showVotingPeople;
-      document.getElementById('bgCheckmarks').checked = backgroundConfig.showCheckmarks;
-      
-      // Also update the toggle panel
-      document.getElementById('toggleBallotBoxes').checked = backgroundConfig.showBallotBoxes;
-      document.getElementById('toggleVotingPeople').checked = backgroundConfig.showVotingPeople;
-      document.getElementById('toggleCheckmarks').checked = backgroundConfig.showCheckmarks;
-      
-      // Create background elements
-      createBackgroundElements();
-    }
-
-    // Create background elements
-    function createBackgroundElements() {
-      const container = document.getElementById('backgroundElements');
-      if (!container) return;
-      
-      // Clear existing elements
-      container.innerHTML = '';
-      backgroundElements = [];
-      
-      const elementCount = backgroundConfig.elementCount;
-      const opacity = backgroundConfig.elementOpacity / 100;
-      
-      for (let i = 0; i < elementCount; i++) {
-        const element = document.createElement('div');
-        element.className = 'bg-element';
-        element.style.opacity = opacity;
-        
-        // Random position
-        const top = Math.random() * 100;
-        const left = Math.random() * 100;
-        element.style.top = `${top}%`;
-        element.style.left = `${left}%`;
-        
-        // Random size variation
-        const sizeMultiplier = 0.5 + Math.random() * 1.5;
-        
-        // Random element type
-        const elementType = Math.random();
-        if (elementType < 0.33 && backgroundConfig.showBallotBoxes) {
-          element.classList.add('ballot-box-bg');
-          element.style.width = `${100 * sizeMultiplier}px`;
-          element.style.height = `${120 * sizeMultiplier}px`;
-        } else if (elementType < 0.66 && backgroundConfig.showVotingPeople) {
-          element.classList.add('person-voting-bg');
-          element.style.width = `${60 * sizeMultiplier}px`;
-          element.style.height = `${90 * sizeMultiplier}px`;
-        } else if (backgroundConfig.showCheckmarks) {
-          element.classList.add('checkmark-bg');
-          element.innerHTML = '✓';
-          element.style.fontSize = `${40 * sizeMultiplier}px`;
-          element.style.color = `rgba(76, 201, 240, ${opacity})`;
-        }
-        
-        container.appendChild(element);
-        backgroundElements.push(element);
-      }
-    }
-
-    // Toggle background control
-    function toggleBackgroundControl() {
-      if (!isAdminLoggedIn) {
-        showNotification('Please login as admin to access background settings', true);
-        showSection('adminLogin');
-        return;
-      }
-      
-      const panel = document.getElementById('bgOptionsPanel');
-      panel.classList.toggle('show');
-    }
-
-    // Show background control
-    function showBackgroundControl() {
-      const control = document.getElementById('bgToggleControl');
-      control.classList.remove('hidden');
-    }
-
-    // Set background color
-    function setBackground(color) {
-      backgroundConfig.color = color;
-      applyBackgroundSettings();
-      
-      // Update active state
-      document.querySelectorAll('.bg-option').forEach(option => {
-        option.classList.remove('active');
-      });
-      event.target.classList.add('active');
-    }
-
-    // Set background pattern
-    function setPattern(pattern) {
-      backgroundConfig.pattern = pattern;
-      applyBackgroundSettings();
-    }
-
-    // Apply background settings from panel
-    function applyBackgroundSettingsFromPanel() {
-      backgroundConfig.showBallotBoxes = document.getElementById('toggleBallotBoxes').checked;
-      backgroundConfig.showVotingPeople = document.getElementById('toggleVotingPeople').checked;
-      backgroundConfig.showCheckmarks = document.getElementById('toggleCheckmarks').checked;
-      
-      applyBackgroundSettings();
-      saveData();
-      showNotification('Background settings applied');
-    }
-
-    // Save background settings
-    function saveBackgroundSettings() {
-      backgroundConfig.showBallotBoxes = document.getElementById('bgBallotBoxes').checked;
-      backgroundConfig.showVotingPeople = document.getElementById('bgVotingPeople').checked;
-      backgroundConfig.showCheckmarks = document.getElementById('bgCheckmarks').checked;
-      backgroundConfig.elementOpacity = document.getElementById('elementOpacity').value;
-      backgroundConfig.elementCount = document.getElementById('elementCount').value;
-      
-      applyBackgroundSettings();
-      saveData();
-      showNotification('Background settings saved');
-    }
-
-    // Show settings tab
+    // Show settings tab - FIXED VERSION
     function showSettingsTab(tabName) {
       console.log('Switching to tab:', tabName);
       
-      // Update tab navigation
-      document.querySelectorAll('.settings-tab').forEach(tab => {
-        tab.classList.remove('active');
-      });
-      
-      // Hide all tab contents
-      document.querySelectorAll('.settings-tab-content').forEach(content => {
+      // Hide all tab contents first
+      const tabContents = document.querySelectorAll('.settings-tab-content');
+      tabContents.forEach(content => {
         content.classList.add('hidden');
       });
       
-      // Activate clicked tab
-      const activeTabBtn = document.getElementById(tabName + 'TabBtn');
-      if (activeTabBtn) {
-        activeTabBtn.classList.add('active');
+      // Remove active class from all tabs
+      const tabButtons = document.querySelectorAll('.settings-tab');
+      tabButtons.forEach(tab => {
+        tab.classList.remove('active');
+      });
+      
+      // Show selected tab content
+      const selectedContent = document.getElementById(tabName + 'TabContent');
+      if (selectedContent) {
+        selectedContent.classList.remove('hidden');
       }
       
-      // Show corresponding content
-      const activeContent = document.getElementById(tabName + 'TabContent');
-      if (activeContent) {
-        activeContent.classList.remove('hidden');
+      // Activate selected tab button
+      const selectedTab = document.getElementById(tabName + 'TabBtn');
+      if (selectedTab) {
+        selectedTab.classList.add('active');
       }
     }
 
@@ -2147,7 +1688,7 @@
       }
       
       // If showing admin panel, show admin actions section
-      if (id === 'adminPanel') {
+      if (id === 'adminPanel' && isAdminLoggedIn) {
         const adminActionsSection = document.getElementById('adminActionsSection');
         if (adminActionsSection) {
           adminActionsSection.classList.remove('hidden');
@@ -2159,33 +1700,28 @@
       // If showing system settings, initialize the tabs
       if (id === 'systemSettings') {
         // Make sure only the first tab is visible
-        document.querySelectorAll('.settings-tab-content').forEach(content => {
-          content.classList.add('hidden');
-        });
-        document.getElementById('appearanceTabContent').classList.remove('hidden');
-        
-        // Update tab buttons
-        document.querySelectorAll('.settings-tab').forEach(tab => {
-          tab.classList.remove('active');
-        });
-        document.getElementById('appearanceTabBtn').classList.add('active');
-        
-        // Update positions list
-        updatePositionsList();
+        setTimeout(() => {
+          showSettingsTab('appearance');
+          updatePositionsList();
+        }, 100);
       }
-      
-      // Close background panel when switching sections
-      document.getElementById('bgOptionsPanel').classList.remove('show');
     }
 
-    // Show system settings (with admin check)
+    // Show system settings (with admin check) - FIXED VERSION
     function showSystemSettings() {
       if (!isAdminLoggedIn) {
         showNotification('Please login as admin to access system settings', true);
         showSection('adminLogin');
-      } else {
-        showSection('systemSettings');
+        return;
       }
+      
+      showSection('systemSettings');
+      
+      // Initialize the first tab
+      setTimeout(() => {
+        showSettingsTab('appearance');
+        updatePositionsList();
+      }, 100);
     }
 
     // Show voter choice section
@@ -2201,9 +1737,17 @@
       showSection('voterChoice');
     }
 
-    // Show admin panel
+    // Show admin panel - FIXED VERSION
     function showAdminPanel() {
       showSection('adminPanel');
+      
+      // Make sure admin actions section is visible
+      const adminActionsSection = document.getElementById('adminActionsSection');
+      if (adminActionsSection && isAdminLoggedIn) {
+        adminActionsSection.classList.remove('hidden');
+        populateAdminDropdowns();
+        setupFileInputListeners();
+      }
     }
 
     // Show developer information
@@ -2231,7 +1775,6 @@
     function updateAdminUI() {
       const adminStatusIndicator = document.getElementById('adminStatusIndicator');
       const adminLogoutOption = document.getElementById('adminLogoutOption');
-      const bgToggleControl = document.getElementById('bgToggleControl');
       
       if (isAdminLoggedIn) {
         if (adminStatusIndicator) {
@@ -2242,18 +1785,12 @@
         if (adminLogoutOption) {
           adminLogoutOption.classList.remove('hidden');
         }
-        if (bgToggleControl) {
-          bgToggleControl.classList.remove('hidden');
-        }
       } else {
         if (adminStatusIndicator) {
           adminStatusIndicator.classList.add('hidden');
         }
         if (adminLogoutOption) {
           adminLogoutOption.classList.add('hidden');
-        }
-        if (bgToggleControl) {
-          bgToggleControl.classList.add('hidden');
         }
       }
     }
@@ -2512,7 +2049,7 @@
       }
     }
 
-    // Admin access
+    // Admin access - FIXED VERSION
     function adminAccess() {
       const passwordInput = document.getElementById('adminPass');
       if (!passwordInput) return;
@@ -2524,12 +2061,18 @@
         saveAdminSession();
         startAdminSessionTimer();
         updateAdminUI();
-        showBackgroundControl();
         
         showNotification('Admin access granted');
         recordLoginAttempt('admin', 'Administrator', 'N/A', 'success');
         
-        setTimeout(() => showAdminPanel(), 1000);
+        // Clear password field
+        passwordInput.value = '';
+        
+        // Show admin panel with proper initialization
+        setTimeout(() => {
+          showAdminPanel();
+          populateAdminDropdowns();
+        }, 500);
       } else {
         showNotification('Wrong password. Access denied.', true);
         recordLoginAttempt('admin', 'Unknown', 'N/A', 'failed');
@@ -2801,6 +2344,13 @@
           reg.appendChild(staffSection);
         }
       }
+      
+      // Initialize toggle content visibility
+      setTimeout(() => {
+        document.querySelectorAll('.toggle-content').forEach(content => {
+          content.style.maxHeight = content.scrollHeight + 'px';
+        });
+      }, 100);
     }
 
     // Toggle voter list visibility
@@ -2931,7 +2481,7 @@
       candidateDiv.innerHTML = tableHTML;
     }
 
-    // Show positions management
+    // Show positions management - FIXED VERSION
     function showPositions() {
       const positionDiv = document.getElementById('positionManagement');
       if (!positionDiv) return;
@@ -2947,20 +2497,24 @@
         <div class="card">
           <div class="card-body">
             <h5 class="card-title mb-3">Current Election Positions</h5>
-            <div class="system-rules-container">
+            <div class="position-management-container">
       `;
       
       positions.forEach((position, index) => {
         const candidateCount = candidates[position] ? candidates[position].length : 0;
         positionsHTML += `
-          <div class="position-item">
+          <div class="position-item d-flex justify-content-between align-items-center mb-2 p-3 border rounded">
             <div>
               <strong>${position}</strong>
-              <span class="position-count">${candidateCount} candidate${candidateCount !== 1 ? 's' : ''}</span>
+              <span class="badge bg-info ms-2">${candidateCount} candidate${candidateCount !== 1 ? 's' : ''}</span>
             </div>
             <div class="position-actions">
-              <button class="btn btn-sm btn-warning" onclick="editPosition(${index})"><i class="bi bi-pencil"></i></button>
-              <button class="btn btn-sm btn-danger" onclick="deletePosition(${index})"><i class="bi bi-trash"></i></button>
+              <button class="btn btn-sm btn-warning me-1" onclick="editPosition(${index})" title="Edit position">
+                <i class="bi bi-pencil"></i>
+              </button>
+              <button class="btn btn-sm btn-danger" onclick="deletePosition(${index})" title="Delete position">
+                <i class="bi bi-trash"></i>
+              </button>
             </div>
           </div>
         `;
@@ -2969,7 +2523,7 @@
       positionsHTML += `
             </div>
             <div class="mt-3">
-              <button class="btn btn-primary" onclick="addNewPosition()">
+              <button class="btn btn-primary" onclick="showAddPositionForm()">
                 <i class="bi bi-plus-circle me-1"></i>Add New Position
               </button>
             </div>
@@ -2978,6 +2532,140 @@
       `;
       
       positionDiv.innerHTML = positionsHTML;
+    }
+
+    // Show add position form
+    function showAddPositionForm() {
+      const positionName = prompt('Enter new position name:');
+      if (!positionName || positionName.trim() === '') {
+        return;
+      }
+      
+      addNewPosition(positionName.trim());
+    }
+
+    // Add new position - FIXED VERSION
+    function addNewPosition(positionName) {
+      if (!positionName || positionName.trim() === '') {
+        showNotification('Please enter a position name', true);
+        return;
+      }
+      
+      // Check if position already exists
+      if (positions.some(p => p.toLowerCase() === positionName.toLowerCase())) {
+        showNotification('Position already exists', true);
+        return;
+      }
+      
+      positions.push(positionName);
+      candidates[positionName] = [];
+      votes[positionName] = {};
+      maxVotes[positionName] = 0;
+      
+      saveData();
+      
+      // Refresh position management display
+      showPositions();
+      
+      // Update position select dropdowns
+      populateAdminDropdowns();
+      
+      // Update positions list in settings
+      updatePositionsList();
+      
+      showNotification(`Position "${positionName}" added successfully`);
+    }
+
+    // Add new position from settings input
+    function addNewPositionFromInput() {
+      const positionInput = document.getElementById('newPositionName');
+      if (!positionInput) return;
+      
+      const positionName = positionInput.value.trim();
+      if (!positionName) {
+        showNotification('Please enter a position name', true);
+        return;
+      }
+      
+      addNewPosition(positionName);
+      positionInput.value = '';
+    }
+
+    // Edit position - FIXED VERSION
+    function editPosition(index) {
+      const currentPosition = positions[index];
+      const newPositionName = prompt('Edit position name:', currentPosition);
+      
+      if (!newPositionName || newPositionName.trim() === '' || newPositionName === currentPosition) {
+        return;
+      }
+      
+      const trimmedName = newPositionName.trim();
+      
+      // Check if position already exists (excluding current one)
+      if (positions.some((p, i) => p.toLowerCase() === trimmedName.toLowerCase() && i !== index)) {
+        showNotification('Position already exists', true);
+        return;
+      }
+      
+      // Update position name in all data structures
+      const oldPositionName = positions[index];
+      positions[index] = trimmedName;
+      
+      // Update candidates and votes if position name changed
+      if (oldPositionName !== trimmedName) {
+        candidates[trimmedName] = candidates[oldPositionName] || [];
+        votes[trimmedName] = votes[oldPositionName] || {};
+        maxVotes[trimmedName] = maxVotes[oldPositionName] || 0;
+        
+        // Remove old position data
+        delete candidates[oldPositionName];
+        delete votes[oldPositionName];
+        delete maxVotes[oldPositionName];
+      }
+      
+      saveData();
+      
+      // Refresh displays
+      showPositions();
+      updatePositionsList();
+      populateAdminDropdowns();
+      
+      showNotification('Position updated successfully');
+    }
+
+    // Delete position - FIXED VERSION
+    function deletePosition(index) {
+      const positionToDelete = positions[index];
+      const candidateCount = candidates[positionToDelete] ? candidates[positionToDelete].length : 0;
+      
+      if (candidateCount > 0) {
+        if (!confirm(`This position has ${candidateCount} candidate${candidateCount !== 1 ? 's' : ''}. Deleting it will also remove all candidates. Are you sure?`)) {
+          return;
+        }
+        
+        // Remove candidates from allCandidateNames set
+        candidates[positionToDelete].forEach(candidate => {
+          allCandidateNames.delete(candidate.name.toLowerCase());
+        });
+      }
+      
+      if (confirm(`Are you sure you want to delete "${positionToDelete}"?`)) {
+        // Remove position
+        positions.splice(index, 1);
+        delete candidates[positionToDelete];
+        delete votes[positionToDelete];
+        delete maxVotes[positionToDelete];
+        
+        saveData();
+        
+        // Refresh displays
+        showPositions();
+        updatePositionsList();
+        populateAdminDropdowns();
+        
+        showNotification('Position deleted successfully');
+      }
     }
 
     // Edit candidate
@@ -3302,25 +2990,34 @@
       });
     }
 
-    // Update positions list
+    // Update positions list - FIXED VERSION
     function updatePositionsList() {
       const positionsList = document.getElementById('positionsList');
       if (!positionsList) return;
       
       positionsList.innerHTML = '';
       
+      if (positions.length === 0) {
+        positionsList.innerHTML = '<p class="text-muted">No positions added yet.</p>';
+        return;
+      }
+      
       positions.forEach((position, index) => {
         const candidateCount = candidates[position] ? candidates[position].length : 0;
         const positionItem = document.createElement('div');
-        positionItem.className = 'position-item';
+        positionItem.className = 'position-item d-flex justify-content-between align-items-center mb-2 p-2 border rounded';
         positionItem.innerHTML = `
           <div>
             <strong>${position}</strong>
-            <span class="position-count">${candidateCount} candidate${candidateCount !== 1 ? 's' : ''}</span>
+            <span class="badge bg-info ms-2">${candidateCount} candidate${candidateCount !== 1 ? 's' : ''}</span>
           </div>
           <div class="position-actions">
-            <button class="btn btn-sm btn-warning" onclick="editPosition(${index})"><i class="bi bi-pencil"></i></button>
-            <button class="btn btn-sm btn-danger" onclick="deletePosition(${index})"><i class="bi bi-trash"></i></button>
+            <button class="btn btn-sm btn-warning me-1" onclick="editPosition(${index})">
+              <i class="bi bi-pencil"></i>
+            </button>
+            <button class="btn btn-sm btn-danger" onclick="deletePosition(${index})">
+              <i class="bi bi-trash"></i>
+            </button>
           </div>
         `;
         positionsList.appendChild(positionItem);
@@ -3371,99 +3068,7 @@
       }
     }
 
-    // Add position
-    function addPosition() {
-      const newPositionInput = document.getElementById('newPositionName');
-      if (!newPositionInput) return;
-      
-      const positionName = newPositionInput.value.trim();
-      if (!positionName) {
-        showNotification('Please enter a position name', true);
-        return;
-      }
-      
-      // Check if position already exists
-      if (positions.some(p => p.toLowerCase() === positionName.toLowerCase())) {
-        showNotification('Position already exists', true);
-        return;
-      }
-      
-      positions.push(positionName);
-      candidates[positionName] = [];
-      votes[positionName] = {};
-      maxVotes[positionName] = 0;
-      
-      saveData();
-      updatePositionsList();
-      newPositionInput.value = '';
-      populateAdminDropdowns();
-      showNotification(`Position "${positionName}" added successfully`);
-    }
-
-    // Edit position
-    function editPosition(index) {
-      const currentPosition = positions[index];
-      const newPositionName = prompt('Edit position name:', currentPosition);
-      
-      if (!newPositionName || newPositionName.trim() === '') {
-        return;
-      }
-      
-      const trimmedName = newPositionName.trim();
-      
-      // Check if position already exists (excluding current one)
-      if (positions.some((p, i) => p.toLowerCase() === trimmedName.toLowerCase() && i !== index)) {
-        showNotification('Position already exists', true);
-        return;
-      }
-      
-      // Update position name
-      positions[index] = trimmedName;
-      
-      // Update candidates and votes if position name changed
-      if (currentPosition !== trimmedName) {
-        candidates[trimmedName] = candidates[currentPosition] || [];
-        votes[trimmedName] = votes[currentPosition] || {};
-        maxVotes[trimmedName] = maxVotes[currentPosition] || 0;
-        
-        delete candidates[currentPosition];
-        delete votes[currentPosition];
-        delete maxVotes[currentPosition];
-      }
-      
-      saveData();
-      updatePositionsList();
-      populateAdminDropdowns();
-      showNotification('Position updated successfully');
-    }
-
-    // Delete position
-    function deletePosition(index) {
-      const positionToDelete = positions[index];
-      const candidateCount = candidates[positionToDelete] ? candidates[positionToDelete].length : 0;
-      
-      if (confirm(`Are you sure you want to delete "${positionToDelete}"? This will also remove ${candidateCount} candidate${candidateCount !== 1 ? 's' : ''} from this position.`)) {
-        // Remove candidates from allCandidateNames set
-        if (candidates[positionToDelete]) {
-          candidates[positionToDelete].forEach(candidate => {
-            allCandidateNames.delete(candidate.name.toLowerCase());
-          });
-        }
-        
-        // Remove position
-        positions.splice(index, 1);
-        delete candidates[positionToDelete];
-        delete votes[positionToDelete];
-        delete maxVotes[positionToDelete];
-        
-        saveData();
-        updatePositionsList();
-        populateAdminDropdowns();
-        showNotification('Position deleted successfully');
-      }
-    }
-
-    // Reset positions to default
+    // Reset positions to default - FIXED VERSION
     function resetPositions() {
       if (confirm('Reset to default positions? This will remove all custom positions and their candidates.')) {
         const defaultPositions = [
@@ -3488,36 +3093,14 @@
         initializeDataStructures();
         
         saveData();
+        
+        // Refresh all displays
         updatePositionsList();
         populateAdminDropdowns();
+        showPositions();
+        
         showNotification('Positions reset to default');
       }
-    }
-
-    // Add new position from admin panel
-    function addNewPosition() {
-      const positionName = prompt('Enter new position name:');
-      if (!positionName || positionName.trim() === '') {
-        return;
-      }
-      
-      const trimmedName = positionName.trim();
-      
-      // Check if position already exists
-      if (positions.some(p => p.toLowerCase() === trimmedName.toLowerCase())) {
-        showNotification('Position already exists', true);
-        return;
-      }
-      
-      positions.push(trimmedName);
-      candidates[trimmedName] = [];
-      votes[trimmedName] = {};
-      maxVotes[trimmedName] = 0;
-      
-      saveData();
-      showPositions();
-      populateAdminDropdowns();
-      showNotification(`Position "${trimmedName}" added successfully`);
     }
 
     // Save appearance settings
@@ -3639,6 +3222,24 @@
       }
     }
 
+    // Test function for position management
+    function testPositionManagement() {
+      console.log('Testing Position Management:');
+      console.log('- Positions count:', positions.length);
+      console.log('- Positions:', positions);
+      console.log('- Candidates data:', candidates);
+      
+      // Test adding a position
+      const testPosition = "Test Position " + Date.now().toString().slice(-4);
+      addNewPosition(testPosition);
+      
+      // Refresh display after 1 second
+      setTimeout(() => {
+        showPositions();
+        updatePositionsList();
+      }, 1000);
+    }
+
     // Initialize data when page loads
     window.onload = function() {
       loadData();
@@ -3649,7 +3250,6 @@
       
       // Apply initial configuration
       applySystemConfig();
-      applyBackgroundSettings();
       
       // Initialize election timer
       initializeElectionTimer();
@@ -3663,24 +3263,6 @@
       
       // Update admin UI
       updateAdminUI();
-      
-      // Setup background toggle control
-      document.getElementById('bgToggleControl').addEventListener('click', toggleBackgroundControl);
-      
-      // Close background panel when clicking outside
-      document.addEventListener('click', function(event) {
-        const bgPanel = document.getElementById('bgOptionsPanel');
-        const bgControl = document.getElementById('bgToggleControl');
-        
-        if (!bgPanel.contains(event.target) && !bgControl.contains(event.target)) {
-          bgPanel.classList.remove('show');
-        }
-      });
-      
-      // Apply background settings from panel
-      window.applyBackgroundSettings = function() {
-        applyBackgroundSettingsFromPanel();
-      };
     };
   </script>
 </body>
