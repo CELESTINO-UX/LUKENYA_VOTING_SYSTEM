@@ -10,8 +10,11 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
   <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Chart.js for graphs -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <style>
     :root {
       --primary: #4361ee;
@@ -62,6 +65,149 @@
       box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
     }
 
+    /* NEW: Election Results Page Styles */
+    .results-page {
+      background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+      min-height: 100vh;
+      padding: 20px 0;
+    }
+
+    .results-header {
+      background: var(--gradient);
+      color: white;
+      border-radius: 15px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      text-align: center;
+      box-shadow: var(--shadow);
+    }
+
+    .chart-container {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow);
+      height: 400px;
+    }
+
+    .results-table-container {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow);
+      max-height: 600px;
+      overflow-y: auto;
+    }
+
+    .results-table th {
+      background: var(--primary);
+      color: white;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .results-table tr:hover {
+      background-color: rgba(67, 97, 238, 0.1);
+    }
+
+    .position-card {
+      border-left: 4px solid var(--success);
+      transition: var(--transition);
+    }
+
+    .position-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .vote-count-badge {
+      font-size: 1rem;
+      padding: 5px 15px;
+      border-radius: 20px;
+    }
+
+    .winner-badge {
+      background: linear-gradient(135deg, #4cc9f0 0%, #4361ee 100%);
+      color: white;
+      font-weight: bold;
+      padding: 5px 15px;
+      border-radius: 20px;
+      display: inline-block;
+      margin-left: 10px;
+    }
+
+    .live-badge {
+      background: var(--danger);
+      color: white;
+      animation: pulse 2s infinite;
+      padding: 5px 15px;
+      border-radius: 20px;
+      font-weight: bold;
+    }
+
+    @keyframes pulse {
+      0% { opacity: 1; }
+      50% { opacity: 0.7; }
+      100% { opacity: 1; }
+    }
+
+    .search-box {
+      max-width: 400px;
+      margin: 0 auto 20px;
+    }
+
+    .download-btn-group {
+      position: sticky;
+      top: 20px;
+      z-index: 100;
+      background: white;
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: var(--shadow);
+      margin-bottom: 20px;
+    }
+
+    .stream-update {
+      background: rgba(76, 201, 240, 0.1);
+      border-left: 4px solid var(--success);
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 15px;
+      animation: slideIn 0.5s ease;
+    }
+
+    @keyframes slideIn {
+      from { transform: translateY(-10px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    .position-winner {
+      background: linear-gradient(135deg, rgba(76, 201, 240, 0.2) 0%, rgba(67, 97, 238, 0.2) 100%);
+      border: 2px solid var(--success);
+    }
+
+    .candidate-bar {
+      height: 30px;
+      border-radius: 15px;
+      background: linear-gradient(90deg, var(--primary) 0%, var(--secondary) 100%);
+      transition: width 0.5s ease;
+      margin-bottom: 10px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .candidate-bar span {
+      position: absolute;
+      right: 10px;
+      color: white;
+      font-weight: bold;
+      line-height: 30px;
+    }
+
+    /* Keep existing styles... */
     .user-card {
       cursor: pointer;
       border-top: 4px solid var(--primary);
@@ -654,6 +800,35 @@
     #adminActionsSection {
       transition: all 0.3s ease;
     }
+
+    /* Search Styles */
+    .search-container {
+      background: white;
+      border-radius: 10px;
+      padding: 15px;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow);
+    }
+    
+    .search-results {
+      max-height: 400px;
+      overflow-y: auto;
+      margin-top: 15px;
+    }
+    
+    .search-result-item {
+      padding: 10px 15px;
+      border-bottom: 1px solid #dee2e6;
+      transition: all 0.2s ease;
+    }
+    
+    .search-result-item:hover {
+      background-color: #f8f9fa;
+    }
+    
+    .search-result-item:last-child {
+      border-bottom: none;
+    }
   </style>
 </head>
 <body>
@@ -682,6 +857,24 @@
               <div>
                 <h6 class="mb-1">Admin Panel</h6>
                 <p class="mb-0 text-muted small">Access administrator controls</p>
+              </div>
+            </div>
+          </div>
+          <div class="settings-option" onclick="showElectionResults()" data-bs-dismiss="modal">
+            <div class="d-flex align-items-center">
+              <i class="bi bi-bar-chart text-primary me-3 fs-5"></i>
+              <div>
+                <h6 class="mb-1">Election Results</h6>
+                <p class="mb-0 text-muted small">View live election results</p>
+              </div>
+            </div>
+          </div>
+          <div class="settings-option" onclick="showSection('searchSection')" data-bs-dismiss="modal">
+            <div class="d-flex align-items-center">
+              <i class="bi bi-search text-primary me-3 fs-5"></i>
+              <div>
+                <h6 class="mb-1">Search</h6>
+                <p class="mb-0 text-muted small">Search voters and candidates</p>
               </div>
             </div>
           </div>
@@ -799,6 +992,76 @@
         <button class="btn vote-btn" id="voteButton" onclick="showVoterChoice()">
           <i class="bi bi-check-circle me-2"></i>CAST YOUR VOTE
         </button>
+        
+        <div class="mt-4">
+          <button class="btn btn-outline-light me-2" onclick="showElectionResults()">
+            <i class="bi bi-bar-chart me-1"></i>View Live Results
+          </button>
+          <button class="btn btn-outline-light" onclick="showSection('searchSection')">
+            <i class="bi bi-search me-1"></i>Search
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- NEW: Search Section -->
+    <section id="searchSection" class="card custom-card hidden mb-4">
+      <div class="card-body">
+        <h2 class="card-title text-secondary mb-4"><i class="bi bi-search me-2"></i>Search</h2>
+        
+        <div class="search-container">
+          <div class="mb-3">
+            <label class="form-label">Search Type</label>
+            <div class="btn-group w-100" role="group">
+              <input type="radio" class="btn-check" name="searchType" id="searchVoters" autocomplete="off" checked>
+              <label class="btn btn-outline-primary" for="searchVoters">Search Voters</label>
+              
+              <input type="radio" class="btn-check" name="searchType" id="searchCandidates" autocomplete="off">
+              <label class="btn btn-outline-primary" for="searchCandidates">Search Candidates</label>
+              
+              <input type="radio" class="btn-check" name="searchType" id="searchPositions" autocomplete="off">
+              <label class="btn btn-outline-primary" for="searchPositions">Search Positions</label>
+            </div>
+          </div>
+          
+          <div class="mb-3">
+            <label for="searchInput" class="form-label">Search Term</label>
+            <input type="text" class="form-control" id="searchInput" placeholder="Enter name, ID, or position...">
+          </div>
+          
+          <div class="mb-3">
+            <label class="form-label">Filter By</label>
+            <div class="d-flex gap-2">
+              <select class="form-select" id="filterType">
+                <option value="all">All Types</option>
+                <option value="student">Students Only</option>
+                <option value="staff">Staff Only</option>
+              </select>
+              <select class="form-select" id="filterStatus">
+                <option value="all">All Status</option>
+                <option value="voted">Voted</option>
+                <option value="not_voted">Not Voted</option>
+              </select>
+            </div>
+          </div>
+          
+          <button class="btn custom-btn-primary w-100 text-white" onclick="performSearch()">
+            <i class="bi bi-search me-1"></i>Search
+          </button>
+        </div>
+        
+        <div id="searchResults" class="search-results">
+          <!-- Search results will appear here -->
+        </div>
+        
+        <div class="d-flex gap-2 mt-4">
+          <button class="btn btn-outline-primary" onclick="showSection('home')">
+            <i class="bi bi-arrow-left me-1"></i>Back to Home
+          </button>
+          <button class="btn btn-outline-success" onclick="exportSearchResults()">
+            <i class="bi bi-download me-1"></i>Export Results
+          </button>
+        </div>
       </div>
     </section>
 
@@ -901,6 +1164,123 @@
         </div>
         <div class="d-flex gap-2">
           <button class="btn btn-outline-primary" onclick="showSection('home')"><i class="bi bi-arrow-left me-1"></i>Back to Home</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- NEW: Election Results Section -->
+    <section id="electionResults" class="hidden">
+      <div class="results-page">
+        <div class="container">
+          <div class="results-header">
+            <h1 class="display-4 mb-3"><i class="bi bi-bar-chart me-2"></i>Live Election Results</h1>
+            <div class="live-badge mb-3">LIVE STREAMING</div>
+            <p class="lead">Real-time voting results with charts and statistics</p>
+            <div class="d-flex justify-content-center gap-3 mt-4">
+              <button class="btn btn-light" onclick="downloadResultsTable()">
+                <i class="bi bi-download me-1"></i>Download Results Table
+              </button>
+              <button class="btn btn-light" onclick="downloadResultsPDF()">
+                <i class="bi bi-file-pdf me-1"></i>Download Results PDF
+              </button>
+              <button class="btn btn-light" onclick="downloadResultsExcel()">
+                <i class="bi bi-file-excel me-1"></i>Download Results Excel
+              </button>
+              <button class="btn btn-light" onclick="showSection('home')">
+                <i class="bi bi-house me-1"></i>Back to Home
+              </button>
+            </div>
+          </div>
+
+          <div class="row mb-4">
+            <div class="col-md-6">
+              <div class="download-btn-group">
+                <h5 class="mb-3">Export Options</h5>
+                <div class="d-grid gap-2">
+                  <button class="btn btn-primary" onclick="downloadResultsTable()">
+                    <i class="bi bi-table me-1"></i>Download Table (CSV)
+                  </button>
+                  <button class="btn btn-danger" onclick="downloadResultsPDF()">
+                    <i class="bi bi-file-pdf me-1"></i>Download PDF Report
+                  </button>
+                  <button class="btn btn-success" onclick="downloadResultsExcel()">
+                    <i class="bi bi-file-excel me-1"></i>Download Excel
+                  </button>
+                  <button class="btn btn-warning" onclick="printResults()">
+                    <i class="bi bi-printer me-1"></i>Print Results
+                  </button>
+                </div>
+              </div>
+            </div>
+            
+            <div class="col-md-6">
+              <div class="card bg-primary text-white">
+                <div class="card-body">
+                  <h5 class="card-title"><i class="bi bi-info-circle me-2"></i>Statistics</h5>
+                  <div class="row text-center">
+                    <div class="col-6">
+                      <h2 id="totalVotesCount">0</h2>
+                      <p>Total Votes Cast</p>
+                    </div>
+                    <div class="col-6">
+                      <h2 id="totalVotersCount">0</h2>
+                      <p>Registered Voters</p>
+                    </div>
+                  </div>
+                  <div class="progress mt-2" style="height: 10px;">
+                    <div id="voterTurnoutBar" class="progress-bar bg-warning" role="progressbar" style="width: 0%"></div>
+                  </div>
+                  <small id="voterTurnoutText" class="d-block mt-2">Voter Turnout: 0%</small>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row mb-4">
+            <div class="col-md-8">
+              <div class="chart-container">
+                <canvas id="overallResultsChart"></canvas>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="chart-container">
+                <canvas id="votesDistributionChart"></canvas>
+              </div>
+            </div>
+          </div>
+
+          <div class="results-table-container">
+            <h4 class="mb-3"><i class="bi bi-table me-2"></i>Detailed Results Table</h4>
+            <table class="table table-hover results-table">
+              <thead>
+                <tr>
+                  <th>Position</th>
+                  <th>Candidate</th>
+                  <th>Votes</th>
+                  <th>Percentage</th>
+                  <th>Status</th>
+                  <th>Rank</th>
+                </tr>
+              </thead>
+              <tbody id="resultsTableBody">
+                <!-- Results will be populated here -->
+              </tbody>
+            </table>
+          </div>
+
+          <div class="row" id="positionResults">
+            <!-- Position-wise results will be populated here -->
+          </div>
+
+          <div class="text-center mt-4">
+            <div class="stream-update">
+              <i class="bi bi-arrow-clockwise me-2"></i>
+              <span id="lastUpdateTime">Last updated: Never</span>
+              <button class="btn btn-sm btn-outline-primary ms-3" onclick="updateResults()">
+                <i class="bi bi-arrow-clockwise me-1"></i>Refresh Now
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -1032,6 +1412,7 @@
             <button class="btn btn-outline-primary" onclick="downloadCSV('results')">Download Results CSV</button>
             <button class="btn btn-outline-primary" onclick="downloadCSV('positions')">Download Positions CSV</button>
             <button class="btn btn-outline-primary" onclick="downloadPDF()">Download Results PDF</button>
+            <button class="btn btn-outline-primary" onclick="downloadResultsExcel()">Download Results Excel</button>
           </div>
         </div>
         
@@ -1312,6 +1693,13 @@
     let loginAttempts = [];
     let allCandidateNames = new Set();
     
+    // Chart instances
+    let overallResultsChart = null;
+    let votesDistributionChart = null;
+    
+    // Results update interval
+    let resultsUpdateInterval = null;
+    
     // New: System configuration
     let systemConfig = {
       theme: 'default',
@@ -1435,6 +1823,996 @@
       if (systemLogo) {
         localStorage.setItem('lukenyaLogo', systemLogo);
       }
+    }
+
+    // NEW: Show election results page
+    function showElectionResults() {
+      showSection('electionResults');
+      updateResults();
+      startResultsStreaming();
+    }
+
+    // NEW: Start results streaming
+    function startResultsStreaming() {
+      if (resultsUpdateInterval) {
+        clearInterval(resultsUpdateInterval);
+      }
+      
+      resultsUpdateInterval = setInterval(updateResults, 5000); // Update every 5 seconds
+    }
+
+    // NEW: Update results display
+    function updateResults() {
+      loadData(); // Reload data to get latest votes
+      
+      // Update last update time
+      document.getElementById('lastUpdateTime').textContent = 
+        `Last updated: ${new Date().toLocaleTimeString()}`;
+      
+      // Calculate statistics
+      const totalVoters = voters.student.length + voters.staff.length;
+      const votedStudents = voters.student.filter(v => v.hasVoted).length;
+      const votedStaff = voters.staff.filter(v => v.hasVoted).length;
+      const totalVotes = votedStudents + votedStaff;
+      const voterTurnout = totalVoters > 0 ? (totalVotes / totalVoters * 100).toFixed(1) : 0;
+      
+      // Update statistics display
+      document.getElementById('totalVotesCount').textContent = totalVotes;
+      document.getElementById('totalVotersCount').textContent = totalVoters;
+      document.getElementById('voterTurnoutBar').style.width = `${voterTurnout}%`;
+      document.getElementById('voterTurnoutText').textContent = `Voter Turnout: ${voterTurnout}%`;
+      
+      // Update results table
+      updateResultsTable();
+      
+      // Update charts
+      updateCharts();
+      
+      // Update position-wise results
+      updatePositionResults();
+    }
+
+    // NEW: Update results table
+    function updateResultsTable() {
+      const tbody = document.getElementById('resultsTableBody');
+      if (!tbody) return;
+      
+      tbody.innerHTML = '';
+      
+      positions.forEach(pos => {
+        if (candidates[pos] && candidates[pos].length > 0) {
+          // Sort candidates by votes
+          const sortedCandidates = [...candidates[pos]].sort((a, b) => {
+            const votesA = votes[pos][a.name] || 0;
+            const votesB = votes[pos][b.name] || 0;
+            return votesB - votesA;
+          });
+          
+          // Calculate total votes for this position
+          const positionTotalVotes = sortedCandidates.reduce((total, candidate) => {
+            return total + (votes[pos][candidate.name] || 0);
+          }, 0);
+          
+          sortedCandidates.forEach((candidate, index) => {
+            const candidateVotes = votes[pos][candidate.name] || 0;
+            const percentage = positionTotalVotes > 0 ? 
+              ((candidateVotes / positionTotalVotes) * 100).toFixed(1) : 0;
+            const rank = index + 1;
+            const isWinner = rank === 1 && candidateVotes > 0;
+            
+            const row = document.createElement('tr');
+            if (isWinner) {
+              row.classList.add('position-winner');
+            }
+            
+            row.innerHTML = `
+              <td><strong>${pos}</strong></td>
+              <td>${candidate.name}</td>
+              <td><span class="badge bg-primary">${candidateVotes}</span></td>
+              <td>${percentage}%</td>
+              <td>
+                ${isWinner ? '<span class="badge bg-success">WINNER</span>' : 
+                  rank === 2 ? '<span class="badge bg-warning">RUNNER UP</span>' : 
+                  '<span class="badge bg-secondary">CANDIDATE</span>'}
+              </td>
+              <td><span class="badge bg-dark">#${rank}</span></td>
+            `;
+            
+            tbody.appendChild(row);
+          });
+        }
+      });
+    }
+
+    // NEW: Update charts
+    function updateCharts() {
+      // Prepare data for charts
+      const chartData = prepareChartData();
+      
+      // Update overall results chart
+      updateOverallResultsChart(chartData);
+      
+      // Update votes distribution chart
+      updateVotesDistributionChart(chartData);
+    }
+
+    // NEW: Prepare chart data
+    function prepareChartData() {
+      const data = {
+        positions: [],
+        totalVotes: [],
+        winners: [],
+        candidateCounts: []
+      };
+      
+      positions.forEach(pos => {
+        if (candidates[pos] && candidates[pos].length > 0) {
+          data.positions.push(pos);
+          
+          // Calculate total votes for this position
+          const positionTotal = candidates[pos].reduce((total, candidate) => {
+            return total + (votes[pos][candidate.name] || 0);
+          }, 0);
+          data.totalVotes.push(positionTotal);
+          
+          // Find winner
+          let winner = 'No Votes';
+          let maxVote = 0;
+          candidates[pos].forEach(candidate => {
+            const candidateVotes = votes[pos][candidate.name] || 0;
+            if (candidateVotes > maxVote) {
+              maxVote = candidateVotes;
+              winner = candidate.name;
+            }
+          });
+          data.winners.push(winner);
+          
+          // Candidate count
+          data.candidateCounts.push(candidates[pos].length);
+        }
+      });
+      
+      return data;
+    }
+
+    // NEW: Update overall results chart
+    function updateOverallResultsChart(chartData) {
+      const ctx = document.getElementById('overallResultsChart');
+      if (!ctx) return;
+      
+      // Destroy existing chart
+      if (overallResultsChart) {
+        overallResultsChart.destroy();
+      }
+      
+      overallResultsChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: chartData.positions,
+          datasets: [{
+            label: 'Total Votes per Position',
+            data: chartData.totalVotes,
+            backgroundColor: [
+              'rgba(67, 97, 238, 0.7)',
+              'rgba(114, 9, 183, 0.7)',
+              'rgba(76, 201, 240, 0.7)',
+              'rgba(247, 37, 133, 0.7)',
+              'rgba(248, 150, 30, 0.7)',
+              'rgba(46, 196, 182, 0.7)',
+              'rgba(131, 56, 236, 0.7)',
+              'rgba(255, 99, 132, 0.7)',
+              'rgba(54, 162, 235, 0.7)',
+              'rgba(255, 206, 86, 0.7)'
+            ],
+            borderColor: [
+              'rgba(67, 97, 238, 1)',
+              'rgba(114, 9, 183, 1)',
+              'rgba(76, 201, 240, 1)',
+              'rgba(247, 37, 133, 1)',
+              'rgba(248, 150, 30, 1)',
+              'rgba(46, 196, 182, 1)',
+              'rgba(131, 56, 236, 1)',
+              'rgba(255, 99, 132, 1)',
+              'rgba(54, 162, 235, 1)',
+              'rgba(255, 206, 86, 1)'
+            ],
+            borderWidth: 2
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              display: true,
+              position: 'top'
+            },
+            title: {
+              display: true,
+              text: 'Votes by Position',
+              font: {
+                size: 16
+              }
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              title: {
+                display: true,
+                text: 'Number of Votes'
+              }
+            },
+            x: {
+              ticks: {
+                maxRotation: 45,
+                minRotation: 45
+              }
+            }
+          }
+        }
+      });
+    }
+
+    // NEW: Update votes distribution chart
+    function updateVotesDistributionChart(chartData) {
+      const ctx = document.getElementById('votesDistributionChart');
+      if (!ctx) return;
+      
+      // Calculate total votes across all positions
+      const totalVotesAll = chartData.totalVotes.reduce((a, b) => a + b, 0);
+      
+      // Prepare data for pie chart
+      const pieLabels = chartData.positions;
+      const pieData = chartData.totalVotes;
+      const backgroundColors = pieLabels.map((_, index) => {
+        const colors = [
+          'rgba(67, 97, 238, 0.7)',
+          'rgba(114, 9, 183, 0.7)',
+          'rgba(76, 201, 240, 0.7)',
+          'rgba(247, 37, 133, 0.7)',
+          'rgba(248, 150, 30, 0.7)',
+          'rgba(46, 196, 182, 0.7)',
+          'rgba(131, 56, 236, 0.7)',
+          'rgba(255, 99, 132, 0.7)',
+          'rgba(54, 162, 235, 0.7)',
+          'rgba(255, 206, 86, 0.7)'
+        ];
+        return colors[index % colors.length];
+      });
+      
+      // Destroy existing chart
+      if (votesDistributionChart) {
+        votesDistributionChart.destroy();
+      }
+      
+      votesDistributionChart = new Chart(ctx, {
+        type: 'pie',
+        data: {
+          labels: pieLabels,
+          datasets: [{
+            data: pieData,
+            backgroundColor: backgroundColors,
+            borderColor: backgroundColors.map(color => color.replace('0.7', '1')),
+            borderWidth: 2
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'right',
+              labels: {
+                boxWidth: 12,
+                font: {
+                  size: 10
+                }
+              }
+            },
+            title: {
+              display: true,
+              text: 'Votes Distribution by Position',
+              font: {
+                size: 14
+              }
+            },
+            tooltip: {
+              callbacks: {
+                label: function(context) {
+                  const label = context.label || '';
+                  const value = context.raw || 0;
+                  const percentage = totalVotesAll > 0 ? 
+                    ((value / totalVotesAll) * 100).toFixed(1) : 0;
+                  return `${label}: ${value} votes (${percentage}%)`;
+                }
+              }
+            }
+          }
+        }
+      });
+    }
+
+    // NEW: Update position-wise results
+    function updatePositionResults() {
+      const container = document.getElementById('positionResults');
+      if (!container) return;
+      
+      container.innerHTML = '';
+      
+      positions.forEach(pos => {
+        if (candidates[pos] && candidates[pos].length > 0) {
+          // Sort candidates by votes
+          const sortedCandidates = [...candidates[pos]].sort((a, b) => {
+            const votesA = votes[pos][a.name] || 0;
+            const votesB = votes[pos][b.name] || 0;
+            return votesB - votesA;
+          });
+          
+          // Calculate total votes for this position
+          const totalVotes = sortedCandidates.reduce((total, candidate) => {
+            return total + (votes[pos][candidate.name] || 0);
+          }, 0);
+          
+          const col = document.createElement('div');
+          col.className = 'col-md-6 col-lg-4 mb-4';
+          
+          let candidatesHTML = '';
+          sortedCandidates.forEach((candidate, index) => {
+            const candidateVotes = votes[pos][candidate.name] || 0;
+            const percentage = totalVotes > 0 ? 
+              ((candidateVotes / totalVotes) * 100).toFixed(1) : 0;
+            const isWinner = index === 0 && candidateVotes > 0;
+            
+            candidatesHTML += `
+              <div class="mb-3">
+                <div class="d-flex justify-content-between mb-1">
+                  <span class="${isWinner ? 'fw-bold text-success' : ''}">
+                    ${index + 1}. ${candidate.name}
+                    ${isWinner ? '<span class="winner-badge">WINNER</span>' : ''}
+                  </span>
+                  <span class="fw-bold">${candidateVotes} votes</span>
+                </div>
+                <div class="progress" style="height: 20px;">
+                  <div class="progress-bar ${isWinner ? 'bg-success' : 'bg-primary'}" 
+                       role="progressbar" 
+                       style="width: ${percentage}%">
+                    ${percentage}%
+                  </div>
+                </div>
+              </div>
+            `;
+          });
+          
+          col.innerHTML = `
+            <div class="card position-card h-100">
+              <div class="card-body">
+                <h5 class="card-title text-primary mb-3">
+                  ${pos}
+                  <span class="badge bg-secondary float-end">${totalVotes} total votes</span>
+                </h5>
+                ${candidatesHTML}
+              </div>
+            </div>
+          `;
+          
+          container.appendChild(col);
+        }
+      });
+    }
+
+    // NEW: Download results as table (CSV)
+    function downloadResultsTable() {
+      let csvData = 'Position,Candidate,Votes,Percentage,Rank,Status\n';
+      
+      positions.forEach(pos => {
+        if (candidates[pos] && candidates[pos].length > 0) {
+          // Sort candidates by votes
+          const sortedCandidates = [...candidates[pos]].sort((a, b) => {
+            const votesA = votes[pos][a.name] || 0;
+            const votesB = votes[pos][b.name] || 0;
+            return votesB - votesA;
+          });
+          
+          // Calculate total votes for this position
+          const totalVotes = sortedCandidates.reduce((total, candidate) => {
+            return total + (votes[pos][candidate.name] || 0);
+          }, 0);
+          
+          sortedCandidates.forEach((candidate, index) => {
+            const candidateVotes = votes[pos][candidate.name] || 0;
+            const percentage = totalVotes > 0 ? 
+              ((candidateVotes / totalVotes) * 100).toFixed(2) : 0;
+            const rank = index + 1;
+            const status = rank === 1 && candidateVotes > 0 ? 'WINNER' : 
+                          rank === 2 ? 'RUNNER UP' : 'CANDIDATE';
+            
+            csvData += `${pos},${candidate.name},${candidateVotes},${percentage}%,${rank},${status}\n`;
+          });
+        }
+      });
+      
+      downloadFile(csvData, 'election_results_table.csv', 'text/csv');
+      showNotification('Results table downloaded successfully');
+    }
+
+    // NEW: Download results as PDF
+    function downloadResultsPDF() {
+      if (!window.jspdf || !window.jspdf.jsPDF) {
+        showNotification('PDF library not loaded. Please check your internet connection.', true);
+        return;
+      }
+      
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+      
+      // Add logo if available
+      if (systemLogo) {
+        try {
+          doc.addImage(systemLogo, 'JPEG', 10, 10, 30, 20);
+        } catch (e) {
+          console.warn('Could not add logo to PDF:', e);
+        }
+      }
+      
+      // Add title
+      doc.setFontSize(20);
+      doc.text('Lukenya Voting System - Election Results', 50, 20);
+      
+      // Add timestamp
+      doc.setFontSize(10);
+      doc.text(`Generated on: ${new Date().toLocaleString()}`, 50, 30);
+      
+      let yPosition = 50;
+      
+      // Add statistics
+      const totalVoters = voters.student.length + voters.staff.length;
+      const votedStudents = voters.student.filter(v => v.hasVoted).length;
+      const votedStaff = voters.staff.filter(v => v.hasVoted).length;
+      const totalVotes = votedStudents + votedStaff;
+      const voterTurnout = totalVoters > 0 ? (totalVotes / totalVoters * 100).toFixed(1) : 0;
+      
+      doc.setFontSize(14);
+      doc.text('Election Statistics:', 10, yPosition);
+      yPosition += 10;
+      
+      doc.setFontSize(11);
+      doc.text(`Total Registered Voters: ${totalVoters}`, 20, yPosition);
+      yPosition += 7;
+      doc.text(`Total Votes Cast: ${totalVotes}`, 20, yPosition);
+      yPosition += 7;
+      doc.text(`Voter Turnout: ${voterTurnout}%`, 20, yPosition);
+      yPosition += 15;
+      
+      // Add results by position
+      doc.setFontSize(14);
+      doc.text('Detailed Results by Position:', 10, yPosition);
+      yPosition += 10;
+      
+      positions.forEach(pos => {
+        if (candidates[pos] && candidates[pos].length > 0) {
+          if (yPosition > 250) {
+            doc.addPage();
+            yPosition = 20;
+          }
+          
+          doc.setFontSize(12);
+          doc.text(`${pos}:`, 10, yPosition);
+          yPosition += 7;
+          
+          // Sort candidates by votes
+          const sortedCandidates = [...candidates[pos]].sort((a, b) => {
+            const votesA = votes[pos][a.name] || 0;
+            const votesB = votes[pos][b.name] || 0;
+            return votesB - votesA;
+          });
+          
+          doc.setFontSize(10);
+          sortedCandidates.forEach((candidate, index) => {
+            if (yPosition > 250) {
+              doc.addPage();
+              yPosition = 20;
+            }
+            
+            const candidateVotes = votes[pos][candidate.name] || 0;
+            const status = index === 0 && candidateVotes > 0 ? ' (WINNER)' : '';
+            doc.text(`  ${index + 1}. ${candidate.name}: ${candidateVotes} votes${status}`, 15, yPosition);
+            yPosition += 6;
+          });
+          
+          yPosition += 5;
+        }
+      });
+      
+      // Add footer
+      doc.setFontSize(8);
+      doc.text('Official Election Results - Lukenya British Curriculum Student Council', 10, 280);
+      
+      doc.save('election_results_report.pdf');
+      showNotification('PDF report downloaded successfully');
+    }
+
+    // NEW: Download results as Excel
+    function downloadResultsExcel() {
+      // Prepare data
+      const data = [];
+      
+      // Add header
+      data.push(['Position', 'Candidate', 'Votes', 'Percentage', 'Rank', 'Status']);
+      
+      positions.forEach(pos => {
+        if (candidates[pos] && candidates[pos].length > 0) {
+          // Sort candidates by votes
+          const sortedCandidates = [...candidates[pos]].sort((a, b) => {
+            const votesA = votes[pos][a.name] || 0;
+            const votesB = votes[pos][b.name] || 0;
+            return votesB - votesA;
+          });
+          
+          // Calculate total votes for this position
+          const totalVotes = sortedCandidates.reduce((total, candidate) => {
+            return total + (votes[pos][candidate.name] || 0);
+          }, 0);
+          
+          sortedCandidates.forEach((candidate, index) => {
+            const candidateVotes = votes[pos][candidate.name] || 0;
+            const percentage = totalVotes > 0 ? 
+              ((candidateVotes / totalVotes) * 100).toFixed(2) : 0;
+            const rank = index + 1;
+            const status = rank === 1 && candidateVotes > 0 ? 'WINNER' : 
+                          rank === 2 ? 'RUNNER UP' : 'CANDIDATE';
+            
+            data.push([pos, candidate.name, candidateVotes, `${percentage}%`, rank, status]);
+          });
+          
+          // Add empty row between positions
+          data.push([]);
+        }
+      });
+      
+      // Create worksheet
+      const ws = XLSX.utils.aoa_to_sheet(data);
+      
+      // Create workbook
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, 'Election Results');
+      
+      // Generate Excel file
+      XLSX.writeFile(wb, 'election_results.xlsx');
+      showNotification('Excel file downloaded successfully');
+    }
+
+    // NEW: Print results
+    function printResults() {
+      window.print();
+    }
+
+    // NEW: Perform search
+    function performSearch() {
+      const searchType = document.querySelector('input[name="searchType"]:checked').id;
+      const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+      const filterType = document.getElementById('filterType').value;
+      const filterStatus = document.getElementById('filterStatus').value;
+      
+      const resultsDiv = document.getElementById('searchResults');
+      resultsDiv.innerHTML = '';
+      
+      let results = [];
+      
+      if (searchType === 'searchVoters') {
+        // Search in student voters
+        if (filterType === 'all' || filterType === 'student') {
+          voters.student.forEach(voter => {
+            if (matchesSearch(voter, searchTerm) && matchesFilter(voter, filterStatus)) {
+              results.push({
+                type: 'Student',
+                name: voter.name,
+                id: voter.id,
+                class: voter.class,
+                status: voter.hasVoted ? 'Voted' : 'Not Voted',
+                data: voter
+              });
+            }
+          });
+        }
+        
+        // Search in staff voters
+        if (filterType === 'all' || filterType === 'staff') {
+          voters.staff.forEach(voter => {
+            if (matchesSearch(voter, searchTerm) && matchesFilter(voter, filterStatus)) {
+              results.push({
+                type: 'Staff',
+                name: voter.name,
+                id: voter.id,
+                class: 'N/A',
+                status: voter.hasVoted ? 'Voted' : 'Not Voted',
+                data: voter
+              });
+            }
+          });
+        }
+        
+        displayVoterSearchResults(results);
+        
+      } else if (searchType === 'searchCandidates') {
+        // Search candidates
+        positions.forEach(pos => {
+          if (candidates[pos]) {
+            candidates[pos].forEach(candidate => {
+              if (candidate.name.toLowerCase().includes(searchTerm) || 
+                  pos.toLowerCase().includes(searchTerm)) {
+                const candidateVotes = votes[pos][candidate.name] || 0;
+                results.push({
+                  position: pos,
+                  name: candidate.name,
+                  votes: candidateVotes,
+                  data: {position: pos, candidate: candidate}
+                });
+              }
+            });
+          }
+        });
+        
+        displayCandidateSearchResults(results);
+        
+      } else if (searchType === 'searchPositions') {
+        // Search positions
+        positions.forEach(pos => {
+          if (pos.toLowerCase().includes(searchTerm)) {
+            const candidateCount = candidates[pos] ? candidates[pos].length : 0;
+            const totalVotes = candidates[pos] ? 
+              candidates[pos].reduce((total, candidate) => {
+                return total + (votes[pos][candidate.name] || 0);
+              }, 0) : 0;
+            
+            results.push({
+              position: pos,
+              candidates: candidateCount,
+              votes: totalVotes,
+              data: {position: pos}
+            });
+          }
+        });
+        
+        displayPositionSearchResults(results);
+      }
+      
+      if (results.length === 0) {
+        resultsDiv.innerHTML = `
+          <div class="alert alert-info">
+            <i class="bi bi-info-circle me-2"></i>
+            No results found for "${searchTerm}"
+          </div>
+        `;
+      }
+    }
+
+    // NEW: Helper function to check if voter matches search
+    function matchesSearch(voter, searchTerm) {
+      if (!searchTerm) return true;
+      
+      return voter.name.toLowerCase().includes(searchTerm) ||
+             voter.id.toLowerCase().includes(searchTerm) ||
+             (voter.class && voter.class.toLowerCase().includes(searchTerm));
+    }
+
+    // NEW: Helper function to check if voter matches filter
+    function matchesFilter(voter, filterStatus) {
+      if (filterStatus === 'all') return true;
+      if (filterStatus === 'voted') return voter.hasVoted;
+      if (filterStatus === 'not_voted') return !voter.hasVoted;
+      return true;
+    }
+
+    // NEW: Display voter search results
+    function displayVoterSearchResults(results) {
+      const resultsDiv = document.getElementById('searchResults');
+      
+      if (results.length === 0) return;
+      
+      let html = `
+        <div class="card">
+          <div class="card-header bg-primary text-white">
+            <h5 class="mb-0"><i class="bi bi-people me-2"></i>Voter Search Results (${results.length} found)</h5>
+          </div>
+          <div class="card-body p-0">
+            <div class="table-responsive">
+              <table class="table table-hover mb-0">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Name</th>
+                    <th>Voter Number</th>
+                    <th>Class</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+      `;
+      
+      results.forEach(result => {
+        const statusClass = result.status === 'Voted' ? 'success' : 'danger';
+        html += `
+          <tr>
+            <td><span class="badge bg-${result.type === 'Student' ? 'primary' : 'secondary'}">${result.type}</span></td>
+            <td>${result.name}</td>
+            <td><code>${result.id}</code></td>
+            <td>${result.class}</td>
+            <td><span class="badge bg-${statusClass}">${result.status}</span></td>
+            <td>
+              <button class="btn btn-sm btn-outline-primary" onclick="viewVoterDetails('${result.type.toLowerCase()}', '${result.id}')">
+                <i class="bi bi-eye"></i>
+              </button>
+            </td>
+          </tr>
+        `;
+      });
+      
+      html += `
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      `;
+      
+      resultsDiv.innerHTML = html;
+    }
+
+    // NEW: Display candidate search results
+    function displayCandidateSearchResults(results) {
+      const resultsDiv = document.getElementById('searchResults');
+      
+      if (results.length === 0) return;
+      
+      let html = `
+        <div class="card">
+          <div class="card-header bg-success text-white">
+            <h5 class="mb-0"><i class="bi bi-person-badge me-2"></i>Candidate Search Results (${results.length} found)</h5>
+          </div>
+          <div class="card-body p-0">
+            <div class="table-responsive">
+              <table class="table table-hover mb-0">
+                <thead>
+                  <tr>
+                    <th>Position</th>
+                    <th>Candidate Name</th>
+                    <th>Votes</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+      `;
+      
+      results.forEach(result => {
+        html += `
+          <tr>
+            <td><strong>${result.position}</strong></td>
+            <td>${result.name}</td>
+            <td><span class="badge bg-primary">${result.votes}</span></td>
+            <td>
+              <button class="btn btn-sm btn-outline-success" onclick="viewCandidateDetails('${result.position}', '${result.name}')">
+                <i class="bi bi-eye"></i>
+              </button>
+            </td>
+          </tr>
+        `;
+      });
+      
+      html += `
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      `;
+      
+      resultsDiv.innerHTML = html;
+    }
+
+    // NEW: Display position search results
+    function displayPositionSearchResults(results) {
+      const resultsDiv = document.getElementById('searchResults');
+      
+      if (results.length === 0) return;
+      
+      let html = `
+        <div class="card">
+          <div class="card-header bg-warning text-dark">
+            <h5 class="mb-0"><i class="bi bi-postcard me-2"></i>Position Search Results (${results.length} found)</h5>
+          </div>
+          <div class="card-body p-0">
+            <div class="table-responsive">
+              <table class="table table-hover mb-0">
+                <thead>
+                  <tr>
+                    <th>Position</th>
+                    <th>Candidates</th>
+                    <th>Total Votes</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+      `;
+      
+      results.forEach(result => {
+        html += `
+          <tr>
+            <td><strong>${result.position}</strong></td>
+            <td><span class="badge bg-info">${result.candidates} candidates</span></td>
+            <td><span class="badge bg-primary">${result.votes} votes</span></td>
+            <td>
+              <button class="btn btn-sm btn-outline-warning" onclick="viewPositionDetails('${result.position}')">
+                <i class="bi bi-eye"></i>
+              </button>
+            </td>
+          </tr>
+        `;
+      });
+      
+      html += `
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      `;
+      
+      resultsDiv.innerHTML = html;
+    }
+
+    // NEW: View voter details
+    function viewVoterDetails(type, id) {
+      let voter;
+      if (type === 'student') {
+        voter = voters.student.find(v => v.id === id);
+      } else {
+        voter = voters.staff.find(v => v.id === id);
+      }
+      
+      if (voter) {
+        alert(`Voter Details:\n\n` +
+              `Type: ${type === 'student' ? 'Student' : 'Staff'}\n` +
+              `Name: ${voter.name}\n` +
+              `Voter Number: ${voter.id}\n` +
+              `Class: ${type === 'student' ? voter.class : 'N/A'}\n` +
+              `Voting Status: ${voter.hasVoted ? 'Has Voted' : 'Not Voted Yet'}`);
+      }
+    }
+
+    // NEW: View candidate details
+    function viewCandidateDetails(position, name) {
+      const candidateVotes = votes[position][name] || 0;
+      const totalVotes = candidates[position] ? 
+        candidates[position].reduce((total, candidate) => {
+          return total + (votes[position][candidate.name] || 0);
+        }, 0) : 0;
+      const percentage = totalVotes > 0 ? 
+        ((candidateVotes / totalVotes) * 100).toFixed(1) : 0;
+      
+      alert(`Candidate Details:\n\n` +
+            `Position: ${position}\n` +
+            `Name: ${name}\n` +
+            `Votes: ${candidateVotes}\n` +
+            `Percentage: ${percentage}%\n` +
+            `Total Votes for Position: ${totalVotes}`);
+    }
+
+    // NEW: View position details
+    function viewPositionDetails(position) {
+      const positionCandidates = candidates[position] || [];
+      const totalVotes = positionCandidates.reduce((total, candidate) => {
+        return total + (votes[position][candidate.name] || 0);
+      }, 0);
+      
+      let details = `Position: ${position}\n`;
+      details += `Number of Candidates: ${positionCandidates.length}\n`;
+      details += `Total Votes: ${totalVotes}\n\n`;
+      details += `Candidates:\n`;
+      
+      // Sort candidates by votes
+      const sortedCandidates = [...positionCandidates].sort((a, b) => {
+        const votesA = votes[position][a.name] || 0;
+        const votesB = votes[position][b.name] || 0;
+        return votesB - votesA;
+      });
+      
+      sortedCandidates.forEach((candidate, index) => {
+        const candidateVotes = votes[position][candidate.name] || 0;
+        const percentage = totalVotes > 0 ? 
+          ((candidateVotes / totalVotes) * 100).toFixed(1) : 0;
+        details += `${index + 1}. ${candidate.name}: ${candidateVotes} votes (${percentage}%)\n`;
+      });
+      
+      alert(details);
+    }
+
+    // NEW: Export search results
+    function exportSearchResults() {
+      const searchType = document.querySelector('input[name="searchType"]:checked').id;
+      
+      if (searchType === 'searchVoters') {
+        downloadVoterSearchResults();
+      } else if (searchType === 'searchCandidates') {
+        downloadCandidateSearchResults();
+      } else if (searchType === 'searchPositions') {
+        downloadPositionSearchResults();
+      }
+    }
+
+    // NEW: Download voter search results
+    function downloadVoterSearchResults() {
+      let csvData = 'Type,Name,Voter Number,Class,Status\n';
+      
+      const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+      const filterType = document.getElementById('filterType').value;
+      const filterStatus = document.getElementById('filterStatus').value;
+      
+      // Search in student voters
+      if (filterType === 'all' || filterType === 'student') {
+        voters.student.forEach(voter => {
+          if (matchesSearch(voter, searchTerm) && matchesFilter(voter, filterStatus)) {
+            csvData += `Student,${voter.name},${voter.id},${voter.class},${voter.hasVoted ? 'Voted' : 'Not Voted'}\n`;
+          }
+        });
+      }
+      
+      // Search in staff voters
+      if (filterType === 'all' || filterType === 'staff') {
+        voters.staff.forEach(voter => {
+          if (matchesSearch(voter, searchTerm) && matchesFilter(voter, filterStatus)) {
+            csvData += `Staff,${voter.name},${voter.id},N/A,${voter.hasVoted ? 'Voted' : 'Not Voted'}\n`;
+          }
+        });
+      }
+      
+      downloadFile(csvData, 'voter_search_results.csv', 'text/csv');
+      showNotification('Voter search results downloaded');
+    }
+
+    // NEW: Download candidate search results
+    function downloadCandidateSearchResults() {
+      let csvData = 'Position,Candidate Name,Votes\n';
+      
+      const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+      
+      positions.forEach(pos => {
+        if (candidates[pos]) {
+          candidates[pos].forEach(candidate => {
+            if (candidate.name.toLowerCase().includes(searchTerm) || 
+                pos.toLowerCase().includes(searchTerm)) {
+              const candidateVotes = votes[pos][candidate.name] || 0;
+              csvData += `${pos},${candidate.name},${candidateVotes}\n`;
+            }
+          });
+        }
+      });
+      
+      downloadFile(csvData, 'candidate_search_results.csv', 'text/csv');
+      showNotification('Candidate search results downloaded');
+    }
+
+    // NEW: Download position search results
+    function downloadPositionSearchResults() {
+      let csvData = 'Position,Candidates,Total Votes\n';
+      
+      const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+      
+      positions.forEach(pos => {
+        if (pos.toLowerCase().includes(searchTerm)) {
+          const candidateCount = candidates[pos] ? candidates[pos].length : 0;
+          const totalVotes = candidates[pos] ? 
+            candidates[pos].reduce((total, candidate) => {
+              return total + (votes[pos][candidate.name] || 0);
+            }, 0) : 0;
+          
+          csvData += `${pos},${candidateCount},${totalVotes}\n`;
+        }
+      });
+      
+      downloadFile(csvData, 'position_search_results.csv', 'text/csv');
+      showNotification('Position search results downloaded');
     }
 
     // Apply system configuration
@@ -1672,6 +3050,12 @@
 
     // Show/hide sections
     function showSection(id) {
+      // Stop results streaming if leaving results page
+      if (id !== 'electionResults' && resultsUpdateInterval) {
+        clearInterval(resultsUpdateInterval);
+        resultsUpdateInterval = null;
+      }
+      
       document.querySelectorAll('section').forEach(s => {
         if (s.id !== 'settingsModal') {
           s.classList.add('hidden');
