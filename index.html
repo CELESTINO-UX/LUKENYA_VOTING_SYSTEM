@@ -463,6 +463,8 @@
       margin-bottom: 1rem;
       border-radius: 10px;
       box-shadow: var(--shadow);
+      background: white;
+      padding: 10px;
     }
     
     .logo-placeholder {
@@ -940,10 +942,8 @@
   <div class="container py-4">
     <header class="text-center mb-5">
       <div class="logo-container mb-3">
-        <img id="systemLogo" class="system-logo" src="" alt="System Logo" style="display: none;">
-        <div id="defaultLogo" class="logo-placeholder">
-          <i class="bi bi-person-badge fs-1 text-white"></i>
-        </div>
+        <!-- Online Logo from provided URL -->
+        <img id="systemLogo" class="system-logo" src="https://sl.bing.net/bRTJOTdf7e0" alt="Lukenya Voting System Logo">
         <h1 id="systemTitle" class="system-title display-4 mt-2">Lukenya Voting System</h1>
         <div id="systemSubtitle" class="subtitle text-secondary fs-5">British Curriculum Student Council Elections</div>
       </div>
@@ -953,7 +953,7 @@
     <section id="home" class="fade-in mb-4">
       <div class="hero-section">
         <h2 class="welcome-text" id="welcomeText">WELCOME TO LUKENYA BRITISH CURRICULUM SCHOOL</h2>
-        <p class="sub-welcome-text" id="electionTitle">STUDENT ELECTION</p>
+        <p class="sub-welcome-text" id="electionTitle">STUDENT COUNCIL ELECTION 2024</p>
         <div class="election-seal mb-4">
           <i class="bi bi-shield-check fs-4"></i>
         </div>
@@ -999,6 +999,9 @@
           </button>
           <button class="btn btn-outline-light" onclick="showSection('searchSection')">
             <i class="bi bi-search me-1"></i>Search
+          </button>
+          <button class="btn btn-outline-light ms-2" onclick="showSection('adminLogin')">
+            <i class="bi bi-shield-lock me-1"></i>Admin Login
           </button>
         </div>
       </div>
@@ -1173,10 +1176,13 @@
       <div class="results-page">
         <div class="container">
           <div class="results-header">
-            <h1 class="display-4 mb-3"><i class="bi bi-bar-chart me-2"></i>Live Election Results</h1>
+            <div class="logo-container mb-3">
+              <img src="https://sl.bing.net/bRTJOTdf7e0" alt="System Logo" class="system-logo" style="max-width: 100px;">
+              <h1 class="display-4 mb-3">Live Election Results</h1>
+            </div>
             <div class="live-badge mb-3">LIVE STREAMING</div>
             <p class="lead">Real-time voting results with charts and statistics</p>
-            <div class="d-flex justify-content-center gap-3 mt-4">
+            <div class="d-flex justify-content-center gap-3 mt-4 flex-wrap">
               <button class="btn btn-light" onclick="downloadResultsTable()">
                 <i class="bi bi-download me-1"></i>Download Results Table
               </button>
@@ -1368,11 +1374,12 @@
                 <div class="card-body">
                   <h3 class="card-title h5"><i class="bi bi-image me-2"></i>System Logo</h3>
                   <div class="mb-3">
-                    <label for="logoUpload" class="form-label">Upload System Logo</label>
+                    <label for="logoUpload" class="form-label">Upload Custom Logo</label>
                     <input type="file" class="form-control" id="logoUpload" accept="image/*">
                     <img id="logoPreview" class="photo-preview mt-2" alt="Logo Preview">
                   </div>
-                  <button class="btn custom-btn-primary w-100 text-white" onclick="uploadLogo()">Set System Logo</button>
+                  <button class="btn custom-btn-primary w-100 text-white" onclick="uploadLogo()">Set Custom Logo</button>
+                  <button class="btn btn-outline-secondary w-100 mt-2" onclick="resetToDefaultLogo()">Reset to Default Logo</button>
                 </div>
               </div>
             </div>
@@ -1689,7 +1696,7 @@
     let votes = {};
     let maxVotes = {};
     let currentVoter = null;
-    let systemLogo = null;
+    let systemLogo = "https://sl.bing.net/bRTJOTdf7e0"; // Default online logo
     let loginAttempts = [];
     let allCandidateNames = new Set();
     
@@ -1706,7 +1713,7 @@
       title: 'Lukenya Voting System',
       subtitle: 'British Curriculum Student Council Elections',
       welcomeText: 'WELCOME TO LUKENYA BRITISH CURRICULUM SCHOOL',
-      electionTitle: 'STUDENT ELECTION',
+      electionTitle: 'STUDENT COUNCIL ELECTION 2024',
       rules: [
         'Each voter can only vote once',
         'Voting is confidential',
@@ -1777,12 +1784,6 @@
       if (savedMaxVotes) maxVotes = JSON.parse(savedMaxVotes);
       if (savedLogo) {
         systemLogo = savedLogo;
-        const logoImg = document.getElementById('systemLogo');
-        if (logoImg) {
-          logoImg.src = systemLogo;
-          logoImg.style.display = 'block';
-          document.getElementById('defaultLogo').style.display = 'none';
-        }
       }
       if (savedLoginAttempts) loginAttempts = JSON.parse(savedLoginAttempts);
       if (savedConfig) {
@@ -1809,6 +1810,13 @@
           localStorage.removeItem('lukenyaAdminSession');
         }
       }
+      
+      // Always set the logo to the online image
+      const logoImg = document.getElementById('systemLogo');
+      if (logoImg) {
+        logoImg.src = systemLogo;
+        logoImg.style.display = 'block';
+      }
     }
 
     // Save data to localStorage
@@ -1820,9 +1828,22 @@
       localStorage.setItem('lukenyaLoginAttempts', JSON.stringify(loginAttempts));
       localStorage.setItem('lukenyaConfig', JSON.stringify(systemConfig));
       localStorage.setItem('lukenyaPositions', JSON.stringify(positions));
-      if (systemLogo) {
+      if (systemLogo && systemLogo !== "https://sl.bing.net/bRTJOTdf7e0") {
         localStorage.setItem('lukenyaLogo', systemLogo);
       }
+    }
+
+    // NEW: Reset to default logo
+    function resetToDefaultLogo() {
+      systemLogo = "https://sl.bing.net/bRTJOTdf7e0";
+      localStorage.removeItem('lukenyaLogo');
+      
+      const logoImg = document.getElementById('systemLogo');
+      if (logoImg) {
+        logoImg.src = systemLogo;
+      }
+      
+      showNotification('Logo reset to default');
     }
 
     // NEW: Show election results page
@@ -2247,12 +2268,12 @@
       const doc = new jsPDF();
       
       // Add logo if available
-      if (systemLogo) {
-        try {
-          doc.addImage(systemLogo, 'JPEG', 10, 10, 30, 20);
-        } catch (e) {
-          console.warn('Could not add logo to PDF:', e);
-        }
+      try {
+        // Try to add the online logo
+        const logoUrl = systemLogo;
+        doc.addImage(logoUrl, 'JPEG', 10, 10, 30, 20);
+      } catch (e) {
+        console.warn('Could not add logo to PDF:', e);
       }
       
       // Add title
@@ -3620,11 +3641,9 @@
         const logoImg = document.getElementById('systemLogo');
         if (logoImg) {
           logoImg.src = systemLogo;
-          logoImg.style.display = 'block';
-          document.getElementById('defaultLogo').style.display = 'none';
         }
         saveData();
-        showNotification('System logo updated successfully');
+        showNotification('Custom logo updated successfully');
         
         logoInput.value = '';
         const preview = document.getElementById('logoPreview');
@@ -4294,12 +4313,12 @@
       const { jsPDF } = window.jspdf;
       const doc = new jsPDF();
       
-      if (systemLogo) {
-        try {
-          doc.addImage(systemLogo, 'JPEG', 10, 10, 30, 20);
-        } catch (e) {
-          console.warn('Could not add logo to PDF:', e);
-        }
+      try {
+        // Try to add the online logo
+        const logoUrl = systemLogo;
+        doc.addImage(logoUrl, 'JPEG', 10, 10, 30, 20);
+      } catch (e) {
+        console.warn('Could not add logo to PDF:', e);
       }
       
       doc.setFontSize(20);
@@ -4647,6 +4666,13 @@
       
       // Update admin UI
       updateAdminUI();
+      
+      // Set the online logo on page load
+      const logoImg = document.getElementById('systemLogo');
+      if (logoImg) {
+        logoImg.src = systemLogo;
+        logoImg.style.display = 'block';
+      }
     };
   </script>
 </body>
