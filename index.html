@@ -1747,31 +1747,25 @@
         
         <p class="text-muted mb-4">Official Results - British Curriculum Student Council Elections</p>
         
-        <!-- Download Buttons - Removed Excel, kept PDF and DOCX -->
+        <!-- Download Buttons - Updated with separate student and staff downloads -->
         <div class="download-buttons">
+          <button class="btn-download pdf" onclick="downloadStudentVotersPDF()">
+            <i class="bi bi-file-pdf"></i> Student Voters PDF
+          </button>
+          <button class="btn-download docx" onclick="downloadStudentVotersDOCX()">
+            <i class="bi-file-word"></i> Student Voters DOCX
+          </button>
+          <button class="btn-download pdf" onclick="downloadStaffVotersPDF()">
+            <i class="bi bi-file-pdf"></i> Staff Voters PDF
+          </button>
+          <button class="btn-download docx" onclick="downloadStaffVotersDOCX()">
+            <i class="bi-file-word"></i> Staff Voters DOCX
+          </button>
           <button class="btn-download pdf" onclick="downloadResultsPDF()">
             <i class="bi bi-file-pdf"></i> PDF Report
           </button>
           <button class="btn-download docx" onclick="downloadResultsDOCX()">
             <i class="bi bi-file-word"></i> DOCX Report
-          </button>
-          <button class="btn-download pdf" onclick="downloadDetailedPDF()">
-            <i class="bi bi-file-pdf"></i> Detailed PDF
-          </button>
-          <button class="btn-download docx" onclick="downloadFormattedDOCX()">
-            <i class="bi bi-file-word"></i> Formatted DOCX
-          </button>
-          <button class="btn-download pdf" onclick="downloadResultsWithCharts()">
-            <i class="bi bi-bar-chart"></i> PDF with Charts
-          </button>
-          <button class="btn-download docx" onclick="downloadComprehensiveDOCX()">
-            <i class="bi bi-file-earmark-word"></i> Comprehensive DOCX
-          </button>
-          <button class="btn-download pdf" onclick="downloadExecutiveSummary()">
-            <i class="bi bi-file-pdf"></i> Executive Summary
-          </button>
-          <button class="btn-download docx" onclick="downloadFullReportDOCX()">
-            <i class="bi bi-file-word"></i> Full Report DOCX
           </button>
         </div>
 
@@ -2024,8 +2018,8 @@
               <button class="btn btn-primary" onclick="showRegistered('all')">All Voters</button>
               <button class="btn btn-success" onclick="showRegistered('student')">Students</button>
               <button class="btn btn-warning" onclick="showRegistered('staff')">Staff</button>
-              <button class="btn-download pdf" onclick="downloadVoterDataPDF()">Export PDF</button>
-              <button class="btn-download docx" onclick="downloadVoterDataDOCX()">Export DOCX</button>
+              <button class="btn-download pdf" onclick="downloadVoterDataPDF()">All Voters PDF</button>
+              <button class="btn-download docx" onclick="downloadVoterDataDOCX()">All Voters DOCX</button>
             </div>
             <div id="registeredVoters" class="table-responsive"></div>
           </div>
@@ -2284,7 +2278,7 @@
   <!-- ========== BOOTSTRAP JS ========== -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 
-  <!-- ========== COMPREHENSIVE JAVASCRIPT (6000+ LINES) ========== -->
+  <!-- ========== COMPREHENSIVE JAVASCRIPT ========== -->
   <script>
     // ========== GLOBAL VARIABLES AND CONSTANTS ==========
     // Version and Application Info
@@ -3839,6 +3833,173 @@
     }
     
     // ========== PDF EXPORT FUNCTIONS ==========
+    function downloadStudentVotersPDF() {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+      
+      doc.setFontSize(24);
+      doc.setTextColor(46, 125, 50);
+      doc.text('Lukenya Voting System', 20, 20);
+      
+      doc.setFontSize(18);
+      doc.text('Student Voters Registry', 20, 30);
+      
+      doc.setFontSize(12);
+      doc.setTextColor(0, 0, 0);
+      doc.text(`Generated: ${moment().format('YYYY-MM-DD HH:mm:ss')}`, 20, 40);
+      doc.text(`Total Students: ${voters.student.length}`, 20, 50);
+      
+      doc.autoTable({
+        head: [['Name', 'Voter Number', 'Class', 'Status']],
+        body: voters.student.map(v => [v.name, v.id, v.class, v.hasVoted ? 'Voted' : 'Not Voted']),
+        startY: 60,
+        theme: 'grid',
+        headStyles: { fillColor: [46, 125, 50] },
+        styles: { fontSize: 10 }
+      });
+      
+      doc.save('student_voters.pdf');
+      showNotification('Student voters PDF downloaded', 'success');
+      logAudit('EXPORT_STUDENT_PDF', 'Student voters PDF downloaded', 'admin');
+    }
+    
+    function downloadStudentVotersDOCX() {
+      let content = `
+        <html>
+        <head>
+          <style>
+            body { font-family: 'Arial', sans-serif; margin: 40px; }
+            h1 { color: #2e7d32; font-size: 28px; }
+            h2 { color: #2e7d32; font-size: 22px; border-bottom: 2px solid #2e7d32; padding-bottom: 10px; }
+            table { border-collapse: collapse; width: 100%; margin: 20px 0; }
+            th { background: #2e7d32; color: white; padding: 12px; text-align: left; }
+            td { border: 1px solid #ddd; padding: 10px; }
+            .header { text-align: center; margin-bottom: 30px; }
+            .summary { background: #f5f5f5; padding: 15px; border-radius: 5px; margin: 20px 0; }
+          </style>
+        </head>
+        <body>
+          <div class="header">
+            <h1>Lukenya Voting System</h1>
+            <h2>Student Voters Registry</h2>
+            <p><strong>Generated:</strong> ${moment().format('YYYY-MM-DD HH:mm:ss')}</p>
+          </div>
+          
+          <div class="summary">
+            <p><strong>Total Student Voters:</strong> ${voters.student.length}</p>
+            <p><strong>Students Who Have Voted:</strong> ${voters.student.filter(v => v.hasVoted).length}</p>
+            <p><strong>Students Who Haven't Voted:</strong> ${voters.student.filter(v => !v.hasVoted).length}</p>
+          </div>
+          
+          <table>
+            <tr>
+              <th>Name</th>
+              <th>Voter Number</th>
+              <th>Class</th>
+              <th>Status</th>
+            </tr>
+      `;
+      
+      voters.student.forEach(v => {
+        content += `<tr><td>${v.name}</td><td>${v.id}</td><td>${v.class}</td><td>${v.hasVoted ? 'Voted' : 'Not Voted'}</td></tr>`;
+      });
+      
+      content += `
+          </table>
+          <p><em>This is an official document of the Lukenya Voting System</em></p>
+        </body>
+        </html>
+      `;
+      
+      const blob = new Blob([content], { type: 'application/msword' });
+      saveAs(blob, 'student_voters.docx');
+      showNotification('Student voters DOCX downloaded', 'success');
+      logAudit('EXPORT_STUDENT_DOCX', 'Student voters DOCX downloaded', 'admin');
+    }
+    
+    function downloadStaffVotersPDF() {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+      
+      doc.setFontSize(24);
+      doc.setTextColor(46, 125, 50);
+      doc.text('Lukenya Voting System', 20, 20);
+      
+      doc.setFontSize(18);
+      doc.text('Staff Voters Registry', 20, 30);
+      
+      doc.setFontSize(12);
+      doc.setTextColor(0, 0, 0);
+      doc.text(`Generated: ${moment().format('YYYY-MM-DD HH:mm:ss')}`, 20, 40);
+      doc.text(`Total Staff: ${voters.staff.length}`, 20, 50);
+      
+      doc.autoTable({
+        head: [['Name', 'Voter Number', 'Status']],
+        body: voters.staff.map(v => [v.name, v.id, v.hasVoted ? 'Voted' : 'Not Voted']),
+        startY: 60,
+        theme: 'grid',
+        headStyles: { fillColor: [46, 125, 50] },
+        styles: { fontSize: 10 }
+      });
+      
+      doc.save('staff_voters.pdf');
+      showNotification('Staff voters PDF downloaded', 'success');
+      logAudit('EXPORT_STAFF_PDF', 'Staff voters PDF downloaded', 'admin');
+    }
+    
+    function downloadStaffVotersDOCX() {
+      let content = `
+        <html>
+        <head>
+          <style>
+            body { font-family: 'Arial', sans-serif; margin: 40px; }
+            h1 { color: #2e7d32; font-size: 28px; }
+            h2 { color: #2e7d32; font-size: 22px; border-bottom: 2px solid #2e7d32; padding-bottom: 10px; }
+            table { border-collapse: collapse; width: 100%; margin: 20px 0; }
+            th { background: #2e7d32; color: white; padding: 12px; text-align: left; }
+            td { border: 1px solid #ddd; padding: 10px; }
+            .header { text-align: center; margin-bottom: 30px; }
+            .summary { background: #f5f5f5; padding: 15px; border-radius: 5px; margin: 20px 0; }
+          </style>
+        </head>
+        <body>
+          <div class="header">
+            <h1>Lukenya Voting System</h1>
+            <h2>Staff Voters Registry</h2>
+            <p><strong>Generated:</strong> ${moment().format('YYYY-MM-DD HH:mm:ss')}</p>
+          </div>
+          
+          <div class="summary">
+            <p><strong>Total Staff Voters:</strong> ${voters.staff.length}</p>
+            <p><strong>Staff Who Have Voted:</strong> ${voters.staff.filter(v => v.hasVoted).length}</p>
+            <p><strong>Staff Who Haven't Voted:</strong> ${voters.staff.filter(v => !v.hasVoted).length}</p>
+          </div>
+          
+          <table>
+            <tr>
+              <th>Name</th>
+              <th>Voter Number</th>
+              <th>Status</th>
+            </tr>
+      `;
+      
+      voters.staff.forEach(v => {
+        content += `<tr><td>${v.name}</td><td>${v.id}</td><td>${v.hasVoted ? 'Voted' : 'Not Voted'}</td></tr>`;
+      });
+      
+      content += `
+          </table>
+          <p><em>This is an official document of the Lukenya Voting System</em></p>
+        </body>
+        </html>
+      `;
+      
+      const blob = new Blob([content], { type: 'application/msword' });
+      saveAs(blob, 'staff_voters.docx');
+      showNotification('Staff voters DOCX downloaded', 'success');
+      logAudit('EXPORT_STAFF_DOCX', 'Staff voters DOCX downloaded', 'admin');
+    }
+    
     function downloadResultsPDF() {
       const { jsPDF } = window.jspdf;
       const doc = new jsPDF();
@@ -3887,165 +4048,12 @@
       logAudit('EXPORT_PDF', 'Results PDF downloaded', 'admin');
     }
     
-    function downloadDetailedPDF() {
-      const { jsPDF } = window.jspdf;
-      const doc = new jsPDF();
-      
-      doc.setFontSize(24);
-      doc.setTextColor(46, 125, 50);
-      doc.text('Lukenya Voting System', 20, 20);
-      
-      doc.setFontSize(18);
-      doc.text('Detailed Election Results', 20, 30);
-      
-      doc.setFontSize(12);
-      doc.setTextColor(0, 0, 0);
-      doc.text(`Report Generated: ${moment().format('YYYY-MM-DD HH:mm:ss')}`, 20, 40);
-      doc.text(`System Version: ${APP_VERSION}`, 20, 45);
-      doc.text(`Theme: ${COLOR_THEMES[systemConfig.theme].name}`, 20, 50);
-      
-      const totalVoters = voters.student.length + voters.staff.length;
-      const totalVotes = voters.student.filter(v => v.hasVoted).length + voters.staff.filter(v => v.hasVoted).length;
-      const turnout = ((totalVotes/totalVoters)*100).toFixed(1);
-      
-      doc.text(`Total Registered Voters: ${totalVoters}`, 20, 60);
-      doc.text(`Total Votes Cast: ${totalVotes}`, 20, 65);
-      doc.text(`Voter Turnout: ${turnout}%`, 20, 70);
-      
-      let y = 80;
-      positions.forEach(pos => {
-        if (candidates[pos] && candidates[pos].length > 0) {
-          doc.setFontSize(14);
-          doc.setTextColor(46, 125, 50);
-          doc.text(pos, 20, y);
-          y += 7;
-          
-          doc.setFontSize(10);
-          doc.setTextColor(0, 0, 0);
-          
-          const sortedCandidates = [...candidates[pos]].sort((a, b) => 
-            (votes[pos][b.name] || 0) - (votes[pos][a.name] || 0)
-          );
-          
-          const totalPosVotes = sortedCandidates.reduce((sum, c) => sum + (votes[pos][c.name] || 0), 0);
-          
-          sortedCandidates.forEach((c, index) => {
-            const voteCount = votes[pos][c.name] || 0;
-            const percentage = totalPosVotes > 0 ? ((voteCount / totalPosVotes) * 100).toFixed(1) : 0;
-            const winner = index === 0 ? ' [WINNER]' : '';
-            doc.text(`  ${index + 1}. ${c.name}: ${voteCount} votes (${percentage}%)${winner}`, 25, y);
-            y += 5;
-          });
-          y += 5;
-        }
-      });
-      
-      doc.save('detailed_election_results.pdf');
-      showNotification('Detailed PDF downloaded', 'success');
-      logAudit('EXPORT_DETAILED_PDF', 'Detailed PDF downloaded', 'admin');
-    }
-    
-    function downloadResultsWithCharts() {
-      const { jsPDF } = window.jspdf;
-      const doc = new jsPDF('landscape');
-      
-      doc.setFontSize(24);
-      doc.setTextColor(46, 125, 50);
-      doc.text('Lukenya Voting System', 20, 20);
-      
-      doc.setFontSize(18);
-      doc.text('Election Results with Charts', 20, 30);
-      
-      doc.setFontSize(12);
-      doc.setTextColor(0, 0, 0);
-      doc.text(`Generated: ${moment().format('YYYY-MM-DD HH:mm:ss')}`, 20, 40);
-      
-      const totalVoters = voters.student.length + voters.staff.length;
-      const totalVotes = voters.student.filter(v => v.hasVoted).length + voters.staff.filter(v => v.hasVoted).length;
-      
-      doc.text(`Total Voters: ${totalVoters} | Votes Cast: ${totalVotes} | Turnout: ${((totalVotes/totalVoters)*100).toFixed(1)}%`, 20, 50);
-      
-      let y = 60;
-      positions.forEach(pos => {
-        if (candidates[pos] && candidates[pos].length > 0) {
-          doc.setFontSize(12);
-          doc.setTextColor(46, 125, 50);
-          doc.text(pos, 20, y);
-          y += 5;
-          
-          doc.setFontSize(8);
-          doc.setTextColor(0, 0, 0);
-          
-          candidates[pos].forEach(c => {
-            const votesCount = votes[pos][c.name] || 0;
-            doc.text(`${c.name}: ${votesCount}`, 25, y);
-            y += 4;
-          });
-          y += 4;
-        }
-      });
-      
-      doc.save('election_results_with_charts.pdf');
-      showNotification('PDF with charts downloaded', 'success');
-    }
-    
-    function downloadExecutiveSummary() {
-      const { jsPDF } = window.jspdf;
-      const doc = new jsPDF();
-      
-      doc.setFontSize(28);
-      doc.setTextColor(46, 125, 50);
-      doc.text('Executive Summary', 20, 20);
-      
-      doc.setFontSize(20);
-      doc.text('Election Results', 20, 30);
-      
-      doc.setFontSize(12);
-      doc.setTextColor(0, 0, 0);
-      doc.text(`Date: ${moment().format('MMMM Do YYYY')}`, 20, 45);
-      
-      const totalVoters = voters.student.length + voters.staff.length;
-      const totalVotes = voters.student.filter(v => v.hasVoted).length + voters.staff.filter(v => v.hasVoted).length;
-      
-      doc.text('Key Statistics:', 20, 60);
-      doc.text(`• Total Registered Voters: ${totalVoters}`, 25, 70);
-      doc.text(`• Total Votes Cast: ${totalVotes}`, 25, 80);
-      doc.text(`• Voter Turnout: ${((totalVotes/totalVoters)*100).toFixed(1)}%`, 25, 90);
-      doc.text(`• Number of Positions: ${positions.length}`, 25, 100);
-      
-      let totalCandidates = 0;
-      positions.forEach(pos => {
-        if (candidates[pos]) totalCandidates += candidates[pos].length;
-      });
-      doc.text(`• Total Candidates: ${totalCandidates}`, 25, 110);
-      
-      doc.text('Winners by Position:', 20, 130);
-      let y = 140;
-      
-      positions.forEach(pos => {
-        if (candidates[pos] && candidates[pos].length > 0) {
-          const sorted = [...candidates[pos]].sort((a, b) => 
-            (votes[pos][b.name] || 0) - (votes[pos][a.name] || 0)
-          );
-          if (sorted.length > 0) {
-            const winner = sorted[0];
-            doc.text(`${pos}: ${winner.name} (${votes[pos][winner.name] || 0} votes)`, 25, y);
-            y += 8;
-          }
-        }
-      });
-      
-      doc.save('executive_summary.pdf');
-      showNotification('Executive Summary downloaded', 'success');
-    }
-    
-    // ========== DOCX EXPORT FUNCTIONS ==========
     function downloadResultsDOCX() {
       let content = `
         <html>
         <head>
           <style>
-            body { font-family: Arial, sans-serif; margin: 40px; }
+            body { font-family: 'Arial', sans-serif; margin: 40px; }
             h1 { color: #2e7d32; font-size: 28px; }
             h2 { color: #2e7d32; font-size: 22px; margin-top: 30px; }
             table { border-collapse: collapse; width: 100%; margin: 20px 0; }
@@ -4128,272 +4136,44 @@
       logAudit('EXPORT_DOCX', 'Results DOCX downloaded', 'admin');
     }
     
-    function downloadFormattedDOCX() {
-      let content = `
-        <html>
-        <head>
-          <style>
-            body { font-family: 'Calibri', sans-serif; margin: 2.5cm; }
-            .title { color: #2e7d32; font-size: 36px; text-align: center; margin-bottom: 10px; }
-            .subtitle { color: #555; font-size: 18px; text-align: center; margin-bottom: 30px; }
-            .section { margin: 25px 0; }
-            .section-title { color: #2e7d32; font-size: 24px; border-bottom: 2px solid #2e7d32; padding-bottom: 5px; }
-            .stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin: 20px 0; }
-            .stat-card { background: #f8f9fa; padding: 15px; border-radius: 8px; border-left: 4px solid #2e7d32; }
-            .stat-label { font-size: 14px; color: #666; }
-            .stat-value { font-size: 28px; font-weight: bold; color: #2e7d32; }
-            table { width: 100%; border-collapse: collapse; margin: 20px 0; }
-            th { background: #2e7d32; color: white; padding: 12px; text-align: left; }
-            td { padding: 10px; border-bottom: 1px solid #ddd; }
-            .winner { background: #e8f5e9; }
-            .footer { margin-top: 50px; text-align: center; color: #999; font-size: 12px; }
-          </style>
-        </head>
-        <body>
-          <div class="title">LUKENYA VOTING SYSTEM</div>
-          <div class="subtitle">Student Council Election Results 2024</div>
-          
-          <div class="section">
-            <div class="section-title">Executive Summary</div>
-      `;
+    function downloadVoterDataPDF() {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
       
-      const totalVoters = voters.student.length + voters.staff.length;
-      const totalVotes = voters.student.filter(v => v.hasVoted).length + voters.staff.filter(v => v.hasVoted).length;
-      const turnout = ((totalVotes/totalVoters)*100).toFixed(1);
+      doc.setFontSize(20);
+      doc.setTextColor(46, 125, 50);
+      doc.text('Lukenya Voting System - Complete Voter Registry', 20, 20);
       
-      content += `
-            <div class="stats-grid">
-              <div class="stat-card">
-                <div class="stat-label">Registered Voters</div>
-                <div class="stat-value">${totalVoters}</div>
-              </div>
-              <div class="stat-card">
-                <div class="stat-label">Votes Cast</div>
-                <div class="stat-value">${totalVotes}</div>
-              </div>
-              <div class="stat-card">
-                <div class="stat-label">Voter Turnout</div>
-                <div class="stat-value">${turnout}%</div>
-              </div>
-              <div class="stat-card">
-                <div class="stat-label">Active Positions</div>
-                <div class="stat-value">${positions.length}</div>
-              </div>
-            </div>
-          </div>
-          
-          <div class="section">
-            <div class="section-title">Detailed Results by Position</div>
-      `;
+      doc.setFontSize(12);
+      doc.setTextColor(0, 0, 0);
+      doc.text(`Generated: ${moment().format('YYYY-MM-DD HH:mm:ss')}`, 20, 30);
       
-      positions.forEach(pos => {
-        if (candidates[pos] && candidates[pos].length > 0) {
-          const sortedCandidates = [...candidates[pos]].sort((a, b) => 
-            (votes[pos][b.name] || 0) - (votes[pos][a.name] || 0)
-          );
-          
-          content += `<h3 style="color: #2e7d32; margin-top: 20px;">${pos}</h3>`;
-          content += `<table><tr><th>Rank</th><th>Candidate</th><th>Votes</th><th>Percentage</th></tr>`;
-          
-          const totalPosVotes = sortedCandidates.reduce((sum, c) => sum + (votes[pos][c.name] || 0), 0);
-          
-          sortedCandidates.forEach((c, index) => {
-            const voteCount = votes[pos][c.name] || 0;
-            const percentage = totalPosVotes > 0 ? ((voteCount / totalPosVotes) * 100).toFixed(1) : 0;
-            const winnerClass = index === 0 ? 'class="winner"' : '';
-            
-            content += `
-              <tr ${winnerClass}>
-                <td>${index + 1}</td>
-                <td><strong>${c.name}</strong> ${index === 0 ? '👑' : ''}</td>
-                <td>${voteCount}</td>
-                <td>${percentage}%</td>
-              </tr>
-            `;
-          });
-          
-          content += `</table>`;
-        }
+      doc.setFontSize(14);
+      doc.text(`Students (${voters.student.length})`, 20, 45);
+      
+      doc.autoTable({
+        head: [['Name', 'ID', 'Class', 'Status']],
+        body: voters.student.map(v => [v.name, v.id, v.class, v.hasVoted ? 'Voted' : 'Not Voted']),
+        startY: 50,
+        theme: 'grid',
+        headStyles: { fillColor: [46, 125, 50] }
       });
       
-      content += `
-          </div>
-          <div class="footer">
-            <p>Generated on ${moment().format('MMMM Do YYYY, h:mm:ss a')}</p>
-            <p>This is an official document of the Lukenya Voting System</p>
-          </div>
-        </body>
-        </html>
-      `;
+      let finalY = doc.lastAutoTable.finalY + 10;
       
-      const blob = new Blob([content], { type: 'application/msword' });
-      saveAs(blob, 'formatted_election_results.docx');
-      showNotification('Formatted DOCX downloaded', 'success');
-    }
-    
-    function downloadComprehensiveDOCX() {
-      let content = `
-        <html>
-        <head>
-          <style>
-            body { font-family: 'Times New Roman', serif; margin: 2cm; }
-            h1 { color: #2e7d32; font-size: 32px; text-align: center; }
-            h2 { color: #2e7d32; font-size: 24px; border-bottom: 1px solid #2e7d32; }
-            h3 { color: #2e7d32; font-size: 18px; }
-            table { width: 100%; border-collapse: collapse; margin: 15px 0; }
-            th { background: #2e7d32; color: white; padding: 8px; }
-            td { border: 1px solid #aaa; padding: 8px; }
-            .voter-table td { background: #f9f9f9; }
-          </style>
-        </head>
-        <body>
-          <h1>LUKENYA VOTING SYSTEM</h1>
-          <h2>Comprehensive Election Report</h2>
-          <p><strong>Generated:</strong> ${moment().format('YYYY-MM-DD HH:mm:ss')}</p>
-          <p><strong>System Version:</strong> ${APP_VERSION}</p>
-          <p><strong>Theme:</strong> ${COLOR_THEMES[systemConfig.theme].name}</p>
-          
-          <h2>1. Election Overview</h2>
-      `;
+      doc.setFontSize(14);
+      doc.text(`Staff (${voters.staff.length})`, 20, finalY);
       
-      const totalVoters = voters.student.length + voters.staff.length;
-      const totalVotes = voters.student.filter(v => v.hasVoted).length + voters.staff.filter(v => v.hasVoted).length;
-      
-      content += `
-          <table>
-            <tr><th>Metric</th><th>Value</th></tr>
-            <tr><td>Election Date</td><td>${systemConfig.electionDate}</td></tr>
-            <tr><td>Voting Start</td><td>${systemConfig.votingStart}</td></tr>
-            <tr><td>Voting Duration</td><td>${systemConfig.votingDuration} hours</td></tr>
-            <tr><td>Total Registered Voters</td><td>${totalVoters}</td></tr>
-            <tr><td>Total Votes Cast</td><td>${totalVotes}</td></tr>
-            <tr><td>Voter Turnout</td><td>${((totalVotes/totalVoters)*100).toFixed(1)}%</td></tr>
-          </table>
-          
-          <h2>2. Voter Demographics</h2>
-          <table>
-            <tr><th>Category</th><th>Registered</th><th>Voted</th><th>Turnout</th></tr>
-            <tr><td>Students</td><td>${voters.student.length}</td><td>${voters.student.filter(v => v.hasVoted).length}</td><td>${voters.student.length > 0 ? ((voters.student.filter(v => v.hasVoted).length / voters.student.length) * 100).toFixed(1) : 0}%</td></tr>
-            <tr><td>Staff</td><td>${voters.staff.length}</td><td>${voters.staff.filter(v => v.hasVoted).length}</td><td>${voters.staff.length > 0 ? ((voters.staff.filter(v => v.hasVoted).length / voters.staff.length) * 100).toFixed(1) : 0}%</td></tr>
-          </table>
-          
-          <h2>3. Detailed Results by Position</h2>
-      `;
-      
-      positions.forEach(pos => {
-        if (candidates[pos] && candidates[pos].length > 0) {
-          content += `<h3>${pos}</h3>`;
-          content += `<table><tr><th>Candidate</th><th>Votes</th><th>Percentage</th></tr>`;
-          
-          const totalPosVotes = candidates[pos].reduce((sum, c) => sum + (votes[pos][c.name] || 0), 0);
-          
-          candidates[pos].forEach(c => {
-            const voteCount = votes[pos][c.name] || 0;
-            const percentage = totalPosVotes > 0 ? ((voteCount / totalPosVotes) * 100).toFixed(1) : 0;
-            content += `<tr><td>${c.name}</td><td>${voteCount}</td><td>${percentage}%</td></tr>`;
-          });
-          
-          content += `</table>`;
-        }
+      doc.autoTable({
+        head: [['Name', 'ID', 'Status']],
+        body: voters.staff.map(v => [v.name, v.id, v.hasVoted ? 'Voted' : 'Not Voted']),
+        startY: finalY + 5,
+        theme: 'grid',
+        headStyles: { fillColor: [46, 125, 50] }
       });
       
-      content += `
-          <h2>4. Registered Voters</h2>
-          <h3>Students</h3>
-          <table class="voter-table">
-            <tr><th>Name</th><th>ID</th><th>Class</th><th>Status</th></tr>
-      `;
-      
-      voters.student.forEach(v => {
-        content += `<tr><td>${v.name}</td><td>${v.id}</td><td>${v.class}</td><td>${v.hasVoted ? 'Voted' : 'Not Voted'}</td></tr>`;
-      });
-      
-      content += `
-          </table>
-          <h3>Staff</h3>
-          <table class="voter-table">
-            <tr><th>Name</th><th>ID</th><th>Status</th></tr>
-      `;
-      
-      voters.staff.forEach(v => {
-        content += `<tr><td>${v.name}</td><td>${v.id}</td><td>${v.hasVoted ? 'Voted' : 'Not Voted'}</td></tr>`;
-      });
-      
-      content += `
-          </table>
-          <p><em>End of Comprehensive Report</em></p>
-        </body>
-        </html>
-      `;
-      
-      const blob = new Blob([content], { type: 'application/msword' });
-      saveAs(blob, 'comprehensive_election_report.docx');
-      showNotification('Comprehensive DOCX downloaded', 'success');
-    }
-    
-    function downloadFullReportDOCX() {
-      let content = `
-        <html>
-        <head>
-          <style>
-            body { font-family: 'Arial', sans-serif; margin: 2cm; }
-            .cover { text-align: center; margin-top: 4cm; }
-            .cover h1 { color: #2e7d32; font-size: 48px; }
-            .cover h2 { color: #555; font-size: 24px; }
-            .toc { margin: 30px 0; }
-            .toc-item { margin: 5px 0; }
-            .page-break { page-break-before: always; }
-          </style>
-        </head>
-        <body>
-          <div class="cover">
-            <h1>LUKENYA VOTING SYSTEM</h1>
-            <h2>Full Election Report</h2>
-            <p style="margin-top: 2cm;">${moment().format('MMMM Do YYYY')}</p>
-            <p>Version ${APP_VERSION}</p>
-          </div>
-          
-          <div class="page-break">
-            <h2>Table of Contents</h2>
-            <div class="toc">
-              <div class="toc-item">1. Executive Summary .................... 2</div>
-              <div class="toc-item">2. Voter Statistics ....................... 3</div>
-              <div class="toc-item">3. Position Results ....................... 4</div>
-              <div class="toc-item">4. Candidate Details ...................... 5</div>
-              <div class="toc-item">5. Voter Registry ......................... 6</div>
-              <div class="toc-item">6. System Information ..................... 7</div>
-            </div>
-          </div>
-      `;
-      
-      const totalVoters = voters.student.length + voters.staff.length;
-      const totalVotes = voters.student.filter(v => v.hasVoted).length + voters.staff.filter(v => v.hasVoted).length;
-      
-      content += `
-          <div class="page-break">
-            <h2>1. Executive Summary</h2>
-            <p>This report contains the complete results of the Lukenya Student Council Election 2024.</p>
-            <table style="width: 50%;">
-              <tr><td>Total Registered Voters</td><td><strong>${totalVoters}</strong></td></tr>
-              <tr><td>Total Votes Cast</td><td><strong>${totalVotes}</strong></td></tr>
-              <tr><td>Voter Turnout</td><td><strong>${((totalVotes/totalVoters)*100).toFixed(1)}%</strong></td></tr>
-              <tr><td>Number of Positions</td><td><strong>${positions.length}</strong></td></tr>
-            </table>
-          </div>
-          
-          <div class="page-break">
-            <h2>2. Voter Statistics</h2>
-            <table>
-              <tr><th>Category</th><th>Total</th><th>Voted</th><th>Percentage</th></tr>
-              <tr><td>Students</td><td>${voters.student.length}</td><td>${voters.student.filter(v => v.hasVoted).length}</td><td>${voters.student.length > 0 ? ((voters.student.filter(v => v.hasVoted).length / voters.student.length) * 100).toFixed(1) : 0}%</td></tr>
-              <tr><td>Staff</td><td>${voters.staff.length}</td><td>${voters.staff.filter(v => v.hasVoted).length}</td><td>${voters.staff.length > 0 ? ((voters.staff.filter(v => v.hasVoted).length / voters.staff.length) * 100).toFixed(1) : 0}%</td></tr>
-            </table>
-          </div>
-      `;
-      
-      const blob = new Blob([content], { type: 'application/msword' });
-      saveAs(blob, 'full_election_report.docx');
-      showNotification('Full report DOCX downloaded', 'success');
+      doc.save('voter_registry.pdf');
+      showNotification('Voter data PDF downloaded', 'success');
     }
     
     function downloadVoterDataDOCX() {
@@ -4401,15 +4181,16 @@
         <html>
         <head>
           <style>
-            body { font-family: 'Arial', sans-serif; }
+            body { font-family: 'Arial', sans-serif; margin: 40px; }
             h1 { color: #2e7d32; }
+            h2 { color: #2e7d32; border-bottom: 2px solid #2e7d32; padding-bottom: 5px; }
             table { border-collapse: collapse; width: 100%; margin: 20px 0; }
             th { background: #2e7d32; color: white; padding: 10px; }
             td { border: 1px solid #ddd; padding: 8px; }
           </style>
         </head>
         <body>
-          <h1>Lukenya Voting System - Voter Registry</h1>
+          <h1>Lukenya Voting System - Complete Voter Registry</h1>
           <p>Generated: ${moment().format('YYYY-MM-DD HH:mm:ss')}</p>
           
           <h2>Students (${voters.student.length})</h2>
@@ -4444,49 +4225,8 @@
       showNotification('Voter data DOCX downloaded', 'success');
     }
     
-    function downloadVoterDataPDF() {
-      const { jsPDF } = window.jspdf;
-      const doc = new jsPDF();
-      
-      doc.setFontSize(20);
-      doc.setTextColor(46, 125, 50);
-      doc.text('Lukenya Voting System - Voter Registry', 20, 20);
-      
-      doc.setFontSize(12);
-      doc.setTextColor(0, 0, 0);
-      doc.text(`Generated: ${moment().format('YYYY-MM-DD HH:mm:ss')}`, 20, 30);
-      
-      doc.setFontSize(14);
-      doc.text(`Students (${voters.student.length})`, 20, 45);
-      
-      let y = 55;
-      voters.student.forEach((v, i) => {
-        doc.setFontSize(10);
-        doc.text(`${i+1}. ${v.name} (${v.id}) - ${v.class} - ${v.hasVoted ? 'Voted' : 'Not Voted'}`, 25, y);
-        y += 5;
-        if (y > 280) {
-          doc.addPage();
-          y = 20;
-        }
-      });
-      
-      y += 10;
-      doc.setFontSize(14);
-      doc.text(`Staff (${voters.staff.length})`, 20, y);
-      y += 10;
-      
-      voters.staff.forEach((v, i) => {
-        doc.setFontSize(10);
-        doc.text(`${i+1}. ${v.name} (${v.id}) - ${v.hasVoted ? 'Voted' : 'Not Voted'}`, 25, y);
-        y += 5;
-        if (y > 280) {
-          doc.addPage();
-          y = 20;
-        }
-      });
-      
-      doc.save('voter_registry.pdf');
-      showNotification('Voter data PDF downloaded', 'success');
+    function downloadDeveloperCV() {
+      showNotification('Developer CV download feature coming soon', 'info');
     }
     
     // ========== LOGO FUNCTIONS ==========
@@ -4651,14 +4391,12 @@
     window.resetToDefaultLogo = resetToDefaultLogo;
     window.performSearch = performSearch;
     window.clearSearch = clearSearch;
+    window.downloadStudentVotersPDF = downloadStudentVotersPDF;
+    window.downloadStudentVotersDOCX = downloadStudentVotersDOCX;
+    window.downloadStaffVotersPDF = downloadStaffVotersPDF;
+    window.downloadStaffVotersDOCX = downloadStaffVotersDOCX;
     window.downloadResultsPDF = downloadResultsPDF;
     window.downloadResultsDOCX = downloadResultsDOCX;
-    window.downloadDetailedPDF = downloadDetailedPDF;
-    window.downloadFormattedDOCX = downloadFormattedDOCX;
-    window.downloadResultsWithCharts = downloadResultsWithCharts;
-    window.downloadComprehensiveDOCX = downloadComprehensiveDOCX;
-    window.downloadExecutiveSummary = downloadExecutiveSummary;
-    window.downloadFullReportDOCX = downloadFullReportDOCX;
     window.downloadVoterDataPDF = downloadVoterDataPDF;
     window.downloadVoterDataDOCX = downloadVoterDataDOCX;
     window.downloadDeveloperCV = downloadDeveloperCV;
