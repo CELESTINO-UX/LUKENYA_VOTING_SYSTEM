@@ -1431,6 +1431,161 @@
       background: #c62828;
       color: white;
     }
+  /* ========== LIVE RESULTS DARK THEME ========== */
+    #electionResults {
+      color: #ffffff;
+    }
+
+    #electionResults .card-modern {
+      background: rgba(20, 20, 20, 0.95);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #ffffff;
+    }
+
+    #electionResults .card-modern::before {
+      background: var(--gradient-primary);
+    }
+
+    #electionResults h2,
+    #electionResults h3,
+    #electionResults h4,
+    #electionResults h5,
+    #electionResults h6,
+    #electionResults p {
+      color: #ffffff;
+    }
+
+    #electionResults .text-muted {
+      color: #b0b0b0 !important;
+    }
+
+    #electionResults .stat-card {
+      background: #1e1e1e;
+      border: 2px solid var(--primary-600);
+      color: #ffffff;
+    }
+
+    #electionResults .stat-card h3,
+    #electionResults .stat-card p {
+      color: #ffffff;
+    }
+
+    #electionResults .stat-icon {
+      background: var(--gradient-primary);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    #electionResults .chart-container {
+      background: #1e1e1e;
+      border: 2px solid var(--primary-600);
+      color: #ffffff;
+    }
+
+    #electionResults .table-modern {
+      background: #1e1e1e;
+      color: #ffffff;
+    }
+
+    #electionResults .table-modern th {
+      background: var(--gradient-primary);
+      color: white;
+    }
+
+    #electionResults .table-modern td {
+      border-bottom: 1px solid #333;
+      color: #ffffff;
+    }
+
+    #electionResults .table-modern tr:hover {
+      background: #2a2a2a;
+    }
+
+    #electionResults .candidate-card {
+      background: #1e1e1e;
+      border: 2px solid var(--primary-600);
+      color: #ffffff;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+    }
+
+    #electionResults .candidate-card:hover {
+      background: #2a2a2a;
+      border-color: var(--primary-400);
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.4);
+    }
+
+    #electionResults .candidate-avatar {
+      background: var(--gradient-primary);
+      color: white;
+      border: 3px solid var(--primary-300);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    #electionResults .progress-modern {
+      background: #2a2a2a;
+    }
+
+    #electionResults .progress-bar-modern {
+      background: var(--gradient-primary);
+    }
+
+    #electionResults .vote-progress {
+      color: #ffffff;
+    }
+
+    #electionResults .vote-percentage {
+      color: var(--primary-300);
+    }
+
+    #electionResults .live-badge {
+      background: #c62828;
+      color: white;
+      box-shadow: 0 0 10px rgba(198, 40, 40, 0.5);
+    }
+
+    #electionResults .winner-badge {
+      background: #ffd700;
+      color: #1e1e1e;
+    }
+
+    #electionResults .unopposed-badge {
+      background: #9c27b0;
+      color: white;
+    }
+
+    #electionResults .btn-download {
+      filter: brightness(0.9);
+      transition: var(--transition-base);
+    }
+
+    #electionResults .btn-download:hover {
+      filter: brightness(1.1);
+      transform: translateY(-2px);
+    }
+
+    #electionResults hr {
+      border-color: #333;
+    }
+
+    #electionResults .badge.bg-primary {
+      background: var(--gradient-primary) !important;
+      color: white;
+    }
+
+    #electionResults .badge.bg-success {
+      background: #2e7d32 !important;
+      color: white;
+    }
+
+    #electionResults .badge.bg-warning {
+      background: #ff8f00 !important;
+      color: white;
+    }
+
+    /* Chart text colors for dark theme */
+    #electionResults canvas {
+      filter: brightness(1.1);
+    }
   </style>
 </head>
 <body data-theme="forest">
