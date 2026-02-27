@@ -4573,6 +4573,22 @@
       console.log('Available color themes:', Object.keys(COLOR_THEMES).length);
     };
     
+    // ========== ELECTION SETTINGS SAVE ==========
+    function saveElectionSettings() {
+      const date = document.getElementById('electionDate').value;
+      const start = document.getElementById('votingStart').value;
+      const duration = parseInt(document.getElementById('votingDuration').value);
+      
+      if (date) systemConfig.electionDate = date;
+      if (start) systemConfig.votingStart = start;
+      if (duration > 0) systemConfig.votingDuration = duration;
+      
+      saveData();
+      initializeElectionTimer();
+      showNotification('Election settings saved. Timer updated.', 'success');
+      logAudit('ELECTION_SETTINGS_UPDATE', 'Election date/time updated', 'admin');
+    }
+
     // ========== EXPOSE GLOBALLY ==========
     window.showSection = showSection;
     window.checkAndShowResults = checkAndShowResults;
@@ -4619,6 +4635,7 @@
     window.downloadDeveloperCV = downloadDeveloperCV;
     window.changeTheme = changeTheme;
     window.saveTheme = saveTheme;
+    window.saveElectionSettings = saveElectionSettings; // <-- ADDED missing function
   </script>
 </body>
 </html>
