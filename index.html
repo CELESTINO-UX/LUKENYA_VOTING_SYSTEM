@@ -1548,7 +1548,7 @@
         <!-- Sync Info -->
         <div class="alert alert-info mb-4">
           <i class="bi bi-cloud-arrow-up-fill me-2"></i>
-          Changes made by admin are visible instantly on all devices connected via GitHub Pages
+          Changes made by admin are visible instantly on all devices via GitHub Pages: <strong>https://celestino-ux.github.io/LUKENYA_VOTING_SYSTEM/</strong>
         </div>
         
         <!-- Results Content - Only Visible to Admin -->
@@ -1735,7 +1735,7 @@
           <!-- Real-Time Sync Info -->
           <div class="alert alert-success mb-4">
             <i class="bi bi-cloud-check-fill me-2"></i>
-            <strong>Real-Time Sync Active:</strong> All changes made here are immediately visible to all users with the GitHub Pages link. Share: <code id="githubLink">https://yourusername.github.io/voting-system</code>
+            <strong>Real-Time Sync Active:</strong> All changes made here are immediately visible to all users with the GitHub Pages link. Share: <code id="githubLink">https://celestino-ux.github.io/LUKENYA_VOTING_SYSTEM/</code>
             <button class="btn btn-sm btn-outline-success ms-3" onclick="copyGithubLink()">
               <i class="bi bi-clipboard"></i> Copy Link
             </button>
@@ -1898,13 +1898,13 @@
           <div class="chart-container mb-4">
             <h4 class="mb-4">GitHub Pages Deployment</h4>
             <div class="alert alert-info">
-              <p><strong>Your system is live at:</strong> <code id="githubLiveLink">https://yourusername.github.io/voting-system</code></p>
+              <p><strong>Your system is live at:</strong> <code id="githubLiveLink">https://celestino-ux.github.io/LUKENYA_VOTING_SYSTEM/</code></p>
               <p><strong>All changes made here are automatically visible to all users with this link.</strong></p>
               <p><strong>To deploy updates:</strong></p>
               <ol>
                 <li>Save this HTML file</li>
                 <li>Push to your GitHub repository</li>
-                <li>Enable GitHub Pages in repository settings</li>
+                <li>Enable GitHub Pages in repository settings (branch: main, folder: /root)</li>
                 <li>Users can access via the link above</li>
               </ol>
               <button class="btn btn-primary" onclick="copyGithubPagesLink()">
@@ -2101,6 +2101,7 @@
           <h2 class="display-5 fw-bold mt-4">CELESTINO ONYANGO OTIENO</h2>
           <p class="fs-4 text-primary">FULL-STACK WEB DEVELOPER</p>
           <p class="lead mb-5">Creating innovative and secure voting solutions for modern educational institutions with real-time sync capabilities</p>
+          <p class="mb-4"><strong>GitHub:</strong> <a href="https://github.com/celestino-ux" target="_blank" class="text-white">celestino-ux</a> | <strong>Live System:</strong> <a href="https://celestino-ux.github.io/LUKENYA_VOTING_SYSTEM/" target="_blank" class="text-white">LUKENYA_VOTING_SYSTEM</a></p>
           
           <div class="d-flex justify-content-center gap-4 flex-wrap">
             <a href="#" class="btn btn-primary" onclick="showSection('home')">
@@ -2117,7 +2118,7 @@
     <!-- ========== FOOTER ========== -->
     <footer class="footer">
       <p class="mb-0">&copy; 2026 Lukenya Voting System. All rights reserved. Developed by Celestino Onyango Otieno.</p>
-      <p class="mb-0 mt-2"><small>Real-Time Sync Enabled | Share via GitHub Pages: <span id="footerGithubLink">https://yourusername.github.io/voting-system</span></small></p>
+      <p class="mb-0 mt-2"><small>Real-Time Sync Enabled | Share via GitHub Pages: <span id="footerGithubLink">https://celestino-ux.github.io/LUKENYA_VOTING_SYSTEM/</span></small></p>
     </footer>
   </div>
 
@@ -2133,7 +2134,7 @@
     const APP_AUTHOR = 'Celestino Onyango Otieno';
     const APP_COMPANY = 'Lukenya Enterprises';
     const BUILD_DATE = '2026-02-28';
-    const GITHUB_PAGES_URL = 'https://yourusername.github.io/voting-system'; // Replace with your actual GitHub Pages URL
+    const GITHUB_PAGES_URL = 'https://celestino-ux.github.io/LUKENYA_VOTING_SYSTEM/'; // Updated to user's exact URL
     
     // Color Themes Configuration - 10 themes
     const COLOR_THEMES = {
@@ -2209,7 +2210,7 @@
       }
     };
     
-    // Firebase Configuration for Real-Time Sync
+    // Firebase Configuration for Real-Time Sync (same as before, replace with your actual config)
     const firebaseConfig = {
       apiKey: "AIzaSyB8xR8X8X8X8X8X8X8X8X8X8X8X8X8X8X8", // Replace with your Firebase config
       authDomain: "lukenya-voting.firebaseapp.com",
@@ -2524,13 +2525,13 @@
     function copyGithubLink() {
       const link = document.getElementById('githubLink').textContent;
       navigator.clipboard.writeText(link).then(() => {
-        showNotification('GitHub Pages link copied to clipboard! Share with users', 'success');
+        showNotification('GitHub Pages link copied to clipboard! Share with users: ' + link, 'success');
       });
     }
     
     function copyGithubPagesLink() {
       navigator.clipboard.writeText(GITHUB_PAGES_URL).then(() => {
-        showNotification('Live link copied! Share with all users', 'success');
+        showNotification('Live link copied! Share with all users: ' + GITHUB_PAGES_URL, 'success');
       });
     }
     
@@ -2583,7 +2584,7 @@
           applyTheme('sunset'); // Default to sunset theme from PDF
         }
         
-        // Update GitHub Pages links
+        // Update GitHub Pages links with the correct URL
         document.querySelectorAll('#githubLink, #githubLiveLink, #footerGithubLink').forEach(el => {
           if (el) el.textContent = GITHUB_PAGES_URL;
         });
