@@ -1198,7 +1198,7 @@
     .pulse { animation: pulse 2s infinite; }
   </style>
 </head>
-<body data-theme="forest">
+<body data-theme="sunset">
   <!-- ========== FLOATING ACTION BUTTON ========== -->
   <button class="fab" data-bs-toggle="modal" data-bs-target="#settingsModal">
     <i class="bi bi-gear-fill fs-4"></i>
@@ -1306,7 +1306,7 @@
     <!-- ========== HEADER SECTION ========== -->
     <header class="text-center mb-5">
       <div class="logo-container">
-        <img id="systemLogo" class="system-logo pulse" src="https://via.placeholder.com/180x180/2e7d32/ffffff?text=LVS" alt="Lukenya Voting System Logo" style="max-width: 160px; border-radius: var(--radius-xl); box-shadow: var(--shadow-xl);">
+        <img id="systemLogo" class="system-logo pulse" src="https://via.placeholder.com/180x180/ef6c00/ffffff?text=LVS" alt="Lukenya Voting System Logo" style="max-width: 160px; border-radius: var(--radius-xl); box-shadow: var(--shadow-xl);">
         <h1 id="systemTitle" class="display-4 fw-bold mt-3 text-gradient">Lukenya Voting System</h1>
         <p id="systemSubtitle" class="lead text-white-75">British Curriculum Student Council Elections 2026 | Real-Time Sync Enabled</p>
       </div>
@@ -1344,27 +1344,14 @@
           </div>
         </div>
 
-        <!-- ========== ACTION BUTTONS ========== -->
-        <div class="d-flex flex-wrap gap-3 justify-content-center mt-4">
-          <button class="btn btn-primary btn-lg" onclick="showVoterChoice()">
-            <i class="bi bi-check-circle me-2"></i>CAST YOUR VOTE
-          </button>
-          <button class="btn btn-success btn-lg" onclick="checkAndShowResults()">
-            <i class="bi bi-bar-chart me-2"></i>LIVE RESULTS
-          </button>
-          <button class="btn btn-warning btn-lg" onclick="showSection('searchSection')">
-            <i class="bi bi-search me-2"></i>SEARCH
-          </button>
-        </div>
-
-        <!-- ========== QUICK STATS ========== -->
-        <div class="stats-grid mt-5">
+        <!-- ========== PUBLIC STATS - HIDDEN (SHOW ASTERISKS) ========== -->
+        <div class="stats-grid mt-5" id="publicStats">
           <div class="stat-card">
             <div class="stat-icon">
               <i class="bi bi-people-fill"></i>
             </div>
             <div class="stat-content">
-              <h3 id="quickTotalVoters">0</h3>
+              <h3>***</h3>
               <p>Registered Voters</p>
             </div>
           </div>
@@ -1373,7 +1360,7 @@
               <i class="bi bi-check-circle-fill"></i>
             </div>
             <div class="stat-content">
-              <h3 id="quickVotesCast">0</h3>
+              <h3>***</h3>
               <p>Votes Cast</p>
             </div>
           </div>
@@ -1382,10 +1369,32 @@
               <i class="bi bi-trophy-fill"></i>
             </div>
             <div class="stat-content">
-              <h3 id="quickCandidates">0</h3>
+              <h3>***</h3>
               <p>Candidates</p>
             </div>
           </div>
+        </div>
+
+        <!-- Admin Login Prompt -->
+        <div class="alert alert-info mt-4">
+          <i class="bi bi-info-circle me-2"></i>
+          Statistics are hidden from public view. <a href="#" onclick="showSection('adminLogin'); return false;" class="text-white fw-bold">Login as Admin</a> to view voter data and results.
+        </div>
+
+        <!-- ========== ACTION BUTTONS ========== -->
+        <div class="d-flex flex-wrap gap-3 justify-content-center mt-4">
+          <button class="btn btn-primary btn-lg" onclick="showVoterChoice()">
+            <i class="bi bi-check-circle me-2"></i>CAST YOUR VOTE
+          </button>
+          <button class="btn btn-success btn-lg" onclick="checkAndShowResults()">
+            <i class="bi bi-bar-chart me-2"></i>LIVE RESULTS
+          </button>
+          <button class="btn btn-warning btn-lg" onclick="showSection('adminLogin')">
+            <i class="bi bi-shield-lock me-2"></i>ADMIN LOGIN
+          </button>
+          <button class="btn btn-info btn-lg" onclick="showSection('searchSection')">
+            <i class="bi bi-search me-2"></i>SEARCH
+          </button>
         </div>
       </div>
     </section>
@@ -1528,7 +1537,7 @@
       <div class="card-modern p-5">
         <!-- Header with Live Badge -->
         <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
-          <h2 class="display-6 fw-bold mb-0 text-white">📊 ELECTION RESULTS 2024</h2>
+          <h2 class="display-6 fw-bold mb-0 text-white">📊 ELECTION RESULTS 2026</h2>
           <span class="live-badge">
             <i class="bi bi-broadcast me-2"></i>LIVE
           </span>
@@ -1542,131 +1551,140 @@
           Changes made by admin are visible instantly on all devices connected via GitHub Pages
         </div>
         
-        <!-- Download Buttons -->
-        <div class="download-buttons">
-          <button class="btn-download pdf" onclick="downloadStudentVotersPDF()">
-            <i class="bi bi-file-pdf"></i> Student Voters PDF
-          </button>
-          <button class="btn-download docx" onclick="downloadStudentVotersDOCX()">
-            <i class="bi-file-word"></i> Student Voters DOCX
-          </button>
-          <button class="btn-download pdf" onclick="downloadStaffVotersPDF()">
-            <i class="bi bi-file-pdf"></i> Staff Voters PDF
-          </button>
-          <button class="btn-download docx" onclick="downloadStaffVotersDOCX()">
-            <i class="bi-file-word"></i> Staff Voters DOCX
-          </button>
-          <button class="btn-download pdf" onclick="downloadResultsPDF()">
-            <i class="bi bi-file-pdf"></i> PDF Report
-          </button>
-          <button class="btn-download docx" onclick="downloadResultsDOCX()">
-            <i class="bi bi-file-word"></i> DOCX Report
-          </button>
-        </div>
+        <!-- Results Content - Only Visible to Admin -->
+        <div id="resultsContent" class="hidden">
+          <!-- Download Buttons -->
+          <div class="download-buttons">
+            <button class="btn-download pdf" onclick="downloadStudentVotersPDF()">
+              <i class="bi bi-file-pdf"></i> Student Voters PDF
+            </button>
+            <button class="btn-download docx" onclick="downloadStudentVotersDOCX()">
+              <i class="bi-file-word"></i> Student Voters DOCX
+            </button>
+            <button class="btn-download pdf" onclick="downloadStaffVotersPDF()">
+              <i class="bi bi-file-pdf"></i> Staff Voters PDF
+            </button>
+            <button class="btn-download docx" onclick="downloadStaffVotersDOCX()">
+              <i class="bi-file-word"></i> Staff Voters DOCX
+            </button>
+            <button class="btn-download pdf" onclick="downloadResultsPDF()">
+              <i class="bi bi-file-pdf"></i> PDF Report
+            </button>
+            <button class="btn-download docx" onclick="downloadResultsDOCX()">
+              <i class="bi bi-file-word"></i> DOCX Report
+            </button>
+          </div>
 
-        <!-- Statistics Dashboard -->
-        <div class="stats-grid">
-          <div class="stat-card">
-            <div class="stat-icon">
-              <i class="bi bi-people-fill"></i>
+          <!-- Statistics Dashboard -->
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-icon">
+                <i class="bi bi-people-fill"></i>
+              </div>
+              <div class="stat-content">
+                <h3 id="resultsTotalVoters">0</h3>
+                <p>Registered Voters</p>
+              </div>
             </div>
-            <div class="stat-content">
-              <h3 id="resultsTotalVoters">0</h3>
-              <p>Registered Voters</p>
+            <div class="stat-card">
+              <div class="stat-icon" style="background: var(--gradient-success);">
+                <i class="bi bi-check-circle-fill"></i>
+              </div>
+              <div class="stat-content">
+                <h3 id="resultsTotalVotes">0</h3>
+                <p>Votes Cast</p>
+              </div>
             </div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-icon" style="background: var(--gradient-success);">
-              <i class="bi bi-check-circle-fill"></i>
-            </div>
-            <div class="stat-content">
-              <h3 id="resultsTotalVotes">0</h3>
-              <p>Votes Cast</p>
-            </div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-icon" style="background: var(--gradient-warning);">
-              <i class="bi bi-percent"></i>
-            </div>
-            <div class="stat-content">
-              <h3 id="resultsTurnout">0%</h3>
-              <p>Voter Turnout</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Turnout Progress -->
-        <div class="mb-5">
-          <div class="d-flex justify-content-between mb-2">
-            <span class="fw-bold text-white">Voter Turnout Progress</span>
-            <span class="badge bg-primary" id="turnoutPercentage">0%</span>
-          </div>
-          <div class="progress-modern">
-            <div class="progress-bar-modern" id="turnoutProgressBar" style="width: 0%"></div>
-          </div>
-        </div>
-
-        <!-- Charts Row -->
-        <div class="row g-4">
-          <div class="col-lg-8">
-            <div class="chart-container">
-              <h4 class="mb-4 text-white">Votes by Position</h4>
-              <div class="chart-wrapper">
-                <canvas id="overallResultsChart"></canvas>
+            <div class="stat-card">
+              <div class="stat-icon" style="background: var(--gradient-warning);">
+                <i class="bi bi-percent"></i>
+              </div>
+              <div class="stat-content">
+                <h3 id="resultsTurnout">0%</h3>
+                <p>Voter Turnout</p>
               </div>
             </div>
           </div>
-          <div class="col-lg-4">
-            <div class="chart-container">
-              <h4 class="mb-4 text-white">Vote Distribution</h4>
-              <div class="chart-wrapper">
-                <canvas id="votesDistributionChart"></canvas>
+
+          <!-- Turnout Progress -->
+          <div class="mb-5">
+            <div class="d-flex justify-content-between mb-2">
+              <span class="fw-bold text-white">Voter Turnout Progress</span>
+              <span class="badge bg-primary" id="turnoutPercentage">0%</span>
+            </div>
+            <div class="progress-modern">
+              <div class="progress-bar-modern" id="turnoutProgressBar" style="width: 0%"></div>
+            </div>
+          </div>
+
+          <!-- Charts Row -->
+          <div class="row g-4">
+            <div class="col-lg-8">
+              <div class="chart-container">
+                <h4 class="mb-4 text-white">Votes by Position</h4>
+                <div class="chart-wrapper">
+                  <canvas id="overallResultsChart"></canvas>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-4">
+              <div class="chart-container">
+                <h4 class="mb-4 text-white">Vote Distribution</h4>
+                <div class="chart-wrapper">
+                  <canvas id="votesDistributionChart"></canvas>
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        <!-- Secondary Charts Row -->
-        <div class="row g-4 mt-2">
-          <div class="col-md-6">
-            <div class="chart-container">
-              <h4 class="mb-4 text-white">Turnout Analysis</h4>
-              <div class="chart-wrapper">
-                <canvas id="turnoutChart"></canvas>
+          <!-- Secondary Charts Row -->
+          <div class="row g-4 mt-2">
+            <div class="col-md-6">
+              <div class="chart-container">
+                <h4 class="mb-4 text-white">Turnout Analysis</h4>
+                <div class="chart-wrapper">
+                  <canvas id="turnoutChart"></canvas>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="chart-container">
+                <h4 class="mb-4 text-white">Voter Categories</h4>
+                <div class="chart-wrapper">
+                  <canvas id="voterCategoryChart"></canvas>
+                </div>
               </div>
             </div>
           </div>
-          <div class="col-md-6">
-            <div class="chart-container">
-              <h4 class="mb-4 text-white">Voter Categories</h4>
-              <div class="chart-wrapper">
-                <canvas id="voterCategoryChart"></canvas>
-              </div>
+
+          <!-- Detailed Results Table -->
+          <div class="chart-container mt-4">
+            <h4 class="mb-4 text-white">Detailed Results by Position</h4>
+            <div class="table-responsive">
+              <table class="table-modern">
+                <thead>
+                  <tr>
+                    <th>Position</th>
+                    <th>Candidate</th>
+                    <th>Votes</th>
+                    <th>Percentage</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="resultsTableBody"></tbody>
+              </table>
             </div>
           </div>
+
+          <!-- Position-wise Results Cards -->
+          <div id="positionResults" class="candidates-grid mt-4"></div>
         </div>
 
-        <!-- Detailed Results Table -->
-        <div class="chart-container mt-4">
-          <h4 class="mb-4 text-white">Detailed Results by Position</h4>
-          <div class="table-responsive">
-            <table class="table-modern">
-              <thead>
-                <tr>
-                  <th>Position</th>
-                  <th>Candidate</th>
-                  <th>Votes</th>
-                  <th>Percentage</th>
-                  <th>Status</th>
-                </tr>
-              </thead>
-              <tbody id="resultsTableBody"></tbody>
-            </table>
-          </div>
+        <!-- Public Message -->
+        <div id="publicResultsMessage" class="alert alert-info text-center">
+          <i class="bi bi-lock-fill me-2"></i>
+          Results are only visible to administrators. <a href="#" onclick="showSection('adminLogin'); return false;" class="fw-bold">Login as Admin</a> to view.
         </div>
-
-        <!-- Position-wise Results Cards -->
-        <div id="positionResults" class="candidates-grid mt-4"></div>
 
         <!-- Back Button -->
         <div class="text-center mt-5">
@@ -1710,7 +1728,7 @@
 
     <!-- ========== ADMIN PANEL SECTION WITH REAL-TIME SYNC ========== -->
     <section id="adminPanel" class="hidden fade-in">
-      <div class="p-5">
+      <div class="card-modern p-5">
         <h2 class="display-6 fw-bold mb-4 text-center" style="color: white; text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">Admin Panel - Real-Time Sync Enabled</h2>
         
         <div id="adminActionsSection" class="card-modern p-5" style="background: rgba(255, 255, 255, 0.98);">
@@ -2098,7 +2116,7 @@
 
     <!-- ========== FOOTER ========== -->
     <footer class="footer">
-      <p class="mb-0">&copy; 2024 Lukenya Voting System. All rights reserved. Developed by Celestino Onyango Otieno.</p>
+      <p class="mb-0">&copy; 2026 Lukenya Voting System. All rights reserved. Developed by Celestino Onyango Otieno.</p>
       <p class="mb-0 mt-2"><small>Real-Time Sync Enabled | Share via GitHub Pages: <span id="footerGithubLink">https://yourusername.github.io/voting-system</span></small></p>
     </footer>
   </div>
@@ -2110,11 +2128,11 @@
   <script>
     // ========== GLOBAL VARIABLES AND CONSTANTS ==========
     // Version and Application Info
-    const APP_VERSION = '5.0.0';
+    const APP_VERSION = '6.0.0';
     const APP_NAME = 'Lukenya Voting System';
     const APP_AUTHOR = 'Celestino Onyango Otieno';
     const APP_COMPANY = 'Lukenya Enterprises';
-    const BUILD_DATE = '2024-11-20';
+    const BUILD_DATE = '2026-02-28';
     const GITHUB_PAGES_URL = 'https://yourusername.github.io/voting-system'; // Replace with your actual GitHub Pages URL
     
     // Color Themes Configuration - 10 themes
@@ -2216,79 +2234,187 @@
       firebaseInitialized = false;
     }
     
-    // Data Structures
-    let positions = [
-      "Head Boy", "Head Girl", "Boys' Dorm Captain", "Girls' Dorm Captain",
-      "Boys' Entertainment Prefect", "Girls' Entertainment Prefect", "Boys' Sports Prefect",
-      "Girls' Sports Prefect", "Boys' Dining Prefect", "Girls' Dining Prefect",
-      "Boys' Chapel Prefect", "Girls' Chapel Prefect", "KS3 Representative",
-      "KS4 Representative", "Academic Prefect", "Library Prefect",
-      "Environmental Prefect", "Health & Sanitation Prefect", "Transport Prefect"
+    // ========== DATA FROM PDF FILES (COMPLETE REGISTRY) ==========
+    const POSITIONS = [
+      "Boys' Sports and Co-curriculum",
+      "Girls' Sports and Co-curriculum",
+      "Boys' Chapel",
+      "Girl Environment",
+      "Boy Environment"
     ];
-    
-    let voters = {
-      student: [],
-      staff: []
-    };
-    
-    let candidates = {};
-    let votes = {};
-    let maxVotes = {};
-    let auditLog = [];
-    let loginAttempts = [];
-    let allCandidateNames = new Set();
-    let systemMetrics = {
-      uptime: 0,
-      totalSessions: 0,
-      peakConcurrent: 0,
-      averageResponseTime: 0,
-      lastBackup: null
-    };
-    
-    // System Configuration
-    let systemConfig = {
-      theme: 'forest',
-      title: 'Lukenya Voting System',
-      subtitle: 'British Curriculum Student Council Elections 2024',
-      welcomeText: 'WELCOME TO LUKENYA',
-      electionTitle: 'STUDENT COUNCIL ELECTION 2024',
-      electionDate: moment().format('YYYY-MM-DD'),
-      votingStart: '08:00',
-      votingDuration: 8,
-      allowVoteChange: false,
-      sessionTimeout: 30,
-      autoLogout: true,
-      enableTimer: true,
-      emailNotifications: true,
-      smsNotifications: false,
-      twoFactorAuth: false,
-      adminEmail: 'admin@lukenya.edu',
-      rules: [
-        'Each voter can only vote once',
-        'Voting is confidential and anonymous',
-        'No campaigning within 50 meters of voting area',
-        'Valid ID required for voting',
-        'Results will be announced after voting closes'
+
+    // Candidates from election_results.pdf
+    const INITIAL_CANDIDATES = {
+      "Boys' Sports and Co-curriculum": [
+        { name: "Edmund Munyoki" },
+        { name: "Trevor Amani" }
       ],
-      backupSchedule: 'daily',
-      retentionPeriod: 365,
-      maxLoginAttempts: 5,
-      requireStrongPasswords: true,
-      enableAuditLog: true,
-      logLevel: 'info'
+      "Girls' Sports and Co-curriculum": [
+        { name: "Gabriella Zahra" },
+        { name: "Aduu Bol" }
+      ],
+      "Boys' Chapel": [
+        { name: "Baraka Owino" },
+        { name: "Tim Mburu" }
+      ],
+      "Girl Environment": [
+        { name: "Zawadi Makamu" },
+        { name: "Zarya" }
+      ],
+      "Boy Environment": [
+        { name: "Chris Linus" },
+        { name: "Zachary Mbithi" }
+      ]
+    };
+
+    // Complete student voters from voter_registry.pdf (92 students)
+    const STUDENT_VOTERS = [
+      { name: "Daniel Ingati", id: "STU007", class: "10B", hasVoted: false },
+      { name: "Griffins Muoki", id: "STU008", class: "10B", hasVoted: false },
+      { name: "Carlsam Suri", id: "STU010", class: "10A", hasVoted: false },
+      { name: "Blessings Natasha", id: "STU011", class: "10A", hasVoted: false },
+      { name: "Paul Charles", id: "STU017", class: "10A", hasVoted: false },
+      { name: "Mariebell G.", id: "STU018", class: "10B", hasVoted: false },
+      { name: "Gabriel Vigne", id: "STU021", class: "9A", hasVoted: false },
+      { name: "Dennis Wisdom", id: "STU022", class: "8", hasVoted: false },
+      { name: "Aloysius Jude", id: "STU024", class: "8", hasVoted: false },
+      { name: "Tim Mburu", id: "STU001", class: "10A", hasVoted: false },
+      { name: "Wesley Agina", id: "STU002", class: "10B", hasVoted: false },
+      { name: "Kennedy Mutitu", id: "STU003", class: "10B", hasVoted: false },
+      { name: "Adrian Francis", id: "STU004", class: "7A", hasVoted: false },
+      { name: "Zackary Mbithi", id: "STU005", class: "7A", hasVoted: false },
+      { name: "Glen Collins", id: "STU006", class: "7A", hasVoted: false },
+      { name: "Alex Garang", id: "STU012", class: "7A", hasVoted: false },
+      { name: "Darren Mitch", id: "STU013", class: "7A", hasVoted: false },
+      { name: "Mwendwa Magutu", id: "STU014", class: "7A", hasVoted: false },
+      { name: "Majak Garang", id: "STU015", class: "7A", hasVoted: false },
+      { name: "Brian Owino", id: "STU023", class: "9A", hasVoted: false },
+      { name: "Edmund Munyoki", id: "STU019", class: "9A", hasVoted: false },
+      { name: "Kelvin Solitei", id: "STU029", class: "9A", hasVoted: false },
+      { name: "Wesly Weke", id: "STU030", class: "9A", hasVoted: false },
+      { name: "Chris Linus", id: "STU031", class: "9A", hasVoted: false },
+      { name: "Ganyang Hoth", id: "STU032", class: "9A", hasVoted: false },
+      { name: "Felix Karia", id: "STU033", class: "10A", hasVoted: false },
+      { name: "Mathew Paita", id: "STU034", class: "10A", hasVoted: false },
+      { name: "Samir Simal", id: "STU035", class: "10B", hasVoted: false },
+      { name: "Trevor Amani", id: "STU037", class: "10B", hasVoted: false },
+      { name: "Kelvin Emilian", id: "STU038", class: "10A", hasVoted: false },
+      { name: "Elvis Henry", id: "STU039", class: "10B", hasVoted: false },
+      { name: "Moses Baraka", id: "STU040", class: "10B", hasVoted: false },
+      { name: "Kennedy Mutitu", id: "STU041", class: "10B", hasVoted: false },
+      { name: "Deng makuie", id: "STU042", class: "10B", hasVoted: false },
+      { name: "Janelle yangi", id: "STU043", class: "10A", hasVoted: false },
+      { name: "Rael Malima", id: "STU044", class: "10A", hasVoted: false },
+      { name: "Gabriella zahra", id: "STU045", class: "9A", hasVoted: false },
+      { name: "Jean Mellan", id: "STU046", class: "9A", hasVoted: false },
+      { name: "Angel Maina", id: "STU047", class: "9A", hasVoted: false },
+      { name: "Rael Manyala", id: "STU048", class: "10A", hasVoted: false },
+      { name: "Blessing", id: "STU049", class: "10A", hasVoted: false },
+      { name: "Zarya", id: "STU050", class: "10B", hasVoted: false },
+      { name: "Alma", id: "STU051", class: "10A", hasVoted: false },
+      { name: "Anai", id: "STU052", class: "10A", hasVoted: false },
+      { name: "Tiffany Moraa", id: "STU053", class: "10A", hasVoted: false },
+      { name: "Sanita", id: "STU088", class: "10A", hasVoted: false },
+      { name: "Tamara Sylvia", id: "STU054", class: "10B", hasVoted: false },
+      { name: "Rutembesa", id: "STU055", class: "10A", hasVoted: false },
+      { name: "Anyieth", id: "STU056", class: "10B", hasVoted: false },
+      { name: "Elyne", id: "STU057", class: "10B", hasVoted: false },
+      { name: "Abby", id: "STU058", class: "10B", hasVoted: false },
+      { name: "Esnas", id: "STU059", class: "10A", hasVoted: false },
+      { name: "Jemimah", id: "STU060", class: "9A", hasVoted: false },
+      { name: "Vivian", id: "STU061", class: "9A", hasVoted: false },
+      { name: "Gloria", id: "STU062", class: "9A", hasVoted: false },
+      { name: "Adua", id: "STU063", class: "9A", hasVoted: false },
+      { name: "Madeline", id: "STU064", class: "7A", hasVoted: false },
+      { name: "Natalie", id: "STU065", class: "9A", hasVoted: false },
+      { name: "Tinashia", id: "STU066", class: "7A", hasVoted: false },
+      { name: "Kiki", id: "STU067", class: "10A", hasVoted: false },
+      { name: "Fortune", id: "STU068", class: "9A", hasVoted: false },
+      { name: "Zawadi", id: "STU069", class: "9A", hasVoted: false },
+      { name: "Ehsani", id: "STU070", class: "10A", hasVoted: false },
+      { name: "Jonathan", id: "STU071", class: "10A", hasVoted: false },
+      { name: "Emmanuel", id: "STU072", class: "10A", hasVoted: false },
+      { name: "Adrian Malala", id: "STU073", class: "10A", hasVoted: false },
+      { name: "Booker", id: "STU074", class: "10A", hasVoted: false },
+      { name: "Shreya", id: "STU075", class: "10B", hasVoted: false },
+      { name: "John", id: "STU076", class: "10B", hasVoted: false },
+      { name: "Taraji", id: "STU077", class: "10B", hasVoted: false },
+      { name: "Makonna", id: "STU078", class: "10B", hasVoted: false },
+      { name: "Hera", id: "STU079", class: "10B", hasVoted: false },
+      { name: "Shazia", id: "STU080", class: "10B", hasVoted: false },
+      { name: "Khusalya", id: "STU081", class: "8A", hasVoted: false },
+      { name: "Abigael Tibo", id: "STU082", class: "8A", hasVoted: false },
+      { name: "Jason", id: "STU083", class: "8A", hasVoted: false },
+      { name: "Nolan", id: "STU084", class: "8A", hasVoted: false },
+      { name: "Liam", id: "STU086", class: "8A", hasVoted: false },
+      { name: "Miles", id: "STU087", class: "8A", hasVoted: false },
+      { name: "Tiffany", id: "STU089", class: "8A", hasVoted: false },
+      { name: "Maya", id: "STU090", class: "8A", hasVoted: false },
+      { name: "Beatrice", id: "STU091", class: "9A", hasVoted: false },
+      { name: "Layla", id: "STU092", class: "9A", hasVoted: false },
+      { name: "Teko", id: "STU093", class: "9A", hasVoted: false },
+      { name: "Akshar", id: "STU094", class: "9A", hasVoted: false },
+      { name: "Fadhili", id: "STU095", class: "9A", hasVoted: false },
+      { name: "Prabath", id: "STU096", class: "9A", hasVoted: false },
+      { name: "Jayden Ngesa", id: "STU097", class: "7A", hasVoted: false },
+      { name: "Hadassa", id: "STU099", class: "7A", hasVoted: false },
+      { name: "Tukuza", id: "STU100", class: "7A", hasVoted: false },
+      { name: "Joshua", id: "STU101", class: "7A", hasVoted: false },
+      { name: "Pima", id: "STU102", class: "9A", hasVoted: false }
+    ];
+
+    // Staff voters from voter_registry.pdf (24 staff members)
+    const STAFF_VOTERS = [
+      { name: "Christine", id: "STA002", hasVoted: false },
+      { name: "Wanyonyi", id: "STA003", hasVoted: false },
+      { name: "Irene", id: "STA005", hasVoted: false },
+      { name: "Dee", id: "STA007", hasVoted: false },
+      { name: "Mutune", id: "STA023", hasVoted: false },
+      { name: "Celestino", id: "STA024", hasVoted: true },
+      { name: "Steve", id: "STA001", hasVoted: false },
+      { name: "Collins", id: "STA004", hasVoted: false },
+      { name: "Mutisya", id: "STA006", hasVoted: false },
+      { name: "Moraa", id: "STA008", hasVoted: false },
+      { name: "Sylvia", id: "STA009", hasVoted: false },
+      { name: "Ivy", id: "STA010", hasVoted: false },
+      { name: "Japheth", id: "STA011", hasVoted: false },
+      { name: "Florence", id: "STA012", hasVoted: false },
+      { name: "Rabin", id: "STA013", hasVoted: false },
+      { name: "Nikita", id: "STA014", hasVoted: false },
+      { name: "Jacques", id: "STA015", hasVoted: false },
+      { name: "Eunice", id: "STA016", hasVoted: false },
+      { name: "Kinyanjiu", id: "STA017", hasVoted: false },
+      { name: "Otieno", id: "STA018", hasVoted: false },
+      { name: "Gichuru", id: "STA019", hasVoted: false },
+      { name: "Dennis", id: "STA020", hasVoted: false },
+      { name: "Virginia", id: "STA021", hasVoted: false },
+      { name: "Kasanga", id: "STA022", hasVoted: false }
+    ];
+
+    // Initial votes from election_results.pdf
+    const INITIAL_VOTES = {
+      "Boys' Sports and Co-curriculum": { "Edmund Munyoki": 0, "Trevor Amani": 1 },
+      "Girls' Sports and Co-curriculum": { "Gabriella Zahra": 1, "Aduu Bol": 0 },
+      "Boys' Chapel": { "Baraka Owino": 1, "Tim Mburu": 0 },
+      "Girl Environment": { "Zawadi Makamu": 1, "Zarya": 0 },
+      "Boy Environment": { "Chris Linus": 1, "Zachary Mbithi": 0 }
     };
     
-    // State Variables
+    // Data Structures
+    let positions = [...POSITIONS];
+    let candidates = JSON.parse(JSON.stringify(INITIAL_CANDIDATES));
+    let votes = JSON.parse(JSON.stringify(INITIAL_VOTES));
+    let voters = {
+      student: JSON.parse(JSON.stringify(STUDENT_VOTERS)),
+      staff: JSON.parse(JSON.stringify(STAFF_VOTERS))
+    };
+    
     let currentVoter = null;
     let isAdminLoggedIn = false;
     let votingStartTime = null;
     let votingEndTime = null;
     let votingTimer = null;
     let resultsUpdateInterval = null;
-    let adminSessionTimer = null;
-    let backupTimer = null;
-    let metricsTimer = null;
-    let syncTimer = null;
     
     // Chart Instances
     let charts = {
@@ -2297,10 +2423,6 @@
       turnout: null,
       category: null
     };
-    
-    // Session Management
-    let activeSessions = [];
-    let sessionCounter = 0;
     
     // ========== REAL-TIME SYNC FUNCTIONS ==========
     function initializeRealTimeSync() {
@@ -2312,7 +2434,10 @@
         const data = snapshot.val();
         if (data) {
           voters = data;
-          updateQuickStats();
+          if (isAdminLoggedIn) {
+            updateAdminStats();
+            showRegistered('all');
+          }
           updateSyncStatus('connected');
           console.log('Voters synced from Firebase');
         }
@@ -2327,7 +2452,9 @@
         const data = snapshot.val();
         if (data) {
           candidates = data;
-          updateCandidateSet();
+          if (isAdminLoggedIn) {
+            showCandidates();
+          }
           console.log('Candidates synced from Firebase');
         }
       });
@@ -2338,20 +2465,10 @@
         const data = snapshot.val();
         if (data) {
           votes = data;
-          if (document.getElementById('electionResults').classList.contains('hidden') === false) {
+          if (document.getElementById('electionResults').classList.contains('hidden') === false && isAdminLoggedIn) {
             updateResults();
           }
           console.log('Votes synced from Firebase');
-        }
-      });
-      
-      // Listen for changes in positions
-      const positionsRef = database.ref('positions');
-      positionsRef.on('value', (snapshot) => {
-        const data = snapshot.val();
-        if (data) {
-          positions = data;
-          console.log('Positions synced from Firebase');
         }
       });
       
@@ -2359,20 +2476,9 @@
       const themeRef = database.ref('theme');
       themeRef.on('value', (snapshot) => {
         const data = snapshot.val();
-        if (data && data !== systemConfig.theme) {
-          systemConfig.theme = data;
+        if (data) {
           applyTheme(data);
           updateSyncStatus('connected');
-        }
-      });
-      
-      // Listen for system config changes
-      const configRef = database.ref('systemConfig');
-      configRef.on('value', (snapshot) => {
-        const data = snapshot.val();
-        if (data) {
-          systemConfig = { ...systemConfig, ...data };
-          initializeElectionTimer();
         }
       });
     }
@@ -2381,13 +2487,11 @@
       if (!firebaseInitialized || !isAdminLoggedIn) return;
       
       try {
-        // Sync all data to Firebase
         database.ref('voters').set(voters);
         database.ref('candidates').set(candidates);
         database.ref('votes').set(votes);
         database.ref('positions').set(positions);
-        database.ref('systemConfig').set(systemConfig);
-        database.ref('theme').set(systemConfig.theme);
+        database.ref('theme').set(document.body.getAttribute('data-theme') || 'sunset');
         database.ref('lastUpdated').set(moment().toISOString());
         
         updateSyncStatus('connected');
@@ -2408,12 +2512,12 @@
         syncDiv.className = 'sync-status connected';
         dot.className = 'sync-dot';
         span.textContent = 'Live Sync Active';
-        icon.className = 'bi bi-cloud-check-fill text-success ms-2';
+        if (icon) icon.className = 'bi bi-cloud-check-fill text-success ms-2';
       } else {
         syncDiv.className = 'sync-status disconnected';
         dot.className = 'sync-dot disconnected';
         span.textContent = 'Sync Disconnected';
-        icon.className = 'bi bi-cloud-slash-fill text-danger ms-2';
+        if (icon) icon.className = 'bi bi-cloud-slash-fill text-danger ms-2';
       }
     }
     
@@ -2435,9 +2539,9 @@
       positions.forEach(pos => {
         if (!candidates[pos]) candidates[pos] = [];
         if (!votes[pos]) votes[pos] = {};
-        if (!maxVotes[pos]) maxVotes[pos] = 0;
       });
       console.log('Data structures initialized with', positions.length, 'positions');
+      console.log('Total voters loaded:', voters.student.length + voters.staff.length);
     }
     
     function loadData() {
@@ -2445,69 +2549,17 @@
         // First try to load from Firebase if available
         if (firebaseInitialized) {
           initializeRealTimeSync();
-          
-          // Also load from localStorage as backup
-          const savedVoters = localStorage.getItem('lukenyaVoters');
-          const savedCandidates = localStorage.getItem('lukenyaCandidates');
-          const savedVotes = localStorage.getItem('lukenyaVotes');
-          const savedMaxVotes = localStorage.getItem('lukenyaMaxVotes');
-          const savedConfig = localStorage.getItem('lukenyaConfig');
-          const savedPositions = localStorage.getItem('lukenyaPositions');
-          const savedAuditLog = localStorage.getItem('lukenyaAuditLog');
-          const savedMetrics = localStorage.getItem('lukenyaMetrics');
-          const savedTheme = localStorage.getItem('lukenyaTheme');
-          const savedLogo = localStorage.getItem('lukenyaLogo');
-          
-          if (savedVoters) voters = JSON.parse(savedVoters);
-          if (savedCandidates) {
-            candidates = JSON.parse(savedCandidates);
-            updateCandidateSet();
-          }
-          if (savedVotes) votes = JSON.parse(savedVotes);
-          if (savedMaxVotes) maxVotes = JSON.parse(savedMaxVotes);
-          if (savedConfig) systemConfig = JSON.parse(savedConfig);
-          if (savedPositions) positions = JSON.parse(savedPositions);
-          if (savedAuditLog) auditLog = JSON.parse(savedAuditLog);
-          if (savedMetrics) systemMetrics = JSON.parse(savedMetrics);
-          if (savedTheme) {
-            document.body.setAttribute('data-theme', savedTheme);
-            systemConfig.theme = savedTheme;
-          }
-          if (savedLogo) {
-            document.getElementById('systemLogo').src = savedLogo;
-          }
-        } else {
-          // Load only from localStorage
-          const savedVoters = localStorage.getItem('lukenyaVoters');
-          const savedCandidates = localStorage.getItem('lukenyaCandidates');
-          const savedVotes = localStorage.getItem('lukenyaVotes');
-          const savedMaxVotes = localStorage.getItem('lukenyaMaxVotes');
-          const savedConfig = localStorage.getItem('lukenyaConfig');
-          const savedPositions = localStorage.getItem('lukenyaPositions');
-          const savedAuditLog = localStorage.getItem('lukenyaAuditLog');
-          const savedMetrics = localStorage.getItem('lukenyaMetrics');
-          const savedTheme = localStorage.getItem('lukenyaTheme');
-          const savedLogo = localStorage.getItem('lukenyaLogo');
-          
-          if (savedVoters) voters = JSON.parse(savedVoters);
-          if (savedCandidates) {
-            candidates = JSON.parse(savedCandidates);
-            updateCandidateSet();
-          }
-          if (savedVotes) votes = JSON.parse(savedVotes);
-          if (savedMaxVotes) maxVotes = JSON.parse(savedMaxVotes);
-          if (savedConfig) systemConfig = JSON.parse(savedConfig);
-          if (savedPositions) positions = JSON.parse(savedPositions);
-          if (savedAuditLog) auditLog = JSON.parse(savedAuditLog);
-          if (savedMetrics) systemMetrics = JSON.parse(savedMetrics);
-          if (savedTheme) {
-            document.body.setAttribute('data-theme', savedTheme);
-            systemConfig.theme = savedTheme;
-          }
-          if (savedLogo) {
-            document.getElementById('systemLogo').src = savedLogo;
-          }
         }
+        
+        // Always load from localStorage as backup/initial
+        const savedVoters = localStorage.getItem('lukenyaVoters');
+        const savedCandidates = localStorage.getItem('lukenyaCandidates');
+        const savedVotes = localStorage.getItem('lukenyaVotes');
+        const savedTheme = localStorage.getItem('lukenyaTheme');
+        
+        if (savedVoters) voters = JSON.parse(savedVoters);
+        if (savedCandidates) candidates = JSON.parse(savedCandidates);
+        if (savedVotes) votes = JSON.parse(savedVotes);
         
         // Check admin session
         const adminSession = localStorage.getItem('lukenyaAdminSession');
@@ -2515,7 +2567,7 @@
           const session = JSON.parse(adminSession);
           if (session.expires > Date.now()) {
             isAdminLoggedIn = true;
-            startAdminSessionTimer();
+            document.getElementById('adminBadge').classList.remove('hidden');
           } else {
             localStorage.removeItem('lukenyaAdminSession');
           }
@@ -2523,21 +2575,18 @@
         
         initializeDataStructures();
         initializeElectionTimer();
-        updateQuickStats();
-        applyTheme(systemConfig.theme);
-        startMetricsCollection();
-        startBackupTimer();
+        
+        // Apply saved theme
+        if (savedTheme) {
+          applyTheme(savedTheme);
+        } else {
+          applyTheme('sunset'); // Default to sunset theme from PDF
+        }
         
         // Update GitHub Pages links
-        document.querySelectorAll('.github-link, #githubLink, #githubLiveLink, #footerGithubLink').forEach(el => {
+        document.querySelectorAll('#githubLink, #githubLiveLink, #footerGithubLink').forEach(el => {
           if (el) el.textContent = GITHUB_PAGES_URL;
         });
-        
-        // Log system start
-        logAudit('SYSTEM_START', 'System initialized successfully');
-        
-        // Start periodic sync check
-        startSyncTimer();
         
       } catch (error) {
         console.error('Error loading data:', error);
@@ -2546,114 +2595,32 @@
       }
     }
     
-    function startSyncTimer() {
-      if (syncTimer) clearInterval(syncTimer);
-      syncTimer = setInterval(() => {
-        if (firebaseInitialized && navigator.onLine) {
-          updateSyncStatus('connected');
-        } else {
-          updateSyncStatus('disconnected');
-        }
-      }, 5000);
-    }
-    
     function saveData() {
       try {
         localStorage.setItem('lukenyaVoters', JSON.stringify(voters));
         localStorage.setItem('lukenyaCandidates', JSON.stringify(candidates));
         localStorage.setItem('lukenyaVotes', JSON.stringify(votes));
-        localStorage.setItem('lukenyaMaxVotes', JSON.stringify(maxVotes));
-        localStorage.setItem('lukenyaConfig', JSON.stringify(systemConfig));
         localStorage.setItem('lukenyaPositions', JSON.stringify(positions));
-        localStorage.setItem('lukenyaAuditLog', JSON.stringify(auditLog.slice(-1000))); // Keep last 1000 entries
-        localStorage.setItem('lukenyaMetrics', JSON.stringify(systemMetrics));
-        localStorage.setItem('lukenyaTheme', systemConfig.theme);
+        localStorage.setItem('lukenyaTheme', document.body.getAttribute('data-theme'));
         
         // Sync to Firebase if admin is logged in
         syncToFirebase();
         
-        logAudit('DATA_SAVE', 'System data saved successfully');
       } catch (error) {
         console.error('Error saving data:', error);
         showNotification('Error saving data', 'error');
       }
     }
     
-    function logAudit(action, details, user = 'system') {
-      if (!systemConfig.enableAuditLog) return;
-      
-      auditLog.push({
-        timestamp: new Date().toISOString(),
-        action: action,
-        details: details,
-        user: user,
-        sessionId: sessionCounter
-      });
-      
-      // Trim log if too large
-      if (auditLog.length > 1000) {
-        auditLog = auditLog.slice(-1000);
-      }
-    }
-    
-    function updateCandidateSet() {
-      allCandidateNames.clear();
-      positions.forEach(pos => {
-        if (candidates[pos]) {
-          candidates[pos].forEach(c => allCandidateNames.add(c.name.toLowerCase()));
-        }
-      });
-    }
-    
-    function startMetricsCollection() {
-      if (metricsTimer) clearInterval(metricsTimer);
-      metricsTimer = setInterval(updateSystemMetrics, 60000); // Update every minute
-    }
-    
-    function updateSystemMetrics() {
-      systemMetrics.uptime += 1;
-      systemMetrics.totalSessions = activeSessions.length;
-      systemMetrics.peakConcurrent = Math.max(systemMetrics.peakConcurrent, activeSessions.length);
-      systemMetrics.lastBackup = localStorage.getItem('lukenyaLastBackup') || null;
-      saveData();
-    }
-    
-    function startBackupTimer() {
-      if (backupTimer) clearInterval(backupTimer);
-      backupTimer = setInterval(performAutoBackup, 3600000); // Hourly backup
-    }
-    
-    function performAutoBackup() {
-      const backup = {
-        timestamp: new Date().toISOString(),
-        voters: voters,
-        candidates: candidates,
-        votes: votes,
-        config: systemConfig,
-        positions: positions
-      };
-      
-      localStorage.setItem('lukenyaBackup', JSON.stringify(backup));
-      localStorage.setItem('lukenyaLastBackup', new Date().toISOString());
-      systemMetrics.lastBackup = new Date().toISOString();
-      
-      logAudit('AUTO_BACKUP', 'Automatic backup performed');
-    }
-    
     // ========== TIMER FUNCTIONS ==========
     function initializeElectionTimer() {
-      if (!systemConfig.enableTimer) {
-        document.querySelector('.timer-wrapper').innerHTML = '<h3>Timer Disabled</h3>';
-        return;
-      }
-      
       if (votingTimer) clearInterval(votingTimer);
       
-      const electionDate = moment(systemConfig.electionDate);
-      const [hours, minutes] = systemConfig.votingStart.split(':').map(Number);
+      const electionDate = moment().format('YYYY-MM-DD');
+      const votingStart = '08:00';
       
-      votingStartTime = moment(electionDate).set({ hour: hours, minute: minutes, second: 0 });
-      votingEndTime = moment(votingStartTime).add(systemConfig.votingDuration, 'hours');
+      votingStartTime = moment(electionDate + ' ' + votingStart);
+      votingEndTime = moment(votingStartTime).add(8, 'hours');
       
       updateTimerDisplay();
       votingTimer = setInterval(updateTimerDisplay, 1000);
@@ -2692,8 +2659,7 @@
         return;
       }
       
-      document.body.setAttribute('data-theme', themeId);
-      systemConfig.theme = themeId;
+      applyTheme(themeId);
       
       // Update display
       document.getElementById('currentThemeDisplay').textContent = COLOR_THEMES[themeId].name;
@@ -2702,38 +2668,18 @@
       document.querySelectorAll('.color-option').forEach(opt => opt.classList.remove('selected'));
       if (event) event.target.classList.add('selected');
       
-      // Apply theme changes to dynamic elements
-      applyThemeColors(themeId);
-      
       // Save and sync
       saveData();
       
-      logAudit('THEME_CHANGE', `Theme changed to ${COLOR_THEMES[themeId].name}`, 'admin');
       showNotification(`Theme changed to ${COLOR_THEMES[themeId].name} and synced to all users`, 'success');
     }
     
-    function applyThemeColors(themeId) {
-      const theme = COLOR_THEMES[themeId];
-      const root = document.documentElement;
-      
-      // Update CSS variables
-      root.style.setProperty('--primary-700', theme.primary);
-      root.style.setProperty('--primary-600', theme.secondary);
-      root.style.setProperty('--gradient-primary', theme.gradient);
-      
-      // Update all gradient elements
-      document.querySelectorAll('.gradient-bg').forEach(el => {
-        el.style.background = theme.gradient;
-      });
-    }
-    
-    function applyTheme(theme) {
-      document.body.setAttribute('data-theme', theme);
-      systemConfig.theme = theme;
+    function applyTheme(themeId) {
+      document.body.setAttribute('data-theme', themeId);
+      localStorage.setItem('lukenyaTheme', themeId);
     }
     
     function saveTheme() {
-      localStorage.setItem('lukenyaTheme', systemConfig.theme);
       saveData();
       showNotification('Theme preference saved and synced', 'success');
     }
@@ -2742,8 +2688,6 @@
       const savedTheme = localStorage.getItem('lukenyaTheme');
       if (savedTheme && COLOR_THEMES[savedTheme]) {
         document.body.setAttribute('data-theme', savedTheme);
-        systemConfig.theme = savedTheme;
-        applyThemeColors(savedTheme);
         document.getElementById('currentThemeDisplay').textContent = COLOR_THEMES[savedTheme].name;
       }
     }
@@ -2780,50 +2724,17 @@
       }
       
       // Special handling for results page
-      if (sectionId === 'electionResults' && isAdminLoggedIn) {
-        updateResults();
-        startResultsStreaming();
+      if (sectionId === 'electionResults') {
+        if (isAdminLoggedIn) {
+          document.getElementById('resultsContent').classList.remove('hidden');
+          document.getElementById('publicResultsMessage').classList.add('hidden');
+          updateResults();
+          startResultsStreaming();
+        } else {
+          document.getElementById('resultsContent').classList.add('hidden');
+          document.getElementById('publicResultsMessage').classList.remove('hidden');
+        }
       }
-      
-      // Update page title
-      updatePageTitle(sectionId);
-      
-      logAudit('NAVIGATION', `Navigated to ${sectionId}`, currentVoter?.id || 'guest');
-    }
-    
-    function updatePageTitle(sectionId) {
-      const titles = {
-        home: 'Home | Lukenya Voting',
-        voterChoice: 'Select Role | Lukenya Voting',
-        studentLogin: 'Student Login | Lukenya Voting',
-        staffLogin: 'Staff Login | Lukenya Voting',
-        voteSection: 'Cast Vote | Lukenya Voting',
-        electionResults: 'Live Results | Lukenya Voting',
-        adminLogin: 'Admin Login | Lukenya Voting',
-        adminPanel: 'Admin Panel | Lukenya Voting',
-        systemSettings: 'Settings | Lukenya Voting',
-        searchSection: 'Search | Lukenya Voting',
-        developerInfo: 'Developer | Lukenya Voting'
-      };
-      
-      document.title = titles[sectionId] || 'Lukenya Voting System';
-    }
-    
-    // ========== QUICK STATS ==========
-    function updateQuickStats() {
-      const totalVoters = voters.student.length + voters.staff.length;
-      const votedStudents = voters.student.filter(v => v.hasVoted).length;
-      const votedStaff = voters.staff.filter(v => v.hasVoted).length;
-      const totalVotes = votedStudents + votedStaff;
-      
-      let totalCandidates = 0;
-      positions.forEach(pos => {
-        if (candidates[pos]) totalCandidates += candidates[pos].length;
-      });
-      
-      document.getElementById('quickTotalVoters').textContent = totalVoters;
-      document.getElementById('quickVotesCast').textContent = totalVotes;
-      document.getElementById('quickCandidates').textContent = totalCandidates;
     }
     
     // ========== ADMIN FUNCTIONS ==========
@@ -2832,22 +2743,17 @@
       
       if (password === "Luk123enya") {
         isAdminLoggedIn = true;
-        sessionCounter++;
         
         // Set session
         const session = {
-          id: sessionCounter,
           loggedIn: true,
-          expires: Date.now() + (systemConfig.sessionTimeout * 60 * 1000),
-          startTime: new Date().toISOString()
+          expires: Date.now() + (30 * 60 * 1000) // 30 minutes
         };
         localStorage.setItem('lukenyaAdminSession', JSON.stringify(session));
-        activeSessions.push(session);
         
-        // Log access
-        logAudit('ADMIN_LOGIN', 'Admin logged in successfully', 'admin');
+        // Show admin badge
+        document.getElementById('adminBadge').classList.remove('hidden');
         
-        updateAdminUI();
         showNotification('Admin access granted - Real-time sync enabled', 'success');
         
         // Sync all data immediately
@@ -2861,52 +2767,15 @@
         }, 500);
       } else {
         showNotification('Invalid password', 'error');
-        
-        // Log failed attempt
-        loginAttempts.push({
-          timestamp: new Date().toISOString(),
-          ip: 'client',
-          password: password
-        });
-        
-        logAudit('ADMIN_LOGIN_FAILED', 'Failed login attempt', 'unknown');
       }
     }
     
     function adminLogout() {
-      // Remove session
-      activeSessions = activeSessions.filter(s => s.id !== sessionCounter);
       isAdminLoggedIn = false;
       localStorage.removeItem('lukenyaAdminSession');
-      
-      // Log logout
-      logAudit('ADMIN_LOGOUT', 'Admin logged out', 'admin');
-      
-      updateAdminUI();
+      document.getElementById('adminBadge').classList.add('hidden');
       showNotification('Logged out successfully', 'success');
       showSection('home');
-      
-      if (adminSessionTimer) clearTimeout(adminSessionTimer);
-    }
-    
-    function updateAdminUI() {
-      const adminBadge = document.getElementById('adminBadge');
-      if (isAdminLoggedIn) {
-        adminBadge.classList.remove('hidden');
-      } else {
-        adminBadge.classList.add('hidden');
-      }
-    }
-    
-    function startAdminSessionTimer() {
-      if (adminSessionTimer) clearTimeout(adminSessionTimer);
-      
-      adminSessionTimer = setTimeout(() => {
-        if (isAdminLoggedIn) {
-          adminLogout();
-          showNotification('Admin session expired due to inactivity', 'warning');
-        }
-      }, systemConfig.sessionTimeout * 60 * 1000);
     }
     
     function updateAdminStats() {
@@ -2925,6 +2794,13 @@
       document.getElementById('adminVotesCast').textContent = totalVotes;
     }
     
+    function populateAdminDropdowns() {
+      const select = document.getElementById('positionSelect');
+      if (select) {
+        select.innerHTML = positions.map(p => `<option value="${p}">${p}</option>`).join('');
+      }
+    }
+    
     // ========== VOTER VERIFICATION ==========
     function verifyStudent() {
       const now = moment();
@@ -2937,7 +2813,7 @@
       }
       
       const name = document.getElementById('sName').value.trim();
-      const adm = document.getElementById('sAdm').value.trim();
+      const adm = document.getElementById('sAdm').value.trim().toUpperCase();
       const cls = document.getElementById('sClass').value.trim();
       
       if (!name || !adm || !cls) {
@@ -2945,14 +2821,14 @@
         return;
       }
       
-      if (!adm.toUpperCase().startsWith('STU')) {
+      if (!adm.startsWith('STU')) {
         showNotification('Invalid student ID format. Must start with STU', 'error');
         return;
       }
       
       const student = voters.student.find(v => 
         v.name.toLowerCase() === name.toLowerCase() && 
-        v.id.toUpperCase() === adm.toUpperCase() && 
+        v.id === adm && 
         v.class.toLowerCase() === cls.toLowerCase()
       );
       
@@ -2963,16 +2839,10 @@
         }
         
         currentVoter = { type: 'student', id: adm, data: student };
-        sessionCounter++;
-        
-        // Log login
-        logAudit('STUDENT_LOGIN', `${name} (${adm}) logged in`, adm);
-        
         showNotification('Login successful', 'success');
         setTimeout(() => startVoting(), 500);
       } else {
         showNotification('Student not found in registration list', 'error');
-        logAudit('STUDENT_LOGIN_FAILED', `Failed login attempt for ${name} (${adm})`, 'unknown');
       }
     }
     
@@ -2987,21 +2857,21 @@
       }
       
       const name = document.getElementById('tName').value.trim();
-      const id = document.getElementById('tID').value.trim();
+      const id = document.getElementById('tID').value.trim().toUpperCase();
       
       if (!name || !id) {
         showNotification('Please fill all fields', 'error');
         return;
       }
       
-      if (!id.toUpperCase().startsWith('STA')) {
+      if (!id.startsWith('STA')) {
         showNotification('Invalid staff ID format. Must start with STA', 'error');
         return;
       }
       
       const staff = voters.staff.find(v => 
         v.name.toLowerCase() === name.toLowerCase() && 
-        v.id.toUpperCase() === id.toUpperCase()
+        v.id === id
       );
       
       if (staff) {
@@ -3011,16 +2881,10 @@
         }
         
         currentVoter = { type: 'staff', id: id, data: staff };
-        sessionCounter++;
-        
-        // Log login
-        logAudit('STAFF_LOGIN', `${name} (${id}) logged in`, id);
-        
         showNotification('Login successful', 'success');
         setTimeout(() => startVoting(), 500);
       } else {
         showNotification('Staff not found in registration list', 'error');
-        logAudit('STAFF_LOGIN_FAILED', `Failed login attempt for ${name} (${id})`, 'unknown');
       }
     }
     
@@ -3097,7 +2961,6 @@
       }
       
       let votesCast = 0;
-      const voteRecord = {};
       
       positions.forEach(position => {
         const selected = document.querySelector(`input[name="${position}"]:checked`);
@@ -3105,7 +2968,6 @@
           const candidateName = selected.value;
           votes[position][candidateName] = (votes[position][candidateName] || 0) + 1;
           votesCast++;
-          voteRecord[position] = candidateName;
         }
       });
       
@@ -3123,11 +2985,7 @@
         if (staff) staff.hasVoted = true;
       }
       
-      // Log vote
-      logAudit('VOTE_CAST', `Vote cast by ${currentVoter.id} for ${votesCast} positions`, currentVoter.id);
-      
       saveData();
-      updateQuickStats();
       
       showNotification('Your vote has been recorded! Thank you for participating.', 'success');
       
@@ -3140,11 +2998,6 @@
     
     // ========== RESULTS FUNCTIONS ==========
     function checkAndShowResults() {
-      if (!isAdminLoggedIn) {
-        showNotification('Please login as admin to view results', 'warning');
-        showSection('adminLogin');
-        return;
-      }
       showSection('electionResults');
     }
     
@@ -3158,7 +3011,7 @@
     }
     
     function updateResults() {
-      loadData(); // Refresh data
+      if (!isAdminLoggedIn) return;
       
       const totalVoters = voters.student.length + voters.staff.length;
       const votedStudents = voters.student.filter(v => v.hasVoted).length;
@@ -3228,6 +3081,8 @@
     }
     
     function updateResultsCharts() {
+      if (!isAdminLoggedIn) return;
+      
       const labels = [];
       const data = [];
       
@@ -3241,90 +3096,104 @@
       
       // Overall Results Chart
       if (charts.overall) charts.overall.destroy();
-      charts.overall = new Chart(document.getElementById('overallResultsChart'), {
-        type: 'bar',
-        data: {
-          labels: labels,
-          datasets: [{
-            label: 'Total Votes',
-            data: data,
-            backgroundColor: 'rgba(46, 125, 50, 0.7)',
-            borderColor: '#2e7d32',
-            borderWidth: 2
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            legend: { display: false }
+      const ctx1 = document.getElementById('overallResultsChart');
+      if (ctx1) {
+        charts.overall = new Chart(ctx1, {
+          type: 'bar',
+          data: {
+            labels: labels,
+            datasets: [{
+              label: 'Total Votes',
+              data: data,
+              backgroundColor: 'rgba(46, 125, 50, 0.7)',
+              borderColor: '#2e7d32',
+              borderWidth: 2
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { display: false }
+            }
           }
-        }
-      });
+        });
+      }
       
       // Distribution Chart
       if (charts.distribution) charts.distribution.destroy();
-      charts.distribution = new Chart(document.getElementById('votesDistributionChart'), {
-        type: 'doughnut',
-        data: {
-          labels: labels,
-          datasets: [{
-            data: data,
-            backgroundColor: [
-              '#2e7d32', '#388e3c', '#43a047', '#4caf50', '#66bb6a',
-              '#81c784', '#a5d6a7', '#c8e6c9', '#1b5e20', '#004d40'
-            ]
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false
-        }
-      });
+      const ctx2 = document.getElementById('votesDistributionChart');
+      if (ctx2) {
+        charts.distribution = new Chart(ctx2, {
+          type: 'doughnut',
+          data: {
+            labels: labels,
+            datasets: [{
+              data: data,
+              backgroundColor: [
+                '#2e7d32', '#388e3c', '#43a047', '#4caf50', '#66bb6a',
+                '#81c784', '#a5d6a7', '#c8e6c9', '#1b5e20', '#004d40'
+              ]
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false
+          }
+        });
+      }
       
       // Turnout Chart
       const totalVoters = voters.student.length + voters.staff.length;
       const totalVotes = voters.student.filter(v => v.hasVoted).length + voters.staff.filter(v => v.hasVoted).length;
       
       if (charts.turnout) charts.turnout.destroy();
-      charts.turnout = new Chart(document.getElementById('turnoutChart'), {
-        type: 'pie',
-        data: {
-          labels: ['Voted', 'Not Voted'],
-          datasets: [{
-            data: [totalVotes, totalVoters - totalVotes],
-            backgroundColor: ['#2e7d32', '#c62828']
-          }]
-        }
-      });
+      const ctx3 = document.getElementById('turnoutChart');
+      if (ctx3) {
+        charts.turnout = new Chart(ctx3, {
+          type: 'pie',
+          data: {
+            labels: ['Voted', 'Not Voted'],
+            datasets: [{
+              data: [totalVotes, totalVoters - totalVotes],
+              backgroundColor: ['#2e7d32', '#c62828']
+            }]
+          }
+        });
+      }
       
       // Category Chart
       const studentVoted = voters.student.filter(v => v.hasVoted).length;
       const staffVoted = voters.staff.filter(v => v.hasVoted).length;
       
       if (charts.category) charts.category.destroy();
-      charts.category = new Chart(document.getElementById('voterCategoryChart'), {
-        type: 'bar',
-        data: {
-          labels: ['Students', 'Staff'],
-          datasets: [
-            {
-              label: 'Total',
-              data: [voters.student.length, voters.staff.length],
-              backgroundColor: '#2e7d32'
-            },
-            {
-              label: 'Voted',
-              data: [studentVoted, staffVoted],
-              backgroundColor: '#81c784'
-            }
-          ]
-        }
-      });
+      const ctx4 = document.getElementById('voterCategoryChart');
+      if (ctx4) {
+        charts.category = new Chart(ctx4, {
+          type: 'bar',
+          data: {
+            labels: ['Students', 'Staff'],
+            datasets: [
+              {
+                label: 'Total',
+                data: [voters.student.length, voters.staff.length],
+                backgroundColor: '#2e7d32'
+              },
+              {
+                label: 'Voted',
+                data: [studentVoted, staffVoted],
+                backgroundColor: '#81c784'
+              }
+            ]
+          }
+        });
+      }
     }
     
     function updatePositionCards() {
       const container = document.getElementById('positionResults');
+      if (!container) return;
+      
       container.innerHTML = '';
       
       positions.forEach(position => {
@@ -3372,7 +3241,7 @@
     function registerVoter() {
       const type = document.getElementById('voterType').value;
       const name = document.getElementById('voterName').value.trim();
-      const id = document.getElementById('voterID').value.trim();
+      const id = document.getElementById('voterID').value.trim().toUpperCase();
       const voterClass = document.getElementById('voterClass').value.trim();
       
       if (!name || !id) {
@@ -3380,12 +3249,12 @@
         return;
       }
       
-      if (type === 'student' && !id.toUpperCase().startsWith('STU')) {
+      if (type === 'student' && !id.startsWith('STU')) {
         showNotification('Student ID must start with STU', 'error');
         return;
       }
       
-      if (type === 'staff' && !id.toUpperCase().startsWith('STA')) {
+      if (type === 'staff' && !id.startsWith('STA')) {
         showNotification('Staff ID must start with STA', 'error');
         return;
       }
@@ -3404,8 +3273,7 @@
       const voter = {
         name: name,
         id: id,
-        hasVoted: false,
-        registrationDate: new Date().toISOString()
+        hasVoted: false
       };
       
       if (type === 'student') {
@@ -3413,9 +3281,6 @@
       }
       
       voters[type].push(voter);
-      
-      // Log action
-      logAudit('REGISTER_VOTER', `${type.toUpperCase()}: ${name} (${id})`, 'admin');
       
       saveData();
       updateAdminStats();
@@ -3443,20 +3308,9 @@
         return;
       }
       
-      if (allCandidateNames.has(name.toLowerCase())) {
-        showNotification('Candidate name already used in another position', 'error');
-        return;
-      }
-      
-      candidates[position].push({ 
-        name: name,
-        addedDate: new Date().toISOString()
-      });
+      candidates[position].push({ name: name });
+      if (!votes[position]) votes[position] = {};
       votes[position][name] = 0;
-      allCandidateNames.add(name.toLowerCase());
-      
-      // Log action
-      logAudit('ADD_CANDIDATE', `${name} added to ${position}`, 'admin');
       
       saveData();
       updateAdminStats();
@@ -3468,10 +3322,10 @@
     
     function showRegistered(type) {
       const container = document.getElementById('registeredVoters');
-      let html = '<table class="table-modern"><tr><th>Name</th><th>ID</th><th>Type</th><th>Class</th><th>Status</th><th>Actions</th></tr>';
+      let html = '<table class="table-modern"><tr><th>Name</th><th>ID</th><th>Type</th><th>Class</th><th>Status</th></tr>';
       
       if (type === 'all' || type === 'student') {
-        voters.student.forEach((v, index) => {
+        voters.student.forEach(v => {
           html += `
             <tr>
               <td>${v.name}</td>
@@ -3479,17 +3333,13 @@
               <td>Student</td>
               <td>${v.class || '-'}</td>
               <td>${v.hasVoted ? '<span class="badge bg-success">Voted</span>' : '<span class="badge bg-warning">Not Voted</span>'}</td>
-              <td>
-                <button class="btn btn-sm btn-warning" onclick="editVoter('student', ${index})"><i class="bi bi-pencil"></i></button>
-                <button class="btn btn-sm btn-danger" onclick="deleteVoter('student', ${index})"><i class="bi bi-trash"></i></button>
-              </td>
             </tr>
           `;
         });
       }
       
       if (type === 'all' || type === 'staff') {
-        voters.staff.forEach((v, index) => {
+        voters.staff.forEach(v => {
           html += `
             <tr>
               <td>${v.name}</td>
@@ -3497,10 +3347,6 @@
               <td>Staff</td>
               <td>-</td>
               <td>${v.hasVoted ? '<span class="badge bg-success">Voted</span>' : '<span class="badge bg-warning">Not Voted</span>'}</td>
-              <td>
-                <button class="btn btn-sm btn-warning" onclick="editVoter('staff', ${index})"><i class="bi bi-pencil"></i></button>
-                <button class="btn btn-sm btn-danger" onclick="deleteVoter('staff', ${index})"><i class="bi bi-trash"></i></button>
-              </td>
             </tr>
           `;
         });
@@ -3510,66 +3356,18 @@
       container.innerHTML = html || '<p class="text-muted">No voters found</p>';
     }
     
-    function editVoter(type, index) {
-      const voter = voters[type][index];
-      const newName = prompt('Enter new name:', voter.name);
-      if (!newName) return;
-      
-      const newId = prompt('Enter new ID:', voter.id);
-      if (!newId) return;
-      
-      // Check for duplicate ID
-      if (voters[type].some((v, i) => v.id === newId && i !== index)) {
-        showNotification('ID already exists', 'error');
-        return;
-      }
-      
-      const oldName = voter.name;
-      voter.name = newName;
-      voter.id = newId;
-      
-      if (type === 'student') {
-        const newClass = prompt('Enter new class:', voter.class);
-        if (newClass) voter.class = newClass;
-      }
-      
-      logAudit('EDIT_VOTER', `${type}: ${oldName} updated to ${newName}`, 'admin');
-      saveData();
-      showRegistered('all');
-      showNotification('Voter updated successfully and synced', 'success');
-    }
-    
-    function deleteVoter(type, index) {
-      if (confirm('Are you sure you want to delete this voter? This will sync to all devices.')) {
-        const voter = voters[type][index];
-        
-        // Log action
-        logAudit('DELETE_VOTER', `${type}: ${voter.name} (${voter.id})`, 'admin');
-        
-        voters[type].splice(index, 1);
-        saveData();
-        updateAdminStats();
-        showRegistered('all');
-        showNotification('Voter deleted and synced', 'success');
-      }
-    }
-    
     function showCandidates() {
       const container = document.getElementById('candidateManagement');
-      let html = '<table class="table-modern"><tr><th>Position</th><th>Candidate</th><th>Votes</th><th>Actions</th></tr>';
+      let html = '<table class="table-modern"><tr><th>Position</th><th>Candidate</th><th>Votes</th></tr>';
       
       positions.forEach(position => {
         if (candidates[position] && candidates[position].length > 0) {
-          candidates[position].forEach((candidate, index) => {
+          candidates[position].forEach(candidate => {
             html += `
               <tr>
                 <td>${position}</td>
                 <td>${candidate.name}</td>
                 <td>${votes[position][candidate.name] || 0}</td>
-                <td>
-                  <button class="btn btn-sm btn-warning" onclick="editCandidate('${position}', ${index})"><i class="bi bi-pencil"></i></button>
-                  <button class="btn btn-sm btn-danger" onclick="deleteCandidate('${position}', ${index})"><i class="bi bi-trash"></i></button>
-                </td>
               </tr>
             `;
           });
@@ -3580,121 +3378,17 @@
       container.innerHTML = html || '<p class="text-muted">No candidates found</p>';
     }
     
-    function editCandidate(position, index) {
-      const candidate = candidates[position][index];
-      const newName = prompt('Enter new name:', candidate.name);
-      if (!newName || newName === candidate.name) return;
-      
-      // Check for duplicates
-      if (candidates[position].some((c, i) => c.name.toLowerCase() === newName.toLowerCase() && i !== index)) {
-        showNotification('Name already exists in this position', 'error');
-        return;
-      }
-      
-      // Update candidate set
-      allCandidateNames.delete(candidate.name.toLowerCase());
-      allCandidateNames.add(newName.toLowerCase());
-      
-      // Transfer votes
-      const oldVotes = votes[position][candidate.name] || 0;
-      delete votes[position][candidate.name];
-      votes[position][newName] = oldVotes;
-      
-      const oldName = candidate.name;
-      candidate.name = newName;
-      
-      logAudit('EDIT_CANDIDATE', `${oldName} in ${position} renamed to ${newName}`, 'admin');
-      saveData();
-      showCandidates();
-      showNotification('Candidate updated and synced', 'success');
-    }
-    
-    function deleteCandidate(position, index) {
-      if (confirm('Delete this candidate? This will sync to all devices.')) {
-        const candidate = candidates[position][index];
-        
-        allCandidateNames.delete(candidate.name.toLowerCase());
-        delete votes[position][candidate.name];
-        candidates[position].splice(index, 1);
-        
-        logAudit('DELETE_CANDIDATE', `${candidate.name} removed from ${position}`, 'admin');
-        saveData();
-        showCandidates();
-        updateAdminStats();
-        showNotification('Candidate deleted and synced', 'success');
-      }
-    }
-    
     function showPositions() {
       const container = document.getElementById('positionManagement');
-      let html = '<table class="table-modern"><tr><th>Position</th><th>Candidates</th><th>Actions</th></tr>';
+      let html = '<table class="table-modern"><tr><th>Position</th><th>Candidates</th></tr>';
       
-      positions.forEach((position, index) => {
+      positions.forEach(position => {
         const candidateCount = candidates[position] ? candidates[position].length : 0;
-        html += `
-          <tr>
-            <td>${position}</td>
-            <td>${candidateCount}</td>
-            <td>
-              <button class="btn btn-sm btn-warning" onclick="editPosition(${index})"><i class="bi bi-pencil"></i></button>
-              <button class="btn btn-sm btn-danger" onclick="deletePosition(${index})"><i class="bi bi-trash"></i></button>
-            </td>
-          </tr>
-        `;
+        html += `<tr><td>${position}</td><td>${candidateCount}</td></tr>`;
       });
       
       html += '</table>';
-      container.innerHTML = html;
-    }
-    
-    function editPosition(index) {
-      const newName = prompt('Edit position name:', positions[index]);
-      if (!newName || newName === positions[index]) return;
-      
-      if (positions.some((p, i) => p.toLowerCase() === newName.toLowerCase() && i !== index)) {
-        showNotification('Position already exists', 'error');
-        return;
-      }
-      
-      const oldName = positions[index];
-      positions[index] = newName;
-      
-      // Update related data structures
-      candidates[newName] = candidates[oldName] || [];
-      votes[newName] = votes[oldName] || {};
-      maxVotes[newName] = maxVotes[oldName] || 0;
-      
-      delete candidates[oldName];
-      delete votes[oldName];
-      delete maxVotes[oldName];
-      
-      logAudit('EDIT_POSITION', `${oldName} renamed to ${newName}`, 'admin');
-      saveData();
-      showPositions();
-      populateAdminDropdowns();
-      showNotification('Position updated and synced', 'success');
-    }
-    
-    function deletePosition(index) {
-      const position = positions[index];
-      
-      if (candidates[position] && candidates[position].length > 0) {
-        if (!confirm(`Delete position "${position}" and all its candidates? This will sync to all devices.`)) return;
-        
-        // Remove candidates from set
-        candidates[position].forEach(c => allCandidateNames.delete(c.name.toLowerCase()));
-      }
-      
-      positions.splice(index, 1);
-      delete candidates[position];
-      delete votes[position];
-      delete maxVotes[position];
-      
-      logAudit('DELETE_POSITION', `Deleted position: ${position}`, 'admin');
-      saveData();
-      showPositions();
-      populateAdminDropdowns();
-      showNotification('Position deleted and synced', 'success');
+      if (container) container.innerHTML = html;
     }
     
     function addNewPosition() {
@@ -3713,9 +3407,7 @@
       positions.push(newPosition);
       candidates[newPosition] = [];
       votes[newPosition] = {};
-      maxVotes[newPosition] = 0;
       
-      logAudit('ADD_POSITION', `Added new position: ${newPosition}`, 'admin');
       saveData();
       showPositions();
       populateAdminDropdowns();
@@ -3723,141 +3415,38 @@
       showNotification('Position added and synced', 'success');
     }
     
-    function populateAdminDropdowns() {
-      const select = document.getElementById('positionSelect');
-      select.innerHTML = positions.map(p => `<option value="${p}">${p}</option>`).join('');
+    function saveElectionSettings() {
+      const date = document.getElementById('electionDate').value;
+      const start = document.getElementById('votingStart').value;
+      const duration = parseInt(document.getElementById('votingDuration').value);
+      
+      if (date && start) {
+        votingStartTime = moment(date + ' ' + start);
+        votingEndTime = moment(votingStartTime).add(duration, 'hours');
+        showNotification('Election settings saved and synced', 'success');
+      }
     }
     
     // ========== SYSTEM SETTINGS FUNCTIONS ==========
     function showSettingsTab(tab) {
-      // Hide all tabs
       document.querySelectorAll('.settings-tab').forEach(t => t.classList.add('hidden'));
       document.querySelectorAll('.list-group-item').forEach(i => i.classList.remove('active'));
       
-      // Show selected tab
       document.getElementById(tab + 'Tab').classList.remove('hidden');
       if (event) event.target.classList.add('active');
-      
-      // Load tab data
-      if (tab === 'appearance') loadAppearanceSettings();
-      if (tab === 'election') loadElectionSettings();
-      if (tab === 'rules') loadRules();
-    }
-    
-    function loadAppearanceSettings() {
-      document.getElementById('systemTitleInput').value = systemConfig.title;
-      document.getElementById('systemSubtitleInput').value = systemConfig.subtitle;
-      document.getElementById('themeSelect').value = systemConfig.theme;
-    }
-    
-    function loadElectionSettings() {
-      document.getElementById('electionName').value = systemConfig.electionTitle;
-      document.getElementById('votingStartDateTime').value = `${systemConfig.electionDate}T${systemConfig.votingStart}`;
-      
-      const endTime = moment(systemConfig.electionDate + ' ' + systemConfig.votingStart).add(systemConfig.votingDuration, 'hours');
-      document.getElementById('votingEndDateTime').value = endTime.format('YYYY-MM-DDTHH:mm');
-      
-      document.getElementById('allowVoteChange').checked = systemConfig.allowVoteChange;
-    }
-    
-    function loadRules() {
-      const rulesList = document.getElementById('rulesList');
-      rulesList.innerHTML = '';
-      
-      systemConfig.rules.forEach((rule, index) => {
-        const div = document.createElement('div');
-        div.className = 'alert alert-info d-flex justify-content-between align-items-center';
-        div.innerHTML = `
-          <span>${rule}</span>
-          <button class="btn btn-sm btn-danger" onclick="deleteRule(${index})">
-            <i class="bi bi-trash"></i>
-          </button>
-        `;
-        rulesList.appendChild(div);
-      });
-    }
-    
-    function addRule() {
-      const newRule = document.getElementById('newRule').value.trim();
-      if (!newRule) return;
-      
-      systemConfig.rules.push(newRule);
-      saveData();
-      loadRules();
-      document.getElementById('newRule').value = '';
-      showNotification('Rule added and synced', 'success');
-    }
-    
-    function deleteRule(index) {
-      systemConfig.rules.splice(index, 1);
-      saveData();
-      loadRules();
-      showNotification('Rule deleted and synced', 'success');
     }
     
     function saveAppearanceSettings() {
-      systemConfig.title = document.getElementById('systemTitleInput').value;
-      systemConfig.subtitle = document.getElementById('systemSubtitleInput').value;
-      systemConfig.theme = document.getElementById('themeSelect').value;
+      const title = document.getElementById('systemTitleInput').value;
+      const subtitle = document.getElementById('systemSubtitleInput').value;
+      const theme = document.getElementById('themeSelect').value;
       
-      applyTheme(systemConfig.theme);
+      if (title) document.getElementById('systemTitle').textContent = title;
+      if (subtitle) document.getElementById('systemSubtitle').textContent = subtitle;
+      applyTheme(theme);
+      
       saveData();
       showNotification('Appearance settings saved and synced', 'success');
-    }
-    
-    function saveElectionSettingsFull() {
-      systemConfig.electionTitle = document.getElementById('electionName').value;
-      
-      const startDateTime = document.getElementById('votingStartDateTime').value;
-      const endDateTime = document.getElementById('votingEndDateTime').value;
-      
-      if (startDateTime && endDateTime) {
-        const start = moment(startDateTime);
-        const end = moment(endDateTime);
-        
-        systemConfig.electionDate = start.format('YYYY-MM-DD');
-        systemConfig.votingStart = start.format('HH:mm');
-        systemConfig.votingDuration = end.diff(start, 'hours');
-      }
-      
-      systemConfig.allowVoteChange = document.getElementById('allowVoteChange').checked;
-      
-      saveData();
-      initializeElectionTimer();
-      showNotification('Election settings saved and synced', 'success');
-    }
-    
-    function saveElectionSettings() {
-      systemConfig.electionDate = document.getElementById('electionDate').value;
-      systemConfig.votingStart = document.getElementById('votingStart').value;
-      systemConfig.votingDuration = parseInt(document.getElementById('votingDuration').value);
-      
-      saveData();
-      initializeElectionTimer();
-      showNotification('Election settings saved and synced', 'success');
-    }
-    
-    function saveNotificationSettings() {
-      systemConfig.emailNotifications = document.getElementById('emailNotifications').checked;
-      systemConfig.smsNotifications = document.getElementById('smsNotifications').checked;
-      systemConfig.adminEmail = document.getElementById('adminEmail').value;
-      
-      saveData();
-      showNotification('Notification settings saved and synced', 'success');
-    }
-    
-    function saveSecuritySettings() {
-      systemConfig.sessionTimeout = parseInt(document.getElementById('sessionTimeout').value);
-      systemConfig.twoFactorAuth = document.getElementById('twoFactorAuth').checked;
-      
-      const newPassword = document.getElementById('adminPassword').value;
-      if (newPassword) {
-        // In a real system, this would be hashed
-        localStorage.setItem('adminPasswordHash', btoa(newPassword));
-      }
-      
-      saveData();
-      showNotification('Security settings saved and synced', 'success');
     }
     
     // ========== SEARCH FUNCTIONS ==========
@@ -3899,7 +3488,6 @@
       });
       
       searchResults += '</table></div>';
-      
       results.innerHTML = searchResults;
     }
     
@@ -3910,6 +3498,11 @@
     
     // ========== PDF EXPORT FUNCTIONS ==========
     function downloadStudentVotersPDF() {
+      if (!isAdminLoggedIn) {
+        showNotification('Admin access required', 'error');
+        return;
+      }
+      
       const { jsPDF } = window.jspdf;
       const doc = new jsPDF();
       
@@ -3936,10 +3529,14 @@
       
       doc.save('student_voters.pdf');
       showNotification('Student voters PDF downloaded', 'success');
-      logAudit('EXPORT_STUDENT_PDF', 'Student voters PDF downloaded', 'admin');
     }
     
     function downloadStudentVotersDOCX() {
+      if (!isAdminLoggedIn) {
+        showNotification('Admin access required', 'error');
+        return;
+      }
+      
       let content = `
         <html>
         <head>
@@ -3990,10 +3587,14 @@
       const blob = new Blob([content], { type: 'application/msword' });
       saveAs(blob, 'student_voters.docx');
       showNotification('Student voters DOCX downloaded', 'success');
-      logAudit('EXPORT_STUDENT_DOCX', 'Student voters DOCX downloaded', 'admin');
     }
     
     function downloadStaffVotersPDF() {
+      if (!isAdminLoggedIn) {
+        showNotification('Admin access required', 'error');
+        return;
+      }
+      
       const { jsPDF } = window.jspdf;
       const doc = new jsPDF();
       
@@ -4020,10 +3621,14 @@
       
       doc.save('staff_voters.pdf');
       showNotification('Staff voters PDF downloaded', 'success');
-      logAudit('EXPORT_STAFF_PDF', 'Staff voters PDF downloaded', 'admin');
     }
     
     function downloadStaffVotersDOCX() {
+      if (!isAdminLoggedIn) {
+        showNotification('Admin access required', 'error');
+        return;
+      }
+      
       let content = `
         <html>
         <head>
@@ -4073,10 +3678,14 @@
       const blob = new Blob([content], { type: 'application/msword' });
       saveAs(blob, 'staff_voters.docx');
       showNotification('Staff voters DOCX downloaded', 'success');
-      logAudit('EXPORT_STAFF_DOCX', 'Staff voters DOCX downloaded', 'admin');
     }
     
     function downloadResultsPDF() {
+      if (!isAdminLoggedIn) {
+        showNotification('Admin access required', 'error');
+        return;
+      }
+      
       const { jsPDF } = window.jspdf;
       const doc = new jsPDF();
       
@@ -4090,7 +3699,6 @@
       doc.setFontSize(12);
       doc.setTextColor(0, 0, 0);
       doc.text(`Generated: ${moment().format('YYYY-MM-DD HH:mm:ss')}`, 20, 40);
-      doc.text(`Theme: ${COLOR_THEMES[systemConfig.theme].name}`, 20, 45);
       
       const totalVoters = voters.student.length + voters.staff.length;
       const totalVotes = voters.student.filter(v => v.hasVoted).length + voters.staff.filter(v => v.hasVoted).length;
@@ -4121,10 +3729,14 @@
       
       doc.save('election_results.pdf');
       showNotification('PDF downloaded successfully', 'success');
-      logAudit('EXPORT_PDF', 'Results PDF downloaded', 'admin');
     }
     
     function downloadResultsDOCX() {
+      if (!isAdminLoggedIn) {
+        showNotification('Admin access required', 'error');
+        return;
+      }
+      
       let content = `
         <html>
         <head>
@@ -4147,7 +3759,6 @@
             <p style="font-size: 18px;">Election Results Report</p>
           </div>
           <p><strong>Generated:</strong> ${moment().format('YYYY-MM-DD HH:mm:ss')}</p>
-          <p><strong>Theme:</strong> ${COLOR_THEMES[systemConfig.theme].name}</p>
       `;
       
       const totalVoters = voters.student.length + voters.staff.length;
@@ -4186,21 +3797,18 @@
           sortedCandidates.forEach((c, index) => {
             const voteCount = votes[pos][c.name] || 0;
             const percentage = totalPosVotes > 0 ? ((voteCount / totalPosVotes) * 100).toFixed(1) : 0;
-            let winnerClass = '';
             let statusText = 'Candidate';
             
             if (isUnopposed) {
-              winnerClass = 'class="winner"';
               statusText = 'Unopposed Winner 🏆';
             } else if (index === 0) {
-              winnerClass = 'class="winner"';
               statusText = 'Winner 🏆';
             }
             
             content += `
               <tr>
                 <td><strong>${pos}</strong></td>
-                <td ${winnerClass}>${c.name} ${isUnopposed ? '(Unopposed)' : ''}</td>
+                <td>${c.name} ${isUnopposed ? '(Unopposed)' : ''}</td>
                 <td>${voteCount}</td>
                 <td>${percentage}%</td>
                 <td>${statusText}</td>
@@ -4212,7 +3820,7 @@
       
       content += `
         </table>
-        <p style="margin-top: 30px;"><em>This report was generated automatically by the Lukenya Voting System. For questions, please contact the administrator.</em></p>
+        <p style="margin-top: 30px;"><em>This report was generated automatically by the Lukenya Voting System.</em></p>
         </body>
         </html>
       `;
@@ -4220,10 +3828,14 @@
       const blob = new Blob([content], { type: 'application/msword' });
       saveAs(blob, 'election_results.docx');
       showNotification('DOCX downloaded successfully', 'success');
-      logAudit('EXPORT_DOCX', 'Results DOCX downloaded', 'admin');
     }
     
     function downloadVoterDataPDF() {
+      if (!isAdminLoggedIn) {
+        showNotification('Admin access required', 'error');
+        return;
+      }
+      
       const { jsPDF } = window.jspdf;
       const doc = new jsPDF();
       
@@ -4264,6 +3876,11 @@
     }
     
     function downloadVoterDataDOCX() {
+      if (!isAdminLoggedIn) {
+        showNotification('Admin access required', 'error');
+        return;
+      }
+      
       let content = `
         <html>
         <head>
@@ -4323,21 +3940,17 @@
       const file = fileInput.files[0];
       
       if (urlInput) {
-        // Handle URL input
         document.getElementById('systemLogo').src = urlInput;
         document.getElementById('logoPreview').src = urlInput;
         document.getElementById('logoPreview').style.display = 'block';
         
         localStorage.setItem('lukenyaLogo', urlInput);
-        logAudit('LOGO_URL_SET', 'System logo set via URL', 'admin');
         showNotification('Logo set from URL successfully and synced', 'success');
         
-        // Sync logo URL to Firebase
         if (firebaseInitialized) {
           database.ref('logo').set(urlInput);
         }
       } else if (file) {
-        // Handle file upload
         const reader = new FileReader();
         reader.onload = function(e) {
           const logoUrl = e.target.result;
@@ -4346,12 +3959,10 @@
           document.getElementById('logoPreview').style.display = 'block';
           
           localStorage.setItem('lukenyaLogo', logoUrl);
-          logAudit('LOGO_UPLOAD', 'System logo updated', 'admin');
           showNotification('Logo uploaded successfully and synced', 'success');
           
-          // Sync logo to Firebase (base64 might be large, consider using storage)
           if (firebaseInitialized) {
-            database.ref('logo').set(logoUrl.substring(0, 1000)); // Truncate for demo
+            database.ref('logo').set(logoUrl.substring(0, 1000));
           }
         };
         reader.readAsDataURL(file);
@@ -4361,13 +3972,12 @@
     }
     
     function resetToDefaultLogo() {
-      const defaultLogo = 'https://via.placeholder.com/180x180/2e7d32/ffffff?text=LVS';
+      const defaultLogo = 'https://via.placeholder.com/180x180/ef6c00/ffffff?text=LVS';
       document.getElementById('systemLogo').src = defaultLogo;
       document.getElementById('logoPreview').style.display = 'none';
       document.getElementById('logoUrlInput').value = '';
       document.getElementById('logoUpload').value = '';
       localStorage.removeItem('lukenyaLogo');
-      logAudit('LOGO_RESET', 'Logo reset to default', 'admin');
       showNotification('Logo reset to default', 'success');
       
       if (firebaseInitialized) {
@@ -4377,7 +3987,6 @@
     
     // ========== UI HELPER FUNCTIONS ==========
     function showNotification(message, type = 'info') {
-      // Create notification element
       const notification = document.createElement('div');
       notification.className = `alert alert-${type} notification-modern`;
       notification.innerHTML = `
@@ -4466,6 +4075,7 @@
       });
       
       console.log(`${APP_NAME} v${APP_VERSION} initialized successfully with real-time sync`);
+      console.log('Total voters loaded:', voters.student.length + voters.staff.length);
       console.log('Available color themes:', Object.keys(COLOR_THEMES).length);
       console.log('GitHub Pages URL:', GITHUB_PAGES_URL);
     };
@@ -4487,21 +4097,10 @@
     window.showRegistered = showRegistered;
     window.showCandidates = showCandidates;
     window.showPositions = showPositions;
-    window.editVoter = editVoter;
-    window.deleteVoter = deleteVoter;
-    window.editCandidate = editCandidate;
-    window.deleteCandidate = deleteCandidate;
-    window.editPosition = editPosition;
-    window.deletePosition = deletePosition;
     window.addNewPosition = addNewPosition;
     window.showSettingsTab = showSettingsTab;
-    window.addRule = addRule;
-    window.deleteRule = deleteRule;
     window.saveAppearanceSettings = saveAppearanceSettings;
-    window.saveElectionSettingsFull = saveElectionSettingsFull;
     window.saveElectionSettings = saveElectionSettings;
-    window.saveNotificationSettings = saveNotificationSettings;
-    window.saveSecuritySettings = saveSecuritySettings;
     window.uploadLogo = uploadLogo;
     window.resetToDefaultLogo = resetToDefaultLogo;
     window.performSearch = performSearch;
