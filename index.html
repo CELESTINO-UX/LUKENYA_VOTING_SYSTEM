@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-  <title>Lukenya Voting · Official Election Results 2026 · Full Registry</title>
+  <title>Lukenya Voting · Official Election Results 2026 · Live Sync</title>
   
   <!-- Bootstrap 5 CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -123,6 +123,15 @@
       margin-right: 6px;
       animation: pulse 1.5s infinite;
     }
+    .sync-dot.offline {
+      background: #f44336;
+      animation: none;
+    }
+    @keyframes pulse {
+      0% { opacity: 1; }
+      50% { opacity: 0.4; }
+      100% { opacity: 1; }
+    }
     .admin-badge {
       background: #f57c00;
       color: white;
@@ -148,13 +157,41 @@
       box-shadow: 0 8px 20px rgba(245,124,0,0.5);
       z-index: 1000;
     }
+    .sync-status {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      background: #1e2436;
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      z-index: 999;
+      border: 1px solid #3d4459;
+    }
+    .device-badge {
+      background: #2e7d32;
+      color: white;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 0.7rem;
+      margin-left: 5px;
+    }
+    .voter-device {
+      max-width: 100px;
+      font-size: 0.7rem;
+      color: #aaa;
+    }
   </style>
 </head>
 <body>
 
-<!-- FAB + ADMIN BADGE -->
+<!-- FAB + ADMIN BADGE + SYNC STATUS -->
 <button class="fab" data-bs-toggle="modal" data-bs-target="#settingsModal"><i class="bi bi-gear"></i></button>
 <div id="adminBadge" class="admin-badge hidden"><i class="bi bi-shield-check"></i> Admin</div>
+<div class="sync-status" id="syncStatus">
+  <span class="sync-dot" id="syncDot"></span>
+  <span id="syncText">Connecting...</span>
+</div>
 
 <!-- Settings Modal -->
 <div class="modal fade" id="settingsModal" tabindex="-1">
@@ -198,9 +235,12 @@
 
       <!-- STATS -->
       <div class="row g-3 mt-4">
-        <div class="col-4"><div class="stat-card"><i class="bi bi-people fs-1"></i><div><h3>116</h3><p>Total</p></div></div></div>
-        <div class="col-4"><div class="stat-card"><i class="bi bi-person-badge fs-1"></i><div><h3>92</h3><p>Students</p></div></div></div>
-        <div class="col-4"><div class="stat-card"><i class="bi bi-person-workspace fs-1"></i><div><h3>24</h3><p>Staff</p></div></div></div>
+        <div class="col-4"><div class="stat-card"><i class="bi bi-people fs-1"></i><div><h3 id="homeTotalVoters">116</h3><p>Total</p></div></div></div>
+        <div class="col-4"><div class="stat-card"><i class="bi bi-person-badge fs-1"></i><div><h3 id="homeStudents">92</h3><p>Students</p></div></div></div>
+        <div class="col-4"><div class="stat-card"><i class="bi bi-person-workspace fs-1"></i><div><h3 id="homeStaff">24</h3><p>Staff</p></div></div></div>
+      </div>
+      <div class="mt-2 text-center">
+        <small class="text-muted"><i class="bi bi-check-circle-fill text-success"></i> <span id="homeVotesCast">1</span> votes cast · <span id="homeTurnout">0.9%</span> turnout</small>
       </div>
 
       <div class="d-flex gap-2 justify-content-center mt-4">
@@ -216,8 +256,8 @@
     <div class="card-modern">
       <h3 class="text-center">Select Your Role</h3>
       <div class="row g-3 mt-3">
-        <div class="col-6"><div class="candidate-card text-center p-3" onclick="showSection('studentLogin')"><i class="bi bi-person-circle fs-1"></i><h5>Student</h5><small>92 voters</small></div></div>
-        <div class="col-6"><div class="candidate-card text-center p-3" onclick="showSection('staffLogin')"><i class="bi bi-person-workspace fs-1"></i><h5>Staff</h5><small>24 voters</small></div></div>
+        <div class="col-6"><div class="candidate-card text-center p-3" onclick="showSection('studentLogin')"><i class="bi bi-person-circle fs-1"></i><h5>Student</h5><small id="studentCount">92 voters</small></div></div>
+        <div class="col-6"><div class="candidate-card text-center p-3" onclick="showSection('staffLogin')"><i class="bi bi-person-workspace fs-1"></i><h5>Staff</h5><small id="staffCount">24 voters</small></div></div>
       </div>
       <button class="btn btn-outline-secondary w-100 mt-3" onclick="showSection('home')">Back</button>
     </div>
@@ -263,7 +303,7 @@
         <h5>📊 OFFICIAL RESULTS 2026</h5>
         <span class="badge bg-danger">LIVE</span>
       </div>
-      <p class="small text-muted">Last update: 27/02/2026 13:42:48 · Sunset Orange</p>
+      <p class="small text-muted">Last update: <span id="lastUpdateTime">27/02/2026 13:42:48</span></p>
       
       <div id="resultsContent" class="hidden">
         <div class="d-flex gap-2 mb-3">
@@ -295,14 +335,21 @@
     </div>
   </section>
 
-  <!-- ========== ADMIN PANEL (FULL CRUD) ========== -->
+  <!-- ========== ADMIN PANEL (FULL CRUD + DEVICE TRACKING) ========== -->
   <section id="adminPanel" class="hidden fade-in">
     <div class="card-modern">
-      <h5 class="text-center">Admin Panel · 116 Voters</h5>
+      <h5 class="text-center">Admin Panel · Live Sync</h5>
       <div class="stats-grid d-flex gap-2 mb-2">
         <div class="stat-card p-2"><span id="adminTotalVoters">116</span><small>Total</small></div>
         <div class="stat-card p-2"><span id="adminTotalCandidates">10</span><small>Candidates</small></div>
         <div class="stat-card p-2"><span id="adminVotesCast">1</span><small>Votes</small></div>
+        <div class="stat-card p-2"><span id="adminActiveDevices">1</span><small>Devices</small></div>
+      </div>
+      
+      <!-- Recent Votes with Device Info -->
+      <div class="card-modern p-2 mb-2">
+        <h6>📱 Recent Votes (Live from all devices)</h6>
+        <div id="recentVotesList" class="table-responsive" style="max-height:150px;"></div>
       </div>
       
       <!-- Voter Management -->
@@ -349,13 +396,13 @@
       <i class="bi bi-code-slash fs-1"></i>
       <h4 class="mt-2">CELESTINO ONYANGO</h4>
       <p class="text-warning">Full‑Stack Developer</p>
-      <p class="small">Lukenya Voting System v7.2 · 116 voters</p>
+      <p class="small">Lukenya Voting System v8.0 · Live Sync Enabled</p>
       <button class="btn btn-outline-light" onclick="showSection('home')">Home</button>
     </div>
   </section>
 
   <!-- FOOTER -->
-  <footer class="text-center small text-muted mt-4">© 2026 Lukenya · Celestino Onyango</footer>
+  <footer class="text-center small text-muted mt-4">© 2026 Lukenya · Celestino Onyango · Live Sync</footer>
 </div>
 
 <!-- MODALS for Add/Edit -->
@@ -498,7 +545,7 @@ const STAFF_VOTERS = [
   {name:"Irene",id:"STA005",hasVoted:false},
   {name:"Dee",id:"STA007",hasVoted:false},
   {name:"Mutune",id:"STA023",hasVoted:false},
-  {name:"Celestino",id:"STA024",hasVoted:true},   // already voted
+  {name:"Celestino",id:"STA024",hasVoted:false},   // Reset to false
   {name:"Steve",id:"STA001",hasVoted:false},
   {name:"Collins",id:"STA004",hasVoted:false},
   {name:"Mutisya",id:"STA006",hasVoted:false},
@@ -528,29 +575,203 @@ const INITIAL_CANDIDATES = {
   "Boy Environment": [{name:"Chris Linus"},{name:"Zachary Mbithi"}]
 };
 const INITIAL_VOTES = {
-  "Boys' Sports": {"Edmund Munyoki":0,"Trevor Amani":1},
-  "Girls' Sports": {"Gabriella Zahra":1,"Aduu Bol":0},
-  "Boys' Chapel": {"Baraka Owino":1,"Tim Mburu":0},
-  "Girl Environment": {"Zawadi Makamu":1,"Zarya":0},
-  "Boy Environment": {"Chris Linus":1,"Zachary Mbithi":0}
+  "Boys' Sports": {"Edmund Munyoki":0,"Trevor Amani":0},
+  "Girls' Sports": {"Gabriella Zahra":0,"Aduu Bol":0},
+  "Boys' Chapel": {"Baraka Owino":0,"Tim Mburu":0},
+  "Girl Environment": {"Zawadi Makamu":0,"Zarya":0},
+  "Boy Environment": {"Chris Linus":0,"Zachary Mbithi":0}
+};
+
+// ==================== FIREBASE CONFIG ====================
+const firebaseConfig = {
+  apiKey: "AIzaSyBxxxxxxxxxxxxxxxxxxxxx", // Replace with your Firebase config
+  authDomain: "your-project.firebaseapp.com",
+  databaseURL: "https://your-project-default-rtdb.firebaseio.com",
+  projectId: "your-project",
+  storageBucket: "your-project.appspot.com",
+  messagingSenderId: "000000000000",
+  appId: "1:000000000000:web:xxxxxxxxxxxx"
 };
 
 // ==================== STATE ====================
-let voters = { student: STUDENT_VOTERS.map(v=>({...v})), staff: STAFF_VOTERS.map(v=>({...v})) };
+let voters = { student: STUDENT_VOTERS.map(v=>({...v, deviceId: null, voteTimestamp: null})), 
+               staff: STAFF_VOTERS.map(v=>({...v, deviceId: null, voteTimestamp: null})) };
 let candidates = JSON.parse(JSON.stringify(INITIAL_CANDIDATES));
 let votes = JSON.parse(JSON.stringify(INITIAL_VOTES));
 let currentVoter = null;
 let isAdminLoggedIn = false;
 let charts = { overall: null };
-
-// ==================== FIREBASE (optional) ====================
-const firebaseConfig = { /* your config */ };
 let firebaseInitialized = false;
+let database = null;
+let deviceId = generateDeviceId();
+let recentVotes = [];
+
+// ==================== DEVICE ID ====================
+function generateDeviceId() {
+  return 'device_' + Math.random().toString(36).substr(2, 9) + '_' + Date.now();
+}
+
+// ==================== FIREBASE INIT ====================
 try {
   firebase.initializeApp(firebaseConfig);
+  database = firebase.database();
   firebaseInitialized = true;
-  document.getElementById('syncStatus')?.classList?.add('connected');
-} catch(e){}
+  updateSyncStatus(true);
+  
+  // Listen for real-time updates
+  setupFirebaseListeners();
+} catch(e) {
+  console.error("Firebase init failed:", e);
+  updateSyncStatus(false);
+}
+
+function updateSyncStatus(connected) {
+  const dot = document.getElementById('syncDot');
+  const text = document.getElementById('syncText');
+  if (connected) {
+    dot.className = 'sync-dot';
+    text.innerText = 'Live Sync';
+  } else {
+    dot.className = 'sync-dot offline';
+    text.innerText = 'Offline Mode';
+  }
+}
+
+function setupFirebaseListeners() {
+  if (!database) return;
+  
+  // Listen for votes
+  const votesRef = database.ref('votes');
+  votesRef.on('value', (snapshot) => {
+    const data = snapshot.val();
+    if (data) {
+      // Merge Firebase votes with local
+      mergeFirebaseData(data);
+    }
+  });
+  
+  // Listen for voters
+  const votersRef = database.ref('voters');
+  votersRef.on('value', (snapshot) => {
+    const data = snapshot.val();
+    if (data) {
+      mergeFirebaseVoters(data);
+    }
+  });
+  
+  // Listen for recent votes
+  const recentRef = database.ref('recentVotes').limitToLast(20);
+  recentRef.on('value', (snapshot) => {
+    const data = snapshot.val();
+    if (data) {
+      recentVotes = Object.values(data).reverse();
+      if (isAdminLoggedIn) {
+        displayRecentVotes();
+      }
+    }
+  });
+}
+
+function mergeFirebaseData(firebaseVotes) {
+  if (!firebaseVotes) return;
+  
+  // Reset local votes
+  Object.keys(votes).forEach(pos => {
+    Object.keys(votes[pos]).forEach(cand => {
+      votes[pos][cand] = 0;
+    });
+  });
+  
+  // Apply Firebase votes
+  Object.keys(firebaseVotes).forEach(voteId => {
+    const vote = firebaseVotes[voteId];
+    if (vote && vote.position && vote.candidate) {
+      if (!votes[vote.position]) votes[vote.position] = {};
+      votes[vote.position][vote.candidate] = (votes[vote.position][vote.candidate] || 0) + 1;
+    }
+  });
+  
+  // Update UI
+  if (document.getElementById('electionResults').classList.contains('hidden') === false) {
+    updateResults();
+  }
+  updateHomeStats();
+  if (isAdminLoggedIn) {
+    updateAdminStats();
+  }
+}
+
+function mergeFirebaseVoters(firebaseVoters) {
+  if (!firebaseVoters) return;
+  
+  // Update hasVoted status from Firebase
+  Object.keys(firebaseVoters).forEach(voterId => {
+    const fbVoter = firebaseVoters[voterId];
+    
+    // Find in students
+    let found = voters.student.find(v => v.id === fbVoter.id);
+    if (found) {
+      found.hasVoted = fbVoter.hasVoted || false;
+      found.deviceId = fbVoter.deviceId || null;
+      found.voteTimestamp = fbVoter.voteTimestamp || null;
+    }
+    
+    // Find in staff
+    found = voters.staff.find(v => v.id === fbVoter.id);
+    if (found) {
+      found.hasVoted = fbVoter.hasVoted || false;
+      found.deviceId = fbVoter.deviceId || null;
+      found.voteTimestamp = fbVoter.voteTimestamp || null;
+    }
+  });
+  
+  if (isAdminLoggedIn) {
+    showRegistered('all');
+    updateAdminStats();
+  }
+  updateHomeStats();
+}
+
+// ==================== SYNC TO FIREBASE ====================
+async function syncVoteToFirebase(voter, voteDetails) {
+  if (!database) return;
+  
+  const timestamp = Date.now();
+  const voteId = `vote_${timestamp}_${voter.id}`;
+  
+  // Record the vote
+  await database.ref(`votes/${voteId}`).set({
+    voterId: voter.id,
+    voterName: voter.name,
+    voterType: voter.type,
+    position: voteDetails.position,
+    candidate: voteDetails.candidate,
+    deviceId: deviceId,
+    timestamp: timestamp,
+    formattedTime: moment(timestamp).format('HH:mm:ss DD/MM')
+  });
+  
+  // Update voter status
+  await database.ref(`voters/${voter.id}`).set({
+    id: voter.id,
+    name: voter.name,
+    type: voter.type,
+    class: voter.class || null,
+    hasVoted: true,
+    deviceId: deviceId,
+    voteTimestamp: timestamp
+  });
+  
+  // Add to recent votes
+  await database.ref(`recentVotes/${voteId}`).set({
+    voterName: voter.name,
+    position: voteDetails.position,
+    candidate: voteDetails.candidate,
+    deviceId: deviceId,
+    time: moment(timestamp).format('HH:mm:ss'),
+    date: moment(timestamp).format('DD/MM')
+  });
+}
 
 // ==================== TIMER ====================
 const votingStart = moment("2026-03-01 15:00");
@@ -572,12 +793,31 @@ setInterval(() => {
   document.getElementById('votingStatus').innerText = status;
 }, 1000);
 
+// ==================== HOME STATS UPDATE ====================
+function updateHomeStats() {
+  const totalVoters = voters.student.length + voters.staff.length;
+  const votesCast = voters.student.filter(v=>v.hasVoted).length + voters.staff.filter(v=>v.hasVoted).length;
+  const turnout = totalVoters ? ((votesCast/totalVoters)*100).toFixed(1) : 0;
+  
+  document.getElementById('homeTotalVoters').innerText = totalVoters;
+  document.getElementById('homeStudents').innerText = voters.student.length;
+  document.getElementById('homeStaff').innerText = voters.staff.length;
+  document.getElementById('homeVotesCast').innerText = votesCast;
+  document.getElementById('homeTurnout').innerText = turnout + '%';
+  
+  document.getElementById('studentCount').innerText = voters.student.length + ' voters';
+  document.getElementById('staffCount').innerText = voters.staff.length + ' voters';
+}
+
 // ==================== NAVIGATION ====================
 function showSection(id) {
   document.querySelectorAll('section').forEach(s => s.classList.add('hidden'));
   document.getElementById(id).classList.remove('hidden');
   if (id === 'adminPanel' && isAdminLoggedIn) {
-    updateAdminStats(); showRegistered('all'); showCandidates();
+    updateAdminStats(); 
+    showRegistered('all'); 
+    showCandidates();
+    displayRecentVotes();
   }
   if (id === 'electionResults') {
     if (isAdminLoggedIn) {
@@ -588,6 +828,9 @@ function showSection(id) {
       document.getElementById('resultsContent').classList.add('hidden');
       document.getElementById('publicResultsMessage').classList.remove('hidden');
     }
+  }
+  if (id === 'home') {
+    updateHomeStats();
   }
 }
 function showVoterChoice() {
@@ -605,8 +848,8 @@ function verifyStudent() {
   const cls = document.getElementById('sClass').value.trim();
   const student = voters.student.find(v => v.name.toLowerCase()===name.toLowerCase() && v.id===id && v.class.toLowerCase()===cls.toLowerCase());
   if (!student) { alert("Student not found"); return; }
-  if (student.hasVoted) { alert("Already voted"); return; }
-  currentVoter = { type:'student', id };
+  if (student.hasVoted) { alert("Already voted from device: " + (student.deviceId || 'unknown')); return; }
+  currentVoter = { type:'student', id: student.id, name: student.name, class: student.class };
   alert("Login successful"); startVoting();
 }
 function verifyStaff() {
@@ -614,15 +857,15 @@ function verifyStaff() {
   const id = document.getElementById('tID').value.trim().toUpperCase();
   const staff = voters.staff.find(v => v.name.toLowerCase()===name.toLowerCase() && v.id===id);
   if (!staff) { alert("Staff not found"); return; }
-  if (staff.hasVoted) { alert("Already voted"); return; }
-  currentVoter = { type:'staff', id };
+  if (staff.hasVoted) { alert("Already voted from device: " + (staff.deviceId || 'unknown')); return; }
+  currentVoter = { type:'staff', id: staff.id, name: staff.name };
   alert("Login successful"); startVoting();
 }
 function startVoting() {
   let html = '';
   POSITIONS.forEach(pos => {
     if (candidates[pos]?.length) {
-      html += `<div class="position-header mt-3">${pos}</div>`;
+      html += `<div class="position-header mt-3 fw-bold text-warning">${pos}</div>`;
       candidates[pos].forEach(c => {
         html += `<div class="candidate-card" onclick="selectCandidate(this,'${pos}')">
           <input type="radio" name="${pos}" value="${c.name}" class="form-check-input me-2"> ${c.name}
@@ -638,22 +881,51 @@ function selectCandidate(el,pos) {
   el.classList.add('selected');
   el.querySelector('input[type=radio]').checked = true;
 }
-function submitVote() {
+async function submitVote() {
   if (!currentVoter) return;
   let missing = [];
+  let selectedVotes = [];
+  
   POSITIONS.forEach(pos => {
     const sel = document.querySelector(`input[name="${pos}"]:checked`);
     if (!sel) missing.push(pos);
     else {
       const cand = sel.value;
-      if (!votes[pos]) votes[pos] = {};
-      votes[pos][cand] = (votes[pos][cand] || 0) + 1;
+      selectedVotes.push({ position: pos, candidate: cand });
     }
   });
+  
   if (missing.length) { alert("Select for: "+missing.join(', ')); return; }
-  if (currentVoter.type==='student') voters.student.find(v=>v.id===currentVoter.id).hasVoted = true;
-  else voters.staff.find(v=>v.id===currentVoter.id).hasVoted = true;
-  saveData(); alert("Vote recorded!"); currentVoter=null; showSection('home');
+  
+  // Record votes locally and sync to Firebase
+  for (let vote of selectedVotes) {
+    if (!votes[vote.position]) votes[vote.position] = {};
+    votes[vote.position][vote.candidate] = (votes[vote.position][vote.candidate] || 0) + 1;
+    
+    // Sync to Firebase
+    if (database) {
+      await syncVoteToFirebase(currentVoter, vote);
+    }
+  }
+  
+  // Update local voter status
+  if (currentVoter.type==='student') {
+    const student = voters.student.find(v=>v.id===currentVoter.id);
+    student.hasVoted = true;
+    student.deviceId = deviceId;
+    student.voteTimestamp = Date.now();
+  } else {
+    const staff = voters.staff.find(v=>v.id===currentVoter.id);
+    staff.hasVoted = true;
+    staff.deviceId = deviceId;
+    staff.voteTimestamp = Date.now();
+  }
+  
+  saveData(); 
+  alert("Vote recorded and synced live!"); 
+  currentVoter=null; 
+  showSection('home');
+  updateHomeStats();
 }
 
 // ==================== ADMIN ====================
@@ -674,16 +946,44 @@ function updateAdminStats() {
   const votesCast = voters.student.filter(v=>v.hasVoted).length + voters.staff.filter(v=>v.hasVoted).length;
   let candCount = 0;
   POSITIONS.forEach(p=> candCount += (candidates[p]?.length||0));
+  
+  // Count unique devices that have voted
+  const devices = new Set();
+  voters.student.filter(v=>v.hasVoted && v.deviceId).forEach(v=>devices.add(v.deviceId));
+  voters.staff.filter(v=>v.hasVoted && v.deviceId).forEach(v=>devices.add(v.deviceId));
+  
   document.getElementById('adminTotalVoters').innerText = totalVoters;
   document.getElementById('adminTotalCandidates').innerText = candCount;
   document.getElementById('adminVotesCast').innerText = votesCast;
+  document.getElementById('adminActiveDevices').innerText = devices.size;
+}
+
+function displayRecentVotes() {
+  let html = '<table class="table-modern"><tr><th>Time</th><th>Voter</th><th>Position</th><th>Candidate</th><th>Device</th></tr>';
+  
+  recentVotes.slice(0, 10).forEach(vote => {
+    html += `<tr>
+      <td>${vote.time || ''}</td>
+      <td>${vote.voterName || ''}</td>
+      <td>${vote.position || ''}</td>
+      <td>${vote.candidate || ''}</td>
+      <td class="voter-device">${vote.deviceId ? vote.deviceId.substr(0,8)+'...' : 'Unknown'}</td>
+    </tr>`;
+  });
+  
+  if (recentVotes.length === 0) {
+    html += '<tr><td colspan="5" class="text-center text-muted">No votes yet</td></tr>';
+  }
+  
+  html += '</table>';
+  document.getElementById('recentVotesList').innerHTML = html;
 }
 
 // ==================== VOTER CRUD ====================
 function showRegistered(type) {
-  let html = '<table class="table-modern"><tr><th>Name</th><th>ID</th><th>Class</th><th>Status</th><th>Actions</th></tr>';
-  if (type==='all'||type==='student') voters.student.forEach((v,i)=>html+=`<tr><td>${v.name}</td><td>${v.id}</td><td>${v.class||'-'}</td><td>${v.hasVoted?'✅':'❌'}</td><td><button class="btn btn-sm btn-outline-primary py-0" onclick="editVoter('student',${i})">✏️</button> <button class="btn btn-sm btn-outline-danger py-0" onclick="deleteVoter('student',${i})">🗑️</button></td></tr>`);
-  if (type==='all'||type==='staff') voters.staff.forEach((v,i)=>html+=`<tr><td>${v.name}</td><td>${v.id}</td><td>-</td><td>${v.hasVoted?'✅':'❌'}</td><td><button class="btn btn-sm btn-outline-primary py-0" onclick="editVoter('staff',${i})">✏️</button> <button class="btn btn-sm btn-outline-danger py-0" onclick="deleteVoter('staff',${i})">🗑️</button></td></tr>`);
+  let html = '<table class="table-modern"><tr><th>Name</th><th>ID</th><th>Class</th><th>Status</th><th>Device</th><th>Actions</th></tr>';
+  if (type==='all'||type==='student') voters.student.forEach((v,i)=>html+=`<tr><td>${v.name}</td><td>${v.id}</td><td>${v.class||'-'}</td><td>${v.hasVoted?'✅':'❌'}</td><td class="voter-device">${v.deviceId ? v.deviceId.substr(0,8)+'...' : '-'}</td><td><button class="btn btn-sm btn-outline-primary py-0" onclick="editVoter('student',${i})">✏️</button> <button class="btn btn-sm btn-outline-danger py-0" onclick="deleteVoter('student',${i})">🗑️</button></td></tr>`);
+  if (type==='all'||type==='staff') voters.staff.forEach((v,i)=>html+=`<tr><td>${v.name}</td><td>${v.id}</td><td>-</td><td>${v.hasVoted?'✅':'❌'}</td><td class="voter-device">${v.deviceId ? v.deviceId.substr(0,8)+'...' : '-'}</td><td><button class="btn btn-sm btn-outline-primary py-0" onclick="editVoter('staff',${i})">✏️</button> <button class="btn btn-sm btn-outline-danger py-0" onclick="deleteVoter('staff',${i})">🗑️</button></td></tr>`);
   html += '</table>';
   document.getElementById('registeredVoters').innerHTML = html;
 }
@@ -714,7 +1014,7 @@ function saveVoter() {
   if (!name||!id) return alert("Name and ID required");
   if (type==='student' && !id.startsWith('STU')) return alert("Student ID must start with STU");
   if (type==='staff' && !id.startsWith('STA')) return alert("Staff ID must start with STA");
-  const voter = { name, id, hasVoted:false };
+  const voter = { name, id, hasVoted:false, deviceId: null, voteTimestamp: null };
   if (type==='student') voter.class = voterClass||'Unknown';
   if (idx!=='') {
     if (editType==='student') voters.student[idx] = { ...voters.student[idx], ...voter };
@@ -724,7 +1024,7 @@ function saveVoter() {
     else voters.staff.push(voter);
   }
   saveData(); bootstrap.Modal.getInstance(document.getElementById('voterModal')).hide();
-  showRegistered('all'); updateAdminStats();
+  showRegistered('all'); updateAdminStats(); updateHomeStats();
 }
 function deleteVoter(type,index) {
   document.getElementById('deleteMsg').innerText = `Delete ${type} voter?`;
@@ -732,7 +1032,7 @@ function deleteVoter(type,index) {
     if (type==='student') voters.student.splice(index,1);
     else voters.staff.splice(index,1);
     saveData(); bootstrap.Modal.getInstance(document.getElementById('deleteConfirmModal')).hide();
-    showRegistered('all'); updateAdminStats();
+    showRegistered('all'); updateAdminStats(); updateHomeStats();
   };
   new bootstrap.Modal(document.getElementById('deleteConfirmModal')).show();
 }
@@ -811,6 +1111,8 @@ function updateResults() {
   document.getElementById('resultsTotalVotes').innerText = totalVotes;
   document.getElementById('resultsTurnout').innerText = turnout+'%';
   document.getElementById('turnoutProgressBar').style.width = turnout+'%';
+  document.getElementById('lastUpdateTime').innerText = moment().format('DD/MM/YYYY HH:mm:ss');
+  
   let tbody='';
   POSITIONS.forEach(pos => {
     if (candidates[pos]) candidates[pos].forEach(c => {
@@ -821,6 +1123,7 @@ function updateResults() {
     });
   });
   document.getElementById('resultsTableBody').innerHTML = tbody;
+  
   if (charts.overall) charts.overall.destroy();
   const ctx = document.getElementById('overallResultsChart')?.getContext('2d');
   if (ctx) {
@@ -841,10 +1144,10 @@ function updateResults() {
 // ==================== SEARCH ====================
 function performSearch() {
   const q = document.getElementById('searchInput').value.toLowerCase();
-  let html = '<table class="table-modern"><tr><th>Type</th><th>Name</th><th>ID/Pos</th><th>Status</th></tr>';
-  voters.student.forEach(v => { if(v.name.toLowerCase().includes(q)||v.id.toLowerCase().includes(q)) html+=`<tr><td>Student</td><td>${v.name}</td><td>${v.id}</td><td>${v.hasVoted?'✅':'❌'}</td></tr>`; });
-  voters.staff.forEach(v => { if(v.name.toLowerCase().includes(q)||v.id.toLowerCase().includes(q)) html+=`<tr><td>Staff</td><td>${v.name}</td><td>${v.id}</td><td>${v.hasVoted?'✅':'❌'}</td></tr>`; });
-  POSITIONS.forEach(p => candidates[p]?.forEach(c => { if(c.name.toLowerCase().includes(q)) html+=`<tr><td>Candidate</td><td>${c.name}</td><td>${p}</td><td>Votes: ${votes[p]?.[c.name]||0}</td></tr>`; }));
+  let html = '<table class="table-modern"><tr><th>Type</th><th>Name</th><th>ID/Pos</th><th>Status</th><th>Device</th></tr>';
+  voters.student.forEach(v => { if(v.name.toLowerCase().includes(q)||v.id.toLowerCase().includes(q)) html+=`<tr><td>Student</td><td>${v.name}</td><td>${v.id}</td><td>${v.hasVoted?'✅':'❌'}</td><td class="voter-device">${v.deviceId ? v.deviceId.substr(0,8)+'...' : '-'}</td></tr>`; });
+  voters.staff.forEach(v => { if(v.name.toLowerCase().includes(q)||v.id.toLowerCase().includes(q)) html+=`<tr><td>Staff</td><td>${v.name}</td><td>${v.id}</td><td>${v.hasVoted?'✅':'❌'}</td><td class="voter-device">${v.deviceId ? v.deviceId.substr(0,8)+'...' : '-'}</td></tr>`; });
+  POSITIONS.forEach(p => candidates[p]?.forEach(c => { if(c.name.toLowerCase().includes(q)) html+=`<tr><td>Candidate</td><td>${c.name}</td><td>${p}</td><td>Votes: ${votes[p]?.[c.name]||0}</td><td>-</td></tr>`; }));
   html += '</table>';
   document.getElementById('searchResults').innerHTML = html;
 }
@@ -855,8 +1158,11 @@ function downloadResultsPDF() {
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF();
   doc.text("Lukenya Voting Results 2026",20,20);
-  doc.text("Total voters: 116",20,30);
-  doc.text("Votes cast: 1 (0.9%)",20,35);
+  const totalVoters = voters.student.length + voters.staff.length;
+  const votesCast = voters.student.filter(v=>v.hasVoted).length + voters.staff.filter(v=>v.hasVoted).length;
+  const turnout = totalVoters? ((votesCast/totalVoters)*100).toFixed(1) : 0;
+  doc.text(`Total voters: ${totalVoters}`,20,30);
+  doc.text(`Votes cast: ${votesCast} (${turnout}%)`,20,35);
   let y=45;
   POSITIONS.forEach(p => {
     doc.text(p,20,y); y+=5;
@@ -867,8 +1173,19 @@ function downloadResultsPDF() {
 }
 function downloadResultsDOCX() {
   if (!isAdminLoggedIn) return alert("Admin only");
-  let content = `<h2>Lukenya Results</h2><table border=1>`;
-  POSITIONS.forEach(p => candidates[p]?.forEach(c => content += `<tr><td>${p}</td><td>${c.name}</td><td>${votes[p]?.[c.name]||0}</td></tr>`));
+  const totalVoters = voters.student.length + voters.staff.length;
+  const votesCast = voters.student.filter(v=>v.hasVoted).length + voters.staff.filter(v=>v.hasVoted).length;
+  const turnout = totalVoters? ((votesCast/totalVoters)*100).toFixed(1) : 0;
+  
+  let content = `<h2>Lukenya Voting Results 2026</h2>`;
+  content += `<p>Total voters: ${totalVoters}</p>`;
+  content += `<p>Votes cast: ${votesCast} (${turnout}%)</p>`;
+  content += `<table border="1" cellpadding="5"><tr><th>Position</th><th>Candidate</th><th>Votes</th></tr>`;
+  
+  POSITIONS.forEach(p => candidates[p]?.forEach(c => {
+    content += `<tr><td>${p}</td><td>${c.name}</td><td>${votes[p]?.[c.name]||0}</td></tr>`;
+  }));
+  
   content += '</table>';
   const blob = new Blob([content], {type:'application/msword'});
   saveAs(blob, "results.docx");
@@ -882,12 +1199,16 @@ function saveData() {
 }
 function loadData() {
   try {
-    if (localStorage.getItem('voters')) voters = JSON.parse(localStorage.getItem('voters'));
+    if (localStorage.getItem('voters')) {
+      const saved = JSON.parse(localStorage.getItem('voters'));
+      voters = saved;
+    }
     if (localStorage.getItem('candidates')) candidates = JSON.parse(localStorage.getItem('candidates'));
     if (localStorage.getItem('votes')) votes = JSON.parse(localStorage.getItem('votes'));
   } catch(e){}
 }
 loadData();
+updateHomeStats();
 
 // expose globals
 window.showSection = showSection; window.checkAndShowResults = checkAndShowResults; window.showVoterChoice = showVoterChoice;
