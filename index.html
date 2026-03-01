@@ -181,9 +181,29 @@
       font-size: 0.7rem;
       color: #aaa;
     }
+    .github-corner {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      z-index: 1000;
+    }
+    .setup-instructions {
+      background: #1e2436;
+      border-left: 4px solid #f57c00;
+      padding: 1rem;
+      margin: 1rem 0;
+      border-radius: 8px;
+    }
   </style>
 </head>
 <body>
+
+<!-- GitHub Corner -->
+<div class="github-corner">
+  <a href="https://github.com/celestino-ux/LUKENYA_VOTING_SYSTEM" target="_blank" class="text-white">
+    <i class="bi bi-github fs-3"></i>
+  </a>
+</div>
 
 <!-- FAB + ADMIN BADGE + SYNC STATUS -->
 <button class="fab" data-bs-toggle="modal" data-bs-target="#settingsModal"><i class="bi bi-gear"></i></button>
@@ -209,6 +229,7 @@
           <button class="list-group-item list-group-item-action bg-transparent text-white" onclick="showSection('adminLogin')">🔐 Admin</button>
           <button class="list-group-item list-group-item-action bg-transparent text-white" onclick="showSection('searchSection')">🔍 Search</button>
           <button class="list-group-item list-group-item-action bg-transparent text-white" onclick="showDeveloperInfo()">👤 Developer</button>
+          <button class="list-group-item list-group-item-action bg-transparent text-white" onclick="showSetupInstructions()">⚙️ Firebase Setup</button>
         </div>
       </div>
     </div>
@@ -240,7 +261,7 @@
         <div class="col-4"><div class="stat-card"><i class="bi bi-person-workspace fs-1"></i><div><h3 id="homeStaff">24</h3><p>Staff</p></div></div></div>
       </div>
       <div class="mt-2 text-center">
-        <small class="text-muted"><i class="bi bi-check-circle-fill text-success"></i> <span id="homeVotesCast">1</span> votes cast · <span id="homeTurnout">0.9%</span> turnout</small>
+        <small class="text-muted"><i class="bi bi-check-circle-fill text-success"></i> <span id="homeVotesCast">0</span> votes cast · <span id="homeTurnout">0%</span> turnout</small>
       </div>
 
       <div class="d-flex gap-2 justify-content-center mt-4">
@@ -303,7 +324,7 @@
         <h5>📊 OFFICIAL RESULTS 2026</h5>
         <span class="badge bg-danger">LIVE</span>
       </div>
-      <p class="small text-muted">Last update: <span id="lastUpdateTime">27/02/2026 13:42:48</span></p>
+      <p class="small text-muted">Last update: <span id="lastUpdateTime">Not yet</span></p>
       
       <div id="resultsContent" class="hidden">
         <div class="d-flex gap-2 mb-3">
@@ -312,10 +333,10 @@
         </div>
         <div class="row g-2">
           <div class="col-4"><div class="stat-card p-2"><span id="resultsTotalVoters">116</span><small>Voters</small></div></div>
-          <div class="col-4"><div class="stat-card p-2"><span id="resultsTotalVotes">1</span><small>Votes</small></div></div>
-          <div class="col-4"><div class="stat-card p-2"><span id="resultsTurnout">0.9%</span><small>Turnout</small></div></div>
+          <div class="col-4"><div class="stat-card p-2"><span id="resultsTotalVotes">0</span><small>Votes</small></div></div>
+          <div class="col-4"><div class="stat-card p-2"><span id="resultsTurnout">0%</span><small>Turnout</small></div></div>
         </div>
-        <div class="progress-modern bg-dark mt-2"><div class="progress-bar-modern bg-warning" id="turnoutProgressBar" style="width:0.9%; height:8px;"></div></div>
+        <div class="progress-modern bg-dark mt-2"><div class="progress-bar-modern bg-warning" id="turnoutProgressBar" style="width:0%; height:8px;"></div></div>
         
         <div style="height:200px;"><canvas id="overallResultsChart"></canvas></div>
         <div class="table-responsive mt-3"><table class="table-modern"><thead><tr><th>Position</th><th>Candidate</th><th>Votes</th><th>%</th></tr></thead><tbody id="resultsTableBody"></tbody></table></div>
@@ -339,11 +360,11 @@
   <section id="adminPanel" class="hidden fade-in">
     <div class="card-modern">
       <h5 class="text-center">Admin Panel · Live Sync</h5>
-      <div class="stats-grid d-flex gap-2 mb-2">
+      <div class="stats-grid d-flex gap-2 mb-2 flex-wrap">
         <div class="stat-card p-2"><span id="adminTotalVoters">116</span><small>Total</small></div>
         <div class="stat-card p-2"><span id="adminTotalCandidates">10</span><small>Candidates</small></div>
-        <div class="stat-card p-2"><span id="adminVotesCast">1</span><small>Votes</small></div>
-        <div class="stat-card p-2"><span id="adminActiveDevices">1</span><small>Devices</small></div>
+        <div class="stat-card p-2"><span id="adminVotesCast">0</span><small>Votes</small></div>
+        <div class="stat-card p-2"><span id="adminActiveDevices">0</span><small>Devices</small></div>
       </div>
       
       <!-- Recent Votes with Device Info -->
@@ -358,7 +379,7 @@
           <h6>🗂️ Voters</h6>
           <button class="btn btn-sm btn-primary" onclick="showAddVoterModal()">+ Add</button>
         </div>
-        <div class="d-flex gap-1 mb-2">
+        <div class="d-flex gap-1 mb-2 flex-wrap">
           <button class="btn btn-sm btn-outline-light" onclick="showRegistered('all')">All</button>
           <button class="btn btn-sm btn-outline-light" onclick="showRegistered('student')">Students</button>
           <button class="btn btn-sm btn-outline-light" onclick="showRegistered('staff')">Staff</button>
@@ -376,6 +397,43 @@
       </div>
       
       <button class="btn btn-secondary w-100 mt-3" onclick="adminLogout()">Logout</button>
+    </div>
+  </section>
+
+  <!-- ========== SETUP INSTRUCTIONS ========== -->
+  <section id="setupInstructions" class="hidden fade-in">
+    <div class="card-modern">
+      <h5 class="text-center">🔥 Firebase Setup Instructions</h5>
+      <div class="setup-instructions">
+        <h6>Step 1: Create Firebase Project</h6>
+        <p>Go to <a href="https://console.firebase.google.com/" target="_blank">Firebase Console</a> and create a new project</p>
+        
+        <h6>Step 2: Enable Realtime Database</h6>
+        <p>In your Firebase project, go to "Realtime Database" and click "Create Database" (start in test mode)</p>
+        
+        <h6>Step 3: Get Firebase Config</h6>
+        <p>Go to Project Settings > General > Your apps > Add app (web). Copy the config object.</p>
+        
+        <h6>Step 4: Update Database Rules</h6>
+        <p>In Realtime Database > Rules, paste:</p>
+        <pre class="bg-dark p-2 rounded text-white">
+{
+  "rules": {
+    ".read": true,
+    ".write": true
+  }
+}
+        </pre>
+        
+        <h6>Step 5: Replace Firebase Config</h6>
+        <p>Find the <code>firebaseConfig</code> object in the script section and replace with your own.</p>
+        
+        <div class="alert alert-warning mt-3">
+          <i class="bi bi-info-circle"></i> 
+          The system will work in offline mode until you configure Firebase.
+        </div>
+      </div>
+      <button class="btn btn-outline-secondary w-100 mt-3" onclick="showSection('home')">Home</button>
     </div>
   </section>
 
@@ -397,6 +455,7 @@
       <h4 class="mt-2">CELESTINO ONYANGO</h4>
       <p class="text-warning">Full‑Stack Developer</p>
       <p class="small">Lukenya Voting System v8.0 · Live Sync Enabled</p>
+      <p><i class="bi bi-github"></i> <a href="https://github.com/celestino-ux" target="_blank" class="text-white-50">@celestino-ux</a></p>
       <button class="btn btn-outline-light" onclick="showSection('home')">Home</button>
     </div>
   </section>
@@ -439,131 +498,143 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
+// ==================== FIREBASE CONFIG ====================
+// REPLACE THIS WITH YOUR ACTUAL FIREBASE CONFIG FROM FIREBASE CONSOLE
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_AUTH_DOMAIN",
+  databaseURL: "YOUR_DATABASE_URL",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_STORAGE_BUCKET",
+  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+  appId: "YOUR_APP_ID"
+};
+
 // ==================== GLOBAL DATA ====================
 const POSITIONS = ["Boys' Sports","Girls' Sports","Boys' Chapel","Girl Environment","Boy Environment"];
 
 // ----- EXACT STUDENTS FROM PDF (92) -----
 const STUDENT_VOTERS = [
-  {name:"Daniel Ingati",id:"STU007",class:"10B",hasVoted:false},
-  {name:"Griffins Muoki",id:"STU008",class:"10B",hasVoted:false},
-  {name:"Carlsam Suri",id:"STU010",class:"10A",hasVoted:false},
-  {name:"Blessings Natasha",id:"STU011",class:"10A",hasVoted:false},
-  {name:"Paul Charles",id:"STU017",class:"10A",hasVoted:false},
-  {name:"Mariebell G.",id:"STU018",class:"10B",hasVoted:false},
-  {name:"Gabriel Vigne",id:"STU021",class:"9A",hasVoted:false},
-  {name:"Dennis Wisdom",id:"STU022",class:"8",hasVoted:false},
-  {name:"Aloysius Jude",id:"STU024",class:"8",hasVoted:false},
-  {name:"Tim Mburu",id:"STU001",class:"10A",hasVoted:false},
-  {name:"Wesley Agina",id:"STU002",class:"10B",hasVoted:false},
-  {name:"Kennedy Mutitu",id:"STU003",class:"10B",hasVoted:false},
-  {name:"Adrian Francis",id:"STU004",class:"7A",hasVoted:false},
-  {name:"Zackary Mbithi",id:"STU005",class:"7A",hasVoted:false},
-  {name:"Glen Collins",id:"STU006",class:"7A",hasVoted:false},
-  {name:"Alex Garang",id:"STU012",class:"7A",hasVoted:false},
-  {name:"Darren Mitch",id:"STU013",class:"7A",hasVoted:false},
-  {name:"Mwendwa Magutu",id:"STU014",class:"7A",hasVoted:false},
-  {name:"Majak Garang",id:"STU015",class:"7A",hasVoted:false},
-  {name:"Brian Owino",id:"STU023",class:"9A",hasVoted:false},
-  {name:"Edmund Munyoki",id:"STU019",class:"9A",hasVoted:false},
-  {name:"Kelvin Solitei",id:"STU029",class:"9A",hasVoted:false},
-  {name:"Wesly Weke",id:"STU030",class:"9A",hasVoted:false},
-  {name:"Chris Linus",id:"STU031",class:"9A",hasVoted:false},
-  {name:"Ganyang Hoth",id:"STU032",class:"9A",hasVoted:false},
-  {name:"Felix Karia",id:"STU033",class:"10A",hasVoted:false},
-  {name:"Mathew Paita",id:"STU034",class:"10A",hasVoted:false},
-  {name:"Samir Simal",id:"STU035",class:"10B",hasVoted:false},
-  {name:"Trevor Amani",id:"STU037",class:"10B",hasVoted:false},
-  {name:"Kelvin Emilian",id:"STU038",class:"10A",hasVoted:false},
-  {name:"Elvis Henry",id:"STU039",class:"10B",hasVoted:false},
-  {name:"Moses Baraka",id:"STU040",class:"10B",hasVoted:false},
-  {name:"Kennedy Mutitu",id:"STU041",class:"10B",hasVoted:false},
-  {name:"Deng Makuie",id:"STU042",class:"10B",hasVoted:false},
-  {name:"Janelle Yangi",id:"STU043",class:"10A",hasVoted:false},
-  {name:"Rael Malima",id:"STU044",class:"10A",hasVoted:false},
-  {name:"Gabriella Zahra",id:"STU045",class:"9A",hasVoted:false},
-  {name:"Jean Mellan",id:"STU046",class:"9A",hasVoted:false},
-  {name:"Angel Maina",id:"STU047",class:"9A",hasVoted:false},
-  {name:"Rael Manyala",id:"STU048",class:"10A",hasVoted:false},
-  {name:"Blessing",id:"STU049",class:"10A",hasVoted:false},
-  {name:"Zarya",id:"STU050",class:"10B",hasVoted:false},
-  {name:"Alma",id:"STU051",class:"10A",hasVoted:false},
-  {name:"Anai",id:"STU052",class:"10A",hasVoted:false},
-  {name:"Tiffany Moraa",id:"STU053",class:"10A",hasVoted:false},
-  {name:"Sanita",id:"STU088",class:"10A",hasVoted:false},
-  {name:"Tamara Sylvia",id:"STU054",class:"10B",hasVoted:false},
-  {name:"Rutembesa",id:"STU055",class:"10A",hasVoted:false},
-  {name:"Anyieth",id:"STU056",class:"10B",hasVoted:false},
-  {name:"Elyne",id:"STU057",class:"10B",hasVoted:false},
-  {name:"Abby",id:"STU058",class:"10B",hasVoted:false},
-  {name:"Esnas",id:"STU059",class:"10A",hasVoted:false},
-  {name:"Jemimah",id:"STU060",class:"9A",hasVoted:false},
-  {name:"Vivian",id:"STU061",class:"9A",hasVoted:false},
-  {name:"Gloria",id:"STU062",class:"9A",hasVoted:false},
-  {name:"Adua",id:"STU063",class:"9A",hasVoted:false},
-  {name:"Madeline",id:"STU064",class:"7A",hasVoted:false},
-  {name:"Natalie",id:"STU065",class:"9A",hasVoted:false},
-  {name:"Tinashia",id:"STU066",class:"7A",hasVoted:false},
-  {name:"Kiki",id:"STU067",class:"10A",hasVoted:false},
-  {name:"Fortune",id:"STU068",class:"9A",hasVoted:false},
-  {name:"Zawadi",id:"STU069",class:"9A",hasVoted:false},
-  {name:"Ehsani",id:"STU070",class:"10A",hasVoted:false},
-  {name:"Jonathan",id:"STU071",class:"10A",hasVoted:false},
-  {name:"Emmanuel",id:"STU072",class:"10A",hasVoted:false},
-  {name:"Adrian Malala",id:"STU073",class:"10A",hasVoted:false},
-  {name:"Booker",id:"STU074",class:"10A",hasVoted:false},
-  {name:"Shreya",id:"STU075",class:"10B",hasVoted:false},
-  {name:"John",id:"STU076",class:"10B",hasVoted:false},
-  {name:"Taraji",id:"STU077",class:"10B",hasVoted:false},
-  {name:"Makonna",id:"STU078",class:"10B",hasVoted:false},
-  {name:"Hera",id:"STU079",class:"10B",hasVoted:false},
-  {name:"Shazia",id:"STU080",class:"10B",hasVoted:false},
-  {name:"Khusalya",id:"STU081",class:"8A",hasVoted:false},
-  {name:"Abigael Tibo",id:"STU082",class:"8A",hasVoted:false},
-  {name:"Jason",id:"STU083",class:"8A",hasVoted:false},
-  {name:"Nolan",id:"STU084",class:"8A",hasVoted:false},
-  {name:"Liam",id:"STU086",class:"8A",hasVoted:false},
-  {name:"Miles",id:"STU087",class:"8A",hasVoted:false},
-  {name:"Tiffany",id:"STU089",class:"8A",hasVoted:false},
-  {name:"Maya",id:"STU090",class:"8A",hasVoted:false},
-  {name:"Beatrice",id:"STU091",class:"9A",hasVoted:false},
-  {name:"Layla",id:"STU092",class:"9A",hasVoted:false},
-  {name:"Teko",id:"STU093",class:"9A",hasVoted:false},
-  {name:"Akshar",id:"STU094",class:"9A",hasVoted:false},
-  {name:"Fadhili",id:"STU095",class:"9A",hasVoted:false},
-  {name:"Prabath",id:"STU096",class:"9A",hasVoted:false},
-  {name:"Jayden Ngesa",id:"STU097",class:"7A",hasVoted:false},
-  {name:"Hadassa",id:"STU099",class:"7A",hasVoted:false},
-  {name:"Tukuza",id:"STU100",class:"7A",hasVoted:false},
-  {name:"Joshua",id:"STU101",class:"7A",hasVoted:false},
-  {name:"Pima",id:"STU102",class:"9A",hasVoted:false}
+  {name:"Daniel Ingati",id:"STU007",class:"10B",hasVoted:false, deviceId: null, voteTimestamp: null},
+  {name:"Griffins Muoki",id:"STU008",class:"10B",hasVoted:false, deviceId: null, voteTimestamp: null},
+  {name:"Carlsam Suri",id:"STU010",class:"10A",hasVoted:false, deviceId: null, voteTimestamp: null},
+  {name:"Blessings Natasha",id:"STU011",class:"10A",hasVoted:false, deviceId: null, voteTimestamp: null},
+  {name:"Paul Charles",id:"STU017",class:"10A",hasVoted:false, deviceId: null, voteTimestamp: null},
+  {name:"Mariebell G.",id:"STU018",class:"10B",hasVoted:false, deviceId: null, voteTimestamp: null},
+  {name:"Gabriel Vigne",id:"STU021",class:"9A",hasVoted:false, deviceId: null, voteTimestamp: null},
+  {name:"Dennis Wisdom",id:"STU022",class:"8",hasVoted:false, deviceId: null, voteTimestamp: null},
+  {name:"Aloysius Jude",id:"STU024",class:"8",hasVoted:false, deviceId: null, voteTimestamp: null},
+  {name:"Tim Mburu",id:"STU001",class:"10A",hasVoted:false, deviceId: null, voteTimestamp: null},
+  {name:"Wesley Agina",id:"STU002",class:"10B",hasVoted:false, deviceId: null, voteTimestamp: null},
+  {name:"Kennedy Mutitu",id:"STU003",class:"10B",hasVoted:false, deviceId: null, voteTimestamp: null},
+  {name:"Adrian Francis",id:"STU004",class:"7A",hasVoted:false, deviceId: null, voteTimestamp: null},
+  {name:"Zackary Mbithi",id:"STU005",class:"7A",hasVoted:false, deviceId: null, voteTimestamp: null},
+  {name:"Glen Collins",id:"STU006",class:"7A",hasVoted:false, deviceId: null, voteTimestamp: null},
+  {name:"Alex Garang",id:"STU012",class:"7A",hasVoted:false, deviceId: null, voteTimestamp: null},
+  {name:"Darren Mitch",id:"STU013",class:"7A",hasVoted:false, deviceId: null, voteTimestamp: null},
+  {name:"Mwendwa Magutu",id:"STU014",class:"7A",hasVoted:false, deviceId: null, voteTimestamp: null},
+  {name:"Majak Garang",id:"STU015",class:"7A",hasVoted:false, deviceId: null, voteTimestamp: null},
+  {name:"Brian Owino",id:"STU023",class:"9A",hasVoted:false, deviceId: null, voteTimestamp: null},
+  {name:"Edmund Munyoki",id:"STU019",class:"9A",hasVoted:false, deviceId: null, voteTimestamp: null},
+  {name:"Kelvin Solitei",id:"STU029",class:"9A",hasVoted:false, deviceId: null, voteTimestamp: null},
+  {name:"Wesly Weke",id:"STU030",class:"9A",hasVoted:false, deviceId: null, voteTimestamp: null},
+  {name:"Chris Linus",id:"STU031",class:"9A",hasVoted:false, deviceId: null, voteTimestamp: null},
+  {name:"Ganyang Hoth",id:"STU032",class:"9A",hasVoted:false, deviceId: null, voteTimestamp: null},
+  {name:"Felix Karia",id:"STU033",class:"10A",hasVoted:false, deviceId: null, voteTimestamp: null},
+  {name:"Mathew Paita",id:"STU034",class:"10A",hasVoted:false, deviceId: null, voteTimestamp: null},
+  {name:"Samir Simal",id:"STU035",class:"10B",hasVoted:false, deviceId: null, voteTimestamp: null},
+  {name:"Trevor Amani",id:"STU037",class:"10B",hasVoted:false, deviceId: null, voteTimestamp: null},
+  {name:"Kelvin Emilian",id:"STU038",class:"10A",hasVoted:false, deviceId: null, voteTimestamp: null},
+  {name:"Elvis Henry",id:"STU039",class:"10B",hasVoted:false, deviceId: null, voteTimestamp: null},
+  {name:"Moses Baraka",id:"STU040",class:"10B",hasVoted:false, deviceId: null, voteTimestamp: null},
+  {name:"Kennedy Mutitu",id:"STU041",class:"10B",hasVoted:false, deviceId: null, voteTimestamp: null},
+  {name:"Deng Makuie",id:"STU042",class:"10B",hasVoted:false, deviceId: null, voteTimestamp: null},
+  {name:"Janelle Yangi",id:"STU043",class:"10A",hasVoted:false, deviceId: null, voteTimestamp: null},
+  {name:"Rael Malima",id:"STU044",class:"10A",hasVoted:false, deviceId: null, voteTimestamp: null},
+  {name:"Gabriella Zahra",id:"STU045",class:"9A",hasVoted:false, deviceId: null, voteTimestamp: null},
+  {name:"Jean Mellan",id:"STU046",class:"9A",hasVoted:false, deviceId: null, voteTimestamp: null},
+  {name:"Angel Maina",id:"STU047",class:"9A",hasVoted:false, deviceId: null, voteTimestamp: null},
+  {name:"Rael Manyala",id:"STU048",class:"10A",hasVoted:false, deviceId: null, voteTimestamp: null},
+  {name:"Blessing",id:"STU049",class:"10A",hasVoted:false, deviceId: null, voteTimestamp: null},
+  {name:"Zarya",id:"STU050",class:"10B",hasVoted:false, deviceId: null, voteTimestamp: null},
+  {name:"Alma",id:"STU051",class:"10A",hasVoted:false, deviceId: null, voteTimestamp: null},
+  {name:"Anai",id:"STU052",class:"10A",hasVoted:false, deviceId: null, voteTimestamp: null},
+  {name:"Tiffany Moraa",id:"STU053",class:"10A",hasVoted:false, deviceId: null, voteTimestamp: null},
+  {name:"Sanita",id:"STU088",class:"10A",hasVoted:false, deviceId: null, voteTimestamp: null},
+  {name:"Tamara Sylvia",id:"STU054",class:"10B",hasVoted:false, deviceId: null, voteTimestamp: null},
+  {name:"Rutembesa",id:"STU055",class:"10A",hasVoted:false, deviceId: null, voteTimestamp: null},
+  {name:"Anyieth",id:"STU056",class:"10B",hasVoted:false, deviceId: null, voteTimestamp: null},
+  {name:"Elyne",id:"STU057",class:"10B",hasVoted:false, deviceId: null, voteTimestamp: null},
+  {name:"Abby",id:"STU058",class:"10B",hasVoted:false, deviceId: null, voteTimestamp: null},
+  {name:"Esnas",id:"STU059",class:"10A",hasVoted:false, deviceId: null, voteTimestamp: null},
+  {name:"Jemimah",id:"STU060",class:"9A",hasVoted:false, deviceId: null, voteTimestamp: null},
+  {name:"Vivian",id:"STU061",class:"9A",hasVoted:false, deviceId: null, voteTimestamp: null},
+  {name:"Gloria",id:"STU062",class:"9A",hasVoted:false, deviceId: null, voteTimestamp: null},
+  {name:"Adua",id:"STU063",class:"9A",hasVoted:false, deviceId: null, voteTimestamp: null},
+  {name:"Madeline",id:"STU064",class:"7A",hasVoted:false, deviceId: null, voteTimestamp: null},
+  {name:"Natalie",id:"STU065",class:"9A",hasVoted:false, deviceId: null, voteTimestamp: null},
+  {name:"Tinashia",id:"STU066",class:"7A",hasVoted:false, deviceId: null, voteTimestamp: null},
+  {name:"Kiki",id:"STU067",class:"10A",hasVoted:false, deviceId: null, voteTimestamp: null},
+  {name:"Fortune",id:"STU068",class:"9A",hasVoted:false, deviceId: null, voteTimestamp: null},
+  {name:"Zawadi",id:"STU069",class:"9A",hasVoted:false, deviceId: null, voteTimestamp: null},
+  {name:"Ehsani",id:"STU070",class:"10A",hasVoted:false, deviceId: null, voteTimestamp: null},
+  {name:"Jonathan",id:"STU071",class:"10A",hasVoted:false, deviceId: null, voteTimestamp: null},
+  {name:"Emmanuel",id:"STU072",class:"10A",hasVoted:false, deviceId: null, voteTimestamp: null},
+  {name:"Adrian Malala",id:"STU073",class:"10A",hasVoted:false, deviceId: null, voteTimestamp: null},
+  {name:"Booker",id:"STU074",class:"10A",hasVoted:false, deviceId: null, voteTimestamp: null},
+  {name:"Shreya",id:"STU075",class:"10B",hasVoted:false, deviceId: null, voteTimestamp: null},
+  {name:"John",id:"STU076",class:"10B",hasVoted:false, deviceId: null, voteTimestamp: null},
+  {name:"Taraji",id:"STU077",class:"10B",hasVoted:false, deviceId: null, voteTimestamp: null},
+  {name:"Makonna",id:"STU078",class:"10B",hasVoted:false, deviceId: null, voteTimestamp: null},
+  {name:"Hera",id:"STU079",class:"10B",hasVoted:false, deviceId: null, voteTimestamp: null},
+  {name:"Shazia",id:"STU080",class:"10B",hasVoted:false, deviceId: null, voteTimestamp: null},
+  {name:"Khusalya",id:"STU081",class:"8A",hasVoted:false, deviceId: null, voteTimestamp: null},
+  {name:"Abigael Tibo",id:"STU082",class:"8A",hasVoted:false, deviceId: null, voteTimestamp: null},
+  {name:"Jason",id:"STU083",class:"8A",hasVoted:false, deviceId: null, voteTimestamp: null},
+  {name:"Nolan",id:"STU084",class:"8A",hasVoted:false, deviceId: null, voteTimestamp: null},
+  {name:"Liam",id:"STU086",class:"8A",hasVoted:false, deviceId: null, voteTimestamp: null},
+  {name:"Miles",id:"STU087",class:"8A",hasVoted:false, deviceId: null, voteTimestamp: null},
+  {name:"Tiffany",id:"STU089",class:"8A",hasVoted:false, deviceId: null, voteTimestamp: null},
+  {name:"Maya",id:"STU090",class:"8A",hasVoted:false, deviceId: null, voteTimestamp: null},
+  {name:"Beatrice",id:"STU091",class:"9A",hasVoted:false, deviceId: null, voteTimestamp: null},
+  {name:"Layla",id:"STU092",class:"9A",hasVoted:false, deviceId: null, voteTimestamp: null},
+  {name:"Teko",id:"STU093",class:"9A",hasVoted:false, deviceId: null, voteTimestamp: null},
+  {name:"Akshar",id:"STU094",class:"9A",hasVoted:false, deviceId: null, voteTimestamp: null},
+  {name:"Fadhili",id:"STU095",class:"9A",hasVoted:false, deviceId: null, voteTimestamp: null},
+  {name:"Prabath",id:"STU096",class:"9A",hasVoted:false, deviceId: null, voteTimestamp: null},
+  {name:"Jayden Ngesa",id:"STU097",class:"7A",hasVoted:false, deviceId: null, voteTimestamp: null},
+  {name:"Hadassa",id:"STU099",class:"7A",hasVoted:false, deviceId: null, voteTimestamp: null},
+  {name:"Tukuza",id:"STU100",class:"7A",hasVoted:false, deviceId: null, voteTimestamp: null},
+  {name:"Joshua",id:"STU101",class:"7A",hasVoted:false, deviceId: null, voteTimestamp: null},
+  {name:"Pima",id:"STU102",class:"9A",hasVoted:false, deviceId: null, voteTimestamp: null}
 ];
 
 // ----- EXACT STAFF FROM PDF (24) -----
 const STAFF_VOTERS = [
-  {name:"Christine",id:"STA002",hasVoted:false},
-  {name:"Wanyonyi",id:"STA003",hasVoted:false},
-  {name:"Irene",id:"STA005",hasVoted:false},
-  {name:"Dee",id:"STA007",hasVoted:false},
-  {name:"Mutune",id:"STA023",hasVoted:false},
-  {name:"Celestino",id:"STA024",hasVoted:false},   // Reset to false
-  {name:"Steve",id:"STA001",hasVoted:false},
-  {name:"Collins",id:"STA004",hasVoted:false},
-  {name:"Mutisya",id:"STA006",hasVoted:false},
-  {name:"Moraa",id:"STA008",hasVoted:false},
-  {name:"Sylvia",id:"STA009",hasVoted:false},
-  {name:"Ivy",id:"STA010",hasVoted:false},
-  {name:"Japheth",id:"STA011",hasVoted:false},
-  {name:"Florence",id:"STA012",hasVoted:false},
-  {name:"Rabin",id:"STA013",hasVoted:false},
-  {name:"Nikita",id:"STA014",hasVoted:false},
-  {name:"Jacques",id:"STA015",hasVoted:false},
-  {name:"Eunice",id:"STA016",hasVoted:false},
-  {name:"Kinyanjiu",id:"STA017",hasVoted:false},
-  {name:"Otieno",id:"STA018",hasVoted:false},
-  {name:"Gichuru",id:"STA019",hasVoted:false},
-  {name:"Dennis",id:"STA020",hasVoted:false},
-  {name:"Virginia",id:"STA021",hasVoted:false},
-  {name:"Kasanga",id:"STA022",hasVoted:false}
+  {name:"Christine",id:"STA002",hasVoted:false, deviceId: null, voteTimestamp: null},
+  {name:"Wanyonyi",id:"STA003",hasVoted:false, deviceId: null, voteTimestamp: null},
+  {name:"Irene",id:"STA005",hasVoted:false, deviceId: null, voteTimestamp: null},
+  {name:"Dee",id:"STA007",hasVoted:false, deviceId: null, voteTimestamp: null},
+  {name:"Mutune",id:"STA023",hasVoted:false, deviceId: null, voteTimestamp: null},
+  {name:"Celestino",id:"STA024",hasVoted:false, deviceId: null, voteTimestamp: null},
+  {name:"Steve",id:"STA001",hasVoted:false, deviceId: null, voteTimestamp: null},
+  {name:"Collins",id:"STA004",hasVoted:false, deviceId: null, voteTimestamp: null},
+  {name:"Mutisya",id:"STA006",hasVoted:false, deviceId: null, voteTimestamp: null},
+  {name:"Moraa",id:"STA008",hasVoted:false, deviceId: null, voteTimestamp: null},
+  {name:"Sylvia",id:"STA009",hasVoted:false, deviceId: null, voteTimestamp: null},
+  {name:"Ivy",id:"STA010",hasVoted:false, deviceId: null, voteTimestamp: null},
+  {name:"Japheth",id:"STA011",hasVoted:false, deviceId: null, voteTimestamp: null},
+  {name:"Florence",id:"STA012",hasVoted:false, deviceId: null, voteTimestamp: null},
+  {name:"Rabin",id:"STA013",hasVoted:false, deviceId: null, voteTimestamp: null},
+  {name:"Nikita",id:"STA014",hasVoted:false, deviceId: null, voteTimestamp: null},
+  {name:"Jacques",id:"STA015",hasVoted:false, deviceId: null, voteTimestamp: null},
+  {name:"Eunice",id:"STA016",hasVoted:false, deviceId: null, voteTimestamp: null},
+  {name:"Kinyanjiu",id:"STA017",hasVoted:false, deviceId: null, voteTimestamp: null},
+  {name:"Otieno",id:"STA018",hasVoted:false, deviceId: null, voteTimestamp: null},
+  {name:"Gichuru",id:"STA019",hasVoted:false, deviceId: null, voteTimestamp: null},
+  {name:"Dennis",id:"STA020",hasVoted:false, deviceId: null, voteTimestamp: null},
+  {name:"Virginia",id:"STA021",hasVoted:false, deviceId: null, voteTimestamp: null},
+  {name:"Kasanga",id:"STA022",hasVoted:false, deviceId: null, voteTimestamp: null}
 ];
 
 // ----- CANDIDATES & VOTES from PDF -----
@@ -582,20 +653,8 @@ const INITIAL_VOTES = {
   "Boy Environment": {"Chris Linus":0,"Zachary Mbithi":0}
 };
 
-// ==================== FIREBASE CONFIG ====================
-const firebaseConfig = {
-  apiKey: "AIzaSyBxxxxxxxxxxxxxxxxxxxxx", // Replace with your Firebase config
-  authDomain: "your-project.firebaseapp.com",
-  databaseURL: "https://your-project-default-rtdb.firebaseio.com",
-  projectId: "your-project",
-  storageBucket: "your-project.appspot.com",
-  messagingSenderId: "000000000000",
-  appId: "1:000000000000:web:xxxxxxxxxxxx"
-};
-
 // ==================== STATE ====================
-let voters = { student: STUDENT_VOTERS.map(v=>({...v, deviceId: null, voteTimestamp: null})), 
-               staff: STAFF_VOTERS.map(v=>({...v, deviceId: null, voteTimestamp: null})) };
+let voters = { student: STUDENT_VOTERS.map(v=>({...v})), staff: STAFF_VOTERS.map(v=>({...v})) };
 let candidates = JSON.parse(JSON.stringify(INITIAL_CANDIDATES));
 let votes = JSON.parse(JSON.stringify(INITIAL_VOTES));
 let currentVoter = null;
@@ -613,13 +672,22 @@ function generateDeviceId() {
 
 // ==================== FIREBASE INIT ====================
 try {
-  firebase.initializeApp(firebaseConfig);
-  database = firebase.database();
-  firebaseInitialized = true;
-  updateSyncStatus(true);
-  
-  // Listen for real-time updates
-  setupFirebaseListeners();
+  // Check if config has placeholder values
+  if (firebaseConfig.apiKey !== "YOUR_API_KEY") {
+    firebase.initializeApp(firebaseConfig);
+    database = firebase.database();
+    firebaseInitialized = true;
+    updateSyncStatus(true);
+    
+    // Listen for real-time updates
+    setupFirebaseListeners();
+    
+    // Initial sync
+    syncInitialData();
+  } else {
+    console.warn("Firebase not configured - using offline mode");
+    updateSyncStatus(false);
+  }
 } catch(e) {
   console.error("Firebase init failed:", e);
   updateSyncStatus(false);
@@ -645,7 +713,6 @@ function setupFirebaseListeners() {
   votesRef.on('value', (snapshot) => {
     const data = snapshot.val();
     if (data) {
-      // Merge Firebase votes with local
       mergeFirebaseData(data);
     }
   });
@@ -670,6 +737,17 @@ function setupFirebaseListeners() {
       }
     }
   });
+}
+
+function syncInitialData() {
+  if (!database) return;
+  
+  // Sync voters to Firebase
+  const allVoters = {};
+  voters.student.forEach(v => { allVoters[v.id] = { ...v, type: 'student' }; });
+  voters.staff.forEach(v => { allVoters[v.id] = { ...v, type: 'staff' }; });
+  
+  database.ref('voters').set(allVoters);
 }
 
 function mergeFirebaseData(firebaseVotes) {
@@ -840,6 +918,7 @@ function showVoterChoice() {
 }
 function checkAndShowResults() { showSection('electionResults'); }
 function showDeveloperInfo() { showSection('developerInfo'); }
+function showSetupInstructions() { showSection('setupInstructions'); }
 
 // ==================== VERIFICATION ====================
 function verifyStudent() {
@@ -902,7 +981,7 @@ async function submitVote() {
     if (!votes[vote.position]) votes[vote.position] = {};
     votes[vote.position][vote.candidate] = (votes[vote.position][vote.candidate] || 0) + 1;
     
-    // Sync to Firebase
+    // Sync to Firebase if available
     if (database) {
       await syncVoteToFirebase(currentVoter, vote);
     }
@@ -922,7 +1001,7 @@ async function submitVote() {
   }
   
   saveData(); 
-  alert("Vote recorded and synced live!"); 
+  alert("Vote recorded" + (database ? " and synced live!" : " (offline mode)")); 
   currentVoter=null; 
   showSection('home');
   updateHomeStats();
@@ -1023,6 +1102,15 @@ function saveVoter() {
     if (type==='student') voters.student.push(voter);
     else voters.staff.push(voter);
   }
+  
+  // Sync to Firebase if available
+  if (database) {
+    const allVoters = {};
+    voters.student.forEach(v => { allVoters[v.id] = { ...v, type: 'student' }; });
+    voters.staff.forEach(v => { allVoters[v.id] = { ...v, type: 'staff' }; });
+    database.ref('voters').set(allVoters);
+  }
+  
   saveData(); bootstrap.Modal.getInstance(document.getElementById('voterModal')).hide();
   showRegistered('all'); updateAdminStats(); updateHomeStats();
 }
@@ -1031,6 +1119,15 @@ function deleteVoter(type,index) {
   document.getElementById('confirmDeleteBtn').onclick = ()=>{
     if (type==='student') voters.student.splice(index,1);
     else voters.staff.splice(index,1);
+    
+    // Sync to Firebase if available
+    if (database) {
+      const allVoters = {};
+      voters.student.forEach(v => { allVoters[v.id] = { ...v, type: 'student' }; });
+      voters.staff.forEach(v => { allVoters[v.id] = { ...v, type: 'staff' }; });
+      database.ref('voters').set(allVoters);
+    }
+    
     saveData(); bootstrap.Modal.getInstance(document.getElementById('deleteConfirmModal')).hide();
     showRegistered('all'); updateAdminStats(); updateHomeStats();
   };
@@ -1201,6 +1298,7 @@ function loadData() {
   try {
     if (localStorage.getItem('voters')) {
       const saved = JSON.parse(localStorage.getItem('voters'));
+      // Preserve device info
       voters = saved;
     }
     if (localStorage.getItem('candidates')) candidates = JSON.parse(localStorage.getItem('candidates'));
@@ -1219,6 +1317,7 @@ window.showAddVoterModal = showAddVoterModal; window.editVoter = editVoter; wind
 window.saveVoter = saveVoter; window.showAddCandidateModal = showAddCandidateModal; window.editCandidate = editCandidate;
 window.deleteCandidate = deleteCandidate; window.saveCandidate = saveCandidate; window.performSearch = performSearch;
 window.downloadResultsPDF = downloadResultsPDF; window.downloadResultsDOCX = downloadResultsDOCX;
+window.showSetupInstructions = showSetupInstructions;
 
 // init
 showSection('home');
