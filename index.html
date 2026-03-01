@@ -2629,10 +2629,11 @@
           
           positionCandidates.forEach(candidate => {
             const initial = candidate.name ? candidate.name.charAt(0).toUpperCase() : '?';
+            // Use the position directly as the name attribute, without escaping
             html += `
               <div class="candidate-card p-3" onclick="selectCandidate(this, '${position.replace(/'/g, "\\'")}')">
                 <div class="form-check">
-                  <input class="form-check-input" type="radio" name="${position.replace(/'/g, "\\'")}" value="${candidate.name.replace(/'/g, "\\'")}">
+                  <input class="form-check-input" type="radio" name="${position}" value="${candidate.name.replace(/'/g, "&apos;")}">
                   <div class="d-flex align-items-center">
                     <div class="candidate-avatar me-2" style="width: 35px; height: 35px; font-size: 1rem;">
                       ${initial}
@@ -2659,12 +2660,23 @@
     }
 
     function selectCandidate(element, position) {
-      document.querySelectorAll(`input[name="${position}"]`).forEach(radio => {
-        const card = radio.closest('.candidate-card');
-        if (card) card.classList.remove('selected');
+      // Remove selected class from all cards in this position
+      document.querySelectorAll(`.candidate-card`).forEach(card => {
+        const radio = card.querySelector('input[type="radio"]');
+        if (radio && radio.name === position) {
+          card.classList.remove('selected');
+        }
       });
+      
+      // Add selected class to clicked card
       element.classList.add('selected');
-      element.querySelector('input[type="radio"]').checked = true;
+      
+      // Check the radio button
+      const radio = element.querySelector('input[type="radio"]');
+      if (radio) {
+        radio.checked = true;
+        console.log(`Selected ${radio.value} for ${position}`);
+      }
     }
 
     function submitVote() {
@@ -2684,16 +2696,28 @@
       }
       
       let votesCast = 0;
+      let selectedPositions = [];
+      let missingPositions = [];
       
+      // Check each position
       positions.forEach(position => {
-        const selected = document.querySelector(`input[name="${position}"]:checked`);
-        if (selected) {
-          const candidateName = selected.value;
+        // Find checked radio for this position
+        const selectedRadio = document.querySelector(`input[name="${position}"]:checked`);
+        
+        if (selectedRadio) {
+          const candidateName = selectedRadio.value;
           if (!votes[position]) votes[position] = {};
           votes[position][candidateName] = (votes[position][candidateName] || 0) + 1;
           votesCast++;
+          selectedPositions.push(position);
+          console.log(`Voted for ${candidateName} in ${position}`);
+        } else {
+          missingPositions.push(position);
         }
       });
+      
+      console.log(`Votes cast: ${votesCast}, Positions: ${positions.length}`);
+      console.log('Missing positions:', missingPositions);
       
       if (votesCast === 0) {
         showNotification('Select a candidate for each position', 'warning');
@@ -2701,10 +2725,11 @@
       }
       
       if (votesCast < positions.length) {
-        showNotification(`Please vote for all ${positions.length} positions`, 'warning');
+        showNotification(`Please vote for all ${positions.length} positions. Missing: ${missingPositions.join(', ')}`, 'warning');
         return;
       }
       
+      // Mark voter as having voted
       if (currentVoter.type === 'student') {
         const student = voters.student.find(v => v.id === currentVoter.id);
         if (student) student.hasVoted = true;
