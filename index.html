@@ -1455,7 +1455,7 @@
       <div class="logo-container">
         <img id="systemLogo" class="system-logo pulse" src="https://via.placeholder.com/150x150/ef6c00/ffffff?text=LVS" alt="Lukenya Voting System Logo" style="max-width: 120px; border-radius: var(--radius-xl); box-shadow: var(--shadow-xl);">
         <h1 id="systemTitle" class="display-5 fw-bold mt-3 text-gradient">Lukenya Voting System</h1>
-        <p id="systemSubtitle" class="text-white-75 px-4">British Curriculum Student Council Elections 2026 | Election Date: 02/03/2026 | Real-Time Sync | Total Registered: 116 (92 Students, 24 Staff)</p>
+        <p id="systemSubtitle" class="text-white-75 px-4">British Curriculum Student Council Elections 2026 | Election Period: 01/03/2026 15:00 – 02/03/2026 18:00 | Real-Time Sync | Total Registered: 116 (92 Students, 24 Staff)</p>
       </div>
     </header>
 
@@ -1463,7 +1463,7 @@
     <section id="home" class="fade-in">
       <div class="hero-section" style="background: var(--gradient-primary); border-radius: var(--radius-2xl); padding: var(--spacing-xl); color: white;">
         <h2 id="welcomeText" class="display-6 fw-bold mb-3">WELCOME TO LUKENYA SCHOOL</h2>
-        <p id="electionTitle" class="fs-5 mb-4">STUDENT COUNCIL ELECTION 2026 | 02/03/2026 | 116 Registered Voters</p>
+        <p id="electionTitle" class="fs-5 mb-4">STUDENT COUNCIL ELECTION 2026 | 01/03/2026 15:00 – 02/03/2026 18:00 | 116 Registered Voters</p>
         
         <!-- ========== COUNTDOWN TIMER ========== -->
         <div class="timer-wrapper">
@@ -1487,7 +1487,7 @@
             </div>
           </div>
           <div class="mt-4">
-            <span class="badge bg-white text-primary p-2 rounded-pill fs-6" id="votingStatus">Voting Starts 02/03/2026</span>
+            <span class="badge bg-white text-primary p-2 rounded-pill fs-6" id="votingStatus">Voting Starts 01/03/2026 15:00</span>
           </div>
         </div>
 
@@ -1690,7 +1690,7 @@
           </span>
         </div>
         
-        <p class="text-muted small mb-3">Election Date: 02/03/2026 | Real-Time Updates | Total Registered: 116 (92 Students, 24 Staff)</p>
+        <p class="text-muted small mb-3">Election Period: 01/03/2026 15:00 – 02/03/2026 18:00 | Real-Time Updates | Total Registered: 116 (92 Students, 24 Staff)</p>
         
         <!-- Results Content - Admin Only -->
         <div id="resultsContent" class="hidden">
@@ -1978,7 +1978,12 @@
               </div>
               <div class="form-group">
                 <label class="form-label small">Voting Start</label>
-                <input type="time" class="form-control form-control-sm" id="votingStart" value="08:00">
+                <input type="time" class="form-control form-control-sm" id="votingStart" value="15:00">
+              </div>
+              <div class="form-group">
+                <label class="form-label small">Voting End (next day 18:00)</label>
+                <input type="time" class="form-control form-control-sm" id="votingEnd" value="18:00" disabled>
+                <small class="text-muted">Ends 02/03/2026 18:00</small>
               </div>
               <button class="btn btn-primary w-100 btn-sm" onclick="saveElectionSettingsFull()">Save</button>
             </div>
@@ -2374,7 +2379,7 @@
           saveData();
         }
         
-        // Set election date to March 2, 2026
+        // Set election date to March 1-2, 2026 (3pm to 6pm next day)
         initializeElectionTimer();
         
         // Apply saved theme
@@ -2408,11 +2413,12 @@
     function initializeElectionTimer() {
       if (votingTimer) clearInterval(votingTimer);
       
-      const electionDate = '2026-03-02';
-      const votingStart = '08:00';
+      // Start: 01/03/2026 15:00, End: 02/03/2026 18:00
+      const startDateStr = '2026-03-01 15:00';
+      const endDateStr = '2026-03-02 18:00';
       
-      votingStartTime = moment(electionDate + ' ' + votingStart);
-      votingEndTime = moment(votingStartTime).add(8, 'hours');
+      votingStartTime = moment(startDateStr);
+      votingEndTime = moment(endDateStr);
       
       updateTimerDisplay();
       votingTimer = setInterval(updateTimerDisplay, 1000);
@@ -2425,7 +2431,7 @@
       
       if (now.isBefore(votingStartTime)) {
         timeRemaining = votingStartTime.diff(now);
-        statusText = 'Voting Starts 02/03/2026';
+        statusText = 'Voting Starts 01/03/2026 15:00';
       } else if (now.isBefore(votingEndTime)) {
         timeRemaining = votingEndTime.diff(now);
         statusText = 'Voting Ends In';
@@ -2499,7 +2505,7 @@
     function showVoterChoice() {
       const now = moment();
       if (now.isBefore(votingStartTime)) {
-        showNotification('Voting starts 02/03/2026', 'warning');
+        showNotification('Voting starts 01/03/2026 15:00', 'warning');
         return;
       } else if (now.isAfter(votingEndTime)) {
         showNotification('Voting ended', 'warning');
@@ -2529,7 +2535,7 @@
     function verifyStudent() {
       const now = moment();
       if (now.isBefore(votingStartTime)) {
-        showNotification('Voting starts 02/03/2026', 'warning');
+        showNotification('Voting starts 01/03/2026 15:00', 'warning');
         return;
       } else if (now.isAfter(votingEndTime)) {
         showNotification('Voting ended', 'warning');
@@ -2567,7 +2573,7 @@
     function verifyStaff() {
       const now = moment();
       if (now.isBefore(votingStartTime)) {
-        showNotification('Voting starts 02/03/2026', 'warning');
+        showNotification('Voting starts 01/03/2026 15:00', 'warning');
         return;
       } else if (now.isAfter(votingEndTime)) {
         showNotification('Voting ended', 'warning');
@@ -2657,7 +2663,7 @@
     function submitVote() {
       const now = moment();
       if (now.isBefore(votingStartTime)) {
-        showNotification('Voting starts 02/03/2026', 'warning');
+        showNotification('Voting starts 01/03/2026 15:00', 'warning');
         return;
       } else if (now.isAfter(votingEndTime)) {
         showNotification('Voting ended', 'warning');
@@ -3117,8 +3123,8 @@
       
       if (title) document.getElementById('systemTitle').textContent = title;
       if (date) {
-        document.getElementById('electionTitle').innerHTML = `STUDENT COUNCIL ELECTION 2026 | ${moment(date).format('DD/MM/YYYY')} | 116 Registered Voters`;
-        document.getElementById('systemSubtitle').innerHTML = `British Curriculum Student Council Elections 2026 | Election Date: ${moment(date).format('DD/MM/YYYY')} | Real-Time Sync | Total Registered: 116 (92 Students, 24 Staff)`;
+        document.getElementById('electionTitle').innerHTML = `STUDENT COUNCIL ELECTION 2026 | ${moment(date).format('DD/MM/YYYY')} 15:00 – 02/03/2026 18:00 | 116 Registered Voters`;
+        document.getElementById('systemSubtitle').innerHTML = `British Curriculum Student Council Elections 2026 | Election Period: 01/03/2026 15:00 – 02/03/2026 18:00 | Real-Time Sync | Total Registered: 116 (92 Students, 24 Staff)`;
       }
       
       saveData();
@@ -3128,8 +3134,8 @@
     function saveElectionSettingsFull() {
       const start = document.getElementById('votingStart').value;
       if (start) {
-        votingStartTime = moment('2026-03-02 ' + start);
-        votingEndTime = moment(votingStartTime).add(8, 'hours');
+        votingStartTime = moment('2026-03-01 ' + start);
+        votingEndTime = moment('2026-03-02 18:00'); // fixed end
       }
       showNotification('Election settings saved', 'success');
     }
@@ -3219,7 +3225,7 @@
       doc.text('Lukenya Voting System', 20, 20);
       
       doc.setFontSize(12);
-      doc.text('Election Results - 02/03/2026', 20, 30);
+      doc.text('Election Results - 01/03/2026 15:00 to 02/03/2026 18:00', 20, 30);
       
       const totalVoters = voters.student.length + voters.staff.length;
       const totalVotes = voters.student.filter(v => v.hasVoted).length + voters.staff.filter(v => v.hasVoted).length;
@@ -3249,7 +3255,7 @@
         }
       });
       
-      doc.save('election_results_02032026.pdf');
+      doc.save('election_results_0103_0203_2026.pdf');
       showNotification('PDF downloaded', 'success');
     }
 
@@ -3267,7 +3273,7 @@
         <head><style>body { font-family: Arial; margin: 20px; }</style></head>
         <body>
           <h2>Lukenya Voting System</h2>
-          <h3>Election Results - 02/03/2026</h3>
+          <h3>Election Results - 01/03/2026 15:00 to 02/03/2026 18:00</h3>
           <p>Total Registered Voters: ${totalVoters} (Students: ${voters.student.length}, Staff: ${voters.staff.length})</p>
           <p>Votes Cast: ${totalVotes} | Turnout: ${((totalVotes/totalVoters)*100).toFixed(1)}%</p>
           <table border="1" cellpadding="5">
@@ -3286,7 +3292,7 @@
       content += '</table></body></html>';
       
       const blob = new Blob([content], { type: 'application/msword' });
-      saveAs(blob, 'election_results_02032026.docx');
+      saveAs(blob, 'election_results_0103_0203_2026.docx');
       showNotification('DOCX downloaded', 'success');
     }
 
@@ -3314,7 +3320,7 @@
       initializeElectionTimer();
       showSection('home');
       
-      console.log(`${APP_NAME} v${APP_VERSION} loaded with election date 02/03/2026`);
+      console.log(`${APP_NAME} v${APP_VERSION} loaded with election period: 01/03/2026 15:00 – 02/03/2026 18:00`);
       console.log(`Total voters loaded: ${voters.student.length} students, ${voters.staff.length} staff (Total: ${voters.student.length + voters.staff.length})`);
       console.log('Mobile-optimized version active');
     };
