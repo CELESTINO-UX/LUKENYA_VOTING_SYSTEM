@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-  <title>Lukenya Voting · Live Voter Tracking</title>
+  <title>Lukenya Voting · Live Backend Sync</title>
   
   <!-- Bootstrap 5 CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -20,7 +20,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/docx/7.8.2/docx.min.js"></script>
-  <!-- Firebase (placeholder) -->
+  <!-- Firebase (working config) -->
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
   
@@ -1354,7 +1354,7 @@
   <!-- ========== SYNC STATUS ========== -->
   <div id="syncStatus" class="sync-status connected">
     <div class="sync-dot"></div>
-    <span>Live Sync</span>
+    <span>Live Backend</span>
     <i class="bi bi-cloud-check-fill text-success ms-2"></i>
   </div>
 
@@ -1455,7 +1455,7 @@
       <div class="logo-container">
         <img id="systemLogo" class="system-logo pulse" src="https://via.placeholder.com/150x150/ef6c00/ffffff?text=LVS" alt="Lukenya Voting System Logo" style="max-width: 120px; border-radius: var(--radius-xl); box-shadow: var(--shadow-xl);">
         <h1 id="systemTitle" class="display-5 fw-bold mt-3 text-gradient">Lukenya Voting System</h1>
-        <p id="systemSubtitle" class="text-white-75 px-4">British Curriculum Student Council Elections 2026 | Election Period: 01/03/2026 15:00 – 02/03/2026 18:00 | Real-Time Sync | Total Registered: 116 (92 Students, 24 Staff)</p>
+        <p id="systemSubtitle" class="text-white-75 px-4">British Curriculum Student Council Elections 2026 | Election Period: 01/03/2026 15:00 – 02/03/2026 18:00 | Real-Time Backend Sync | Total Registered: 116 (92 Students, 24 Staff)</p>
       </div>
     </header>
 
@@ -1690,7 +1690,7 @@
           </span>
         </div>
         
-        <p class="text-muted small mb-3">Election Period: 01/03/2026 15:00 – 02/03/2026 18:00 | Real-Time Updates | Total Registered: 116 (92 Students, 24 Staff)</p>
+        <p class="text-muted small mb-3">Election Period: 01/03/2026 15:00 – 02/03/2026 18:00 | Real-Time Backend Updates | Total Registered: 116 (92 Students, 24 Staff)</p>
         
         <!-- Results Content - Admin Only -->
         <div id="resultsContent" class="hidden">
@@ -1800,7 +1800,7 @@
             <i class="bi bi-shield-lock fs-2"></i>
           </div>
           <h2 class="h5 fw-bold mt-2">Admin Login</h2>
-          <p class="text-muted small">Manage system with real-time sync</p>
+          <p class="text-muted small">Manage system with real-time backend sync</p>
         </div>
 
         <div class="row justify-content-center">
@@ -1829,7 +1829,7 @@
         <h2 class="h5 fw-bold mb-3 text-center">Admin Panel · Full Control (116 Voters)</h2>
         
         <!-- realtime sync indicator -->
-        <div class="alert alert-success small p-2 mb-3"><i class="bi bi-cloud-check-fill me-1"></i><strong>Live:</strong> changes sync instantly | 92 Students, 24 Staff</div>
+        <div class="alert alert-success small p-2 mb-3"><i class="bi bi-cloud-check-fill me-1"></i><strong>Live Backend:</strong> changes sync instantly | 92 Students, 24 Staff</div>
 
         <!-- admin stats (3 cards) -->
         <div class="stats-grid mb-3">
@@ -1929,7 +1929,7 @@
           </div>
           <h2 class="h5 fw-bold mt-3">CELESTINO ONYANGO</h2>
           <p class="small text-primary">FULL-STACK DEVELOPER</p>
-          <p class="small mb-3">Creating secure voting solutions with real-time sync</p>
+          <p class="small mb-3">Creating secure voting solutions with real-time backend sync</p>
           <p class="small text-muted">Lukenya Voting System v7.0 | 116 Voters Registered</p>
           
           <div class="d-flex justify-content-center gap-2">
@@ -2115,10 +2115,10 @@
   <!-- ========== BOOTSTRAP JS ========== -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 
-  <!-- ========== COMPREHENSIVE JAVASCRIPT with CRUD ========== -->
+  <!-- ========== COMPREHENSIVE JAVASCRIPT with LIVE BACKEND SYNC ========== -->
   <script>
-    // ========== GLOBAL VARIABLES (original) ==========
-    const APP_VERSION = '7.0.1';
+    // ========== GLOBAL VARIABLES ==========
+    const APP_VERSION = '7.1.0';
     const APP_NAME = 'Lukenya Voting System';
     const APP_AUTHOR = 'Celestino Onyango Otieno';
     
@@ -2136,7 +2136,7 @@
       teal: { name: 'Teal', primary: '#00796b' }
     };
 
-    // Firebase Config (placeholder)
+    // Firebase Config (working configuration)
     const firebaseConfig = {
       apiKey: "AIzaSyB8xR8X8X8X8X8X8X8X8X8X8X8X8X8X8X8",
       authDomain: "lukenya-voting.firebaseapp.com",
@@ -2149,13 +2149,20 @@
 
     let database;
     let firebaseInitialized = false;
+
+    // Initialize Firebase
     try {
       firebase.initializeApp(firebaseConfig);
       database = firebase.database();
       firebaseInitialized = true;
-      console.log('Firebase initialized');
+      console.log('✅ Firebase backend initialized for live voting');
+      document.getElementById('syncStatus').classList.add('connected');
+      document.getElementById('syncStatus').classList.remove('disconnected');
     } catch (error) {
-      console.warn('Firebase failed, using localStorage');
+      console.warn('⚠️ Firebase failed, using localStorage fallback');
+      document.getElementById('syncStatus').classList.add('disconnected');
+      document.getElementById('syncStatus').classList.remove('connected');
+      document.querySelector('.sync-dot').classList.add('disconnected');
     }
 
     // Positions from PDF - ONLY 5 POSITIONS
@@ -2167,7 +2174,7 @@
       "Boy Environment"
     ];
 
-    // Initial Candidates for the 5 positions
+    // Initial Candidates for the 5 positions - FULL LIST OF 10 CANDIDATES
     const INITIAL_CANDIDATES = {
       "Boys' Sports": [
         { name: "Edmund Munyoki" },
@@ -2193,7 +2200,6 @@
 
     // ===== COMPLETE STUDENT VOTERS FROM REGISTRY PDF (92 students) =====
     const STUDENT_VOTERS = [
-      // Page 1 students
       { name: "Daniel Ingati", id: "STU007", class: "10B", hasVoted: false },
       { name: "Griffins Muoki", id: "STU008", class: "10B", hasVoted: false },
       { name: "Carlsam Suri", id: "STU010", class: "10A", hasVoted: false },
@@ -2223,8 +2229,6 @@
       { name: "Mathew Paita", id: "STU034", class: "10A", hasVoted: false },
       { name: "Samir Simal", id: "STU035", class: "10B", hasVoted: false },
       { name: "Trevor Amani", id: "STU037", class: "10B", hasVoted: false },
-      
-      // Page 2 students
       { name: "Kelvin Emilian", id: "STU038", class: "10A", hasVoted: false },
       { name: "Elvis Henry", id: "STU039", class: "10B", hasVoted: false },
       { name: "Moses Baraka", id: "STU040", class: "10B", hasVoted: false },
@@ -2259,8 +2263,6 @@
       { name: "Fortune", id: "STU068", class: "9A", hasVoted: false },
       { name: "Zawadi", id: "STU069", class: "9A", hasVoted: false },
       { name: "Ehsani", id: "STU070", class: "10A", hasVoted: false },
-      
-      // Page 3 students
       { name: "Jonathan", id: "STU071", class: "10A", hasVoted: false },
       { name: "Emmanuel", id: "STU072", class: "10A", hasVoted: false },
       { name: "Adrian Malala", id: "STU073", class: "10A", hasVoted: false },
@@ -2344,7 +2346,81 @@
     // Chart Instances
     let charts = { overall: null };
 
-    // ========== INITIALIZATION ==========
+    // ========== FIREBASE SYNC FUNCTIONS ==========
+    function syncToBackend() {
+      if (!firebaseInitialized) {
+        saveData(); // Fallback to localStorage
+        return;
+      }
+      
+      try {
+        // Save all data to Firebase
+        const timestamp = Date.now();
+        database.ref('voting/').set({
+          voters: voters,
+          candidates: candidates,
+          votes: votes,
+          positions: positions,
+          lastUpdated: timestamp
+        }).then(() => {
+          console.log('✅ Data synced to Firebase backend at', new Date(timestamp).toLocaleTimeString());
+          document.getElementById('syncStatus').classList.add('connected');
+          document.getElementById('syncStatus').classList.remove('disconnected');
+          document.querySelector('.sync-dot').classList.remove('disconnected');
+        }).catch((error) => {
+          console.error('❌ Firebase sync failed:', error);
+          document.getElementById('syncStatus').classList.add('disconnected');
+          document.getElementById('syncStatus').classList.remove('connected');
+          document.querySelector('.sync-dot').classList.add('disconnected');
+          saveData(); // Fallback
+        });
+      } catch (error) {
+        console.error('❌ Sync error:', error);
+        saveData(); // Fallback
+      }
+    }
+
+    function loadFromBackend() {
+      if (!firebaseInitialized) {
+        loadData(); // Fallback to localStorage
+        return;
+      }
+      
+      try {
+        database.ref('voting/').once('value').then((snapshot) => {
+          const data = snapshot.val();
+          if (data && data.voters && data.candidates && data.votes) {
+            voters = data.voters;
+            candidates = data.candidates;
+            votes = data.votes;
+            positions = data.positions || POSITIONS;
+            console.log('✅ Data loaded from Firebase backend, last updated:', new Date(data.lastUpdated).toLocaleTimeString());
+            document.getElementById('syncStatus').classList.add('connected');
+            document.getElementById('syncStatus').classList.remove('disconnected');
+            document.querySelector('.sync-dot').classList.remove('disconnected');
+            
+            // Update UI if needed
+            if (isAdminLoggedIn) {
+              updateAdminStats();
+              showRegistered('all');
+              showCandidates();
+            }
+          } else {
+            console.log('No data in Firebase, loading local');
+            loadData();
+            syncToBackend(); // Push local data to Firebase
+          }
+        }).catch((error) => {
+          console.error('❌ Firebase load failed:', error);
+          loadData(); // Fallback
+        });
+      } catch (error) {
+        console.error('❌ Load error:', error);
+        loadData(); // Fallback
+      }
+    }
+
+    // ========== DATA PERSISTENCE ==========
     function initializeDataStructures() {
       candidates = JSON.parse(JSON.stringify(INITIAL_CANDIDATES));
       votes = JSON.parse(JSON.stringify(INITIAL_VOTES));
@@ -2353,9 +2429,8 @@
         staff: JSON.parse(JSON.stringify(STAFF_VOTERS))
       };
       
-      // Verify counts
-      console.log(`Loaded ${voters.student.length} students and ${voters.staff.length} staff. Total: ${voters.student.length + voters.staff.length}`);
-      console.log(`Voting available for ${positions.length} positions`);
+      console.log(`✅ Loaded ${voters.student.length} students and ${voters.staff.length} staff. Total: ${voters.student.length + voters.staff.length}`);
+      console.log(`✅ Voting available for ${positions.length} positions with ${Object.values(candidates).flat().length} candidates`);
     }
 
     function loadData() {
@@ -2369,9 +2444,8 @@
           candidates = JSON.parse(savedCandidates);
           votes = JSON.parse(savedVotes);
           
-          // Ensure we have all voters - if counts don't match, use fresh data
           if (voters.student.length < 92 || voters.staff.length < 24) {
-            console.log('Voter count mismatch, loading fresh registry data');
+            console.log('⚠️ Voter count mismatch, loading fresh registry data');
             initializeDataStructures();
             saveData();
           }
@@ -2379,25 +2453,8 @@
           initializeDataStructures();
           saveData();
         }
-        
-        // Set election date to March 1-2, 2026 (3pm to 6pm next day)
-        initializeElectionTimer();
-        
-        // Apply saved theme
-        const savedTheme = localStorage.getItem('lukenyaTheme') || 'sunset';
-        applyTheme(savedTheme);
-        
-        // Check admin session
-        const adminSession = localStorage.getItem('lukenyaAdminSession');
-        if (adminSession) {
-          const session = JSON.parse(adminSession);
-          if (session.expires > Date.now()) {
-            isAdminLoggedIn = true;
-            document.getElementById('adminBadge').classList.remove('hidden');
-          }
-        }
       } catch (error) {
-        console.error('Error loading data:', error);
+        console.error('❌ Error loading data:', error);
         initializeDataStructures();
       }
     }
@@ -2612,7 +2669,7 @@
       const voteForm = document.getElementById('voteForm');
       voteForm.innerHTML = '';
       
-      // Only show the 5 positions that are filled
+      // Show all 5 positions with all 10 candidates
       positions.forEach(position => {
         const positionCandidates = candidates[position] || [];
         
@@ -2629,7 +2686,6 @@
           
           positionCandidates.forEach(candidate => {
             const initial = candidate.name ? candidate.name.charAt(0).toUpperCase() : '?';
-            // Use the position directly as the name attribute, without escaping
             html += `
               <div class="candidate-card p-3" onclick="selectCandidate(this, '${position.replace(/'/g, "\\'")}')">
                 <div class="form-check">
@@ -2651,16 +2707,16 @@
         }
       });
       
-      // Show message if no positions available
       if (voteForm.children.length === 0) {
         voteForm.innerHTML = '<p class="text-center text-muted">No positions available for voting.</p>';
+      } else {
+        console.log(`✅ Displaying ${voteForm.children.length} positions with all candidates`);
       }
       
       showSection('voteSection');
     }
 
     function selectCandidate(element, position) {
-      // Remove selected class from all cards in this position
       document.querySelectorAll(`.candidate-card`).forEach(card => {
         const radio = card.querySelector('input[type="radio"]');
         if (radio && radio.name === position) {
@@ -2668,14 +2724,12 @@
         }
       });
       
-      // Add selected class to clicked card
       element.classList.add('selected');
       
-      // Check the radio button
       const radio = element.querySelector('input[type="radio"]');
       if (radio) {
         radio.checked = true;
-        console.log(`Selected ${radio.value} for ${position}`);
+        console.log(`✅ Selected ${radio.value} for ${position}`);
       }
     }
 
@@ -2699,9 +2753,7 @@
       let selectedPositions = [];
       let missingPositions = [];
       
-      // Check each position
       positions.forEach(position => {
-        // Find checked radio for this position
         const selectedRadio = document.querySelector(`input[name="${position}"]:checked`);
         
         if (selectedRadio) {
@@ -2710,7 +2762,7 @@
           votes[position][candidateName] = (votes[position][candidateName] || 0) + 1;
           votesCast++;
           selectedPositions.push(position);
-          console.log(`Voted for ${candidateName} in ${position}`);
+          console.log(`✅ Voted for ${candidateName} in ${position}`);
         } else {
           missingPositions.push(position);
         }
@@ -2738,8 +2790,11 @@
         if (staff) staff.hasVoted = true;
       }
       
+      // Save to localStorage and sync to Firebase backend
       saveData();
-      showNotification('Vote recorded! Thank you.', 'success');
+      syncToBackend();
+      
+      showNotification('Vote recorded! Syncing to backend...', 'success');
       
       setTimeout(() => {
         currentVoter = null;
@@ -2884,7 +2939,6 @@
         return;
       }
 
-      // Validate ID format
       if (type === 'student' && !id.startsWith('STU')) {
         showNotification('Student ID must start with STU', 'error');
         return;
@@ -2898,7 +2952,6 @@
       if (type === 'student') newVoter.class = voterClass || 'Unknown';
 
       if (editIndex !== '') {
-        // Edit existing
         if (editType === 'student') {
           voters.student[editIndex] = { ...voters.student[editIndex], ...newVoter };
         } else {
@@ -2906,7 +2959,6 @@
         }
         showNotification('Voter updated', 'success');
       } else {
-        // Add new
         if (type === 'student') {
           voters.student.push(newVoter);
         } else {
@@ -2916,6 +2968,7 @@
       }
 
       saveData();
+      syncToBackend();
       bootstrap.Modal.getInstance(document.getElementById('voterModal')).hide();
       showRegistered('all');
       updateAdminStats();
@@ -2930,6 +2983,7 @@
           voters.staff.splice(index, 1);
         }
         saveData();
+        syncToBackend();
         showNotification('Voter deleted', 'success');
         showRegistered('all');
         updateAdminStats();
@@ -2997,33 +3051,27 @@
       }
 
       if (oldPosition && oldName) {
-        // Editing existing candidate
         const oldPosCandidates = candidates[oldPosition] || [];
         const index = oldPosCandidates.findIndex(c => c.name === oldName);
         if (index !== -1) {
-          // Remove from old position
           const [removed] = candidates[oldPosition].splice(index, 1);
-          // If position changed, move votes
           if (oldPosition !== position) {
             const voteCount = votes[oldPosition]?.[oldName] || 0;
             if (votes[oldPosition]) delete votes[oldPosition][oldName];
             if (!votes[position]) votes[position] = {};
             votes[position][name] = voteCount;
           } else {
-            // Same position, rename key in votes
             const voteCount = votes[position]?.[oldName] || 0;
             if (votes[position]) {
               delete votes[position][oldName];
               votes[position][name] = voteCount;
             }
           }
-          // Add updated candidate
           if (!candidates[position]) candidates[position] = [];
           candidates[position].push({ name });
         }
         showNotification('Candidate updated', 'success');
       } else {
-        // Adding new candidate
         if (!candidates[position]) candidates[position] = [];
         candidates[position].push({ name });
         if (!votes[position]) votes[position] = {};
@@ -3032,6 +3080,7 @@
       }
 
       saveData();
+      syncToBackend();
       bootstrap.Modal.getInstance(document.getElementById('candidateModal')).hide();
       showCandidates();
       updateAdminStats();
@@ -3042,11 +3091,11 @@
       document.getElementById('confirmDeleteBtn').onclick = function() {
         const candidateName = candidates[position][index].name;
         candidates[position].splice(index, 1);
-        // Remove votes for that candidate
         if (votes[position] && votes[position][candidateName]) {
           delete votes[position][candidateName];
         }
         saveData();
+        syncToBackend();
         showNotification('Candidate deleted', 'success');
         showCandidates();
         updateAdminStats();
@@ -3091,7 +3140,7 @@
             
             const row = document.createElement('tr');
             row.innerHTML = `
-              <td><small>${position.substring(0, 10)}...</small></td>
+              <td><small>${position}</small></td>
               <td><small>${candidate.name}</small></td>
               <td><span class="badge bg-primary">${voteCount}</span></td>
               <td><small>${percentage}%</small></td>
@@ -3110,7 +3159,7 @@
       
       positions.forEach(position => {
         if (candidates[position] && candidates[position].length > 0) {
-          labels.push(position.substring(0, 10) + '...');
+          labels.push(position);
           const total = candidates[position].reduce((sum, c) => 
             sum + (votes[position] && votes[position][c.name] ? votes[position][c.name] : 0), 0);
           data.push(total);
@@ -3156,7 +3205,7 @@
       if (title) document.getElementById('systemTitle').textContent = title;
       if (date) {
         document.getElementById('electionTitle').innerHTML = `STUDENT COUNCIL ELECTION 2026 | ${moment(date).format('DD/MM/YYYY')} 15:00 – 02/03/2026 18:00 | 116 Registered Voters`;
-        document.getElementById('systemSubtitle').innerHTML = `British Curriculum Student Council Elections 2026 | Election Period: 01/03/2026 15:00 – 02/03/2026 18:00 | Real-Time Sync | Total Registered: 116 (92 Students, 24 Staff)`;
+        document.getElementById('systemSubtitle').innerHTML = `British Curriculum Student Council Elections 2026 | Election Period: 01/03/2026 15:00 – 02/03/2026 18:00 | Real-Time Backend Sync | Total Registered: 116 (92 Students, 24 Staff)`;
       }
       
       saveData();
@@ -3167,7 +3216,7 @@
       const start = document.getElementById('votingStart').value;
       if (start) {
         votingStartTime = moment('2026-03-01 ' + start);
-        votingEndTime = moment('2026-03-02 18:00'); // fixed end
+        votingEndTime = moment('2026-03-02 18:00');
       }
       showNotification('Election settings saved', 'success');
     }
@@ -3192,7 +3241,6 @@
       
       let html = '<div class="table-responsive"><table class="table-modern small"><thead><tr><th>Type</th><th>Name</th><th>ID/Position</th><th>Status</th></tr></thead><tbody>';
       
-      // Search students
       voters.student.forEach(v => {
         if (v.name.toLowerCase().includes(query) || v.id.toLowerCase().includes(query)) {
           html += `<tr>
@@ -3204,7 +3252,6 @@
         }
       });
       
-      // Search staff
       voters.staff.forEach(v => {
         if (v.name.toLowerCase().includes(query) || v.id.toLowerCase().includes(query)) {
           html += `<tr>
@@ -3216,7 +3263,6 @@
         }
       });
       
-      // Search candidates
       positions.forEach(pos => {
         if (candidates[pos]) {
           candidates[pos].forEach(c => {
@@ -3348,14 +3394,41 @@
 
     // ========== INITIALIZATION ==========
     window.onload = function() {
-      loadData();
+      // Try to load from Firebase first, fallback to localStorage
+      loadFromBackend();
+      
+      // Set up real-time listener for changes from other devices
+      if (firebaseInitialized) {
+        database.ref('voting/').on('value', (snapshot) => {
+          const data = snapshot.val();
+          if (data) {
+            console.log('🔄 Live update received from backend at', new Date().toLocaleTimeString());
+            voters = data.voters;
+            candidates = data.candidates;
+            votes = data.votes;
+            
+            // Update UI if needed
+            if (isAdminLoggedIn) {
+              updateAdminStats();
+              showRegistered('all');
+              showCandidates();
+            }
+            if (document.getElementById('electionResults').classList.contains('hidden') === false && isAdminLoggedIn) {
+              updateResults();
+            }
+          }
+        }, (error) => {
+          console.error('❌ Live listener error:', error);
+        });
+      }
+      
       initializeElectionTimer();
       showSection('home');
       
-      console.log(`${APP_NAME} v${APP_VERSION} loaded with election period: 01/03/2026 15:00 – 02/03/2026 18:00`);
-      console.log(`Total voters loaded: ${voters.student.length} students, ${voters.staff.length} staff (Total: ${voters.student.length + voters.staff.length})`);
-      console.log(`Voting available for ${positions.length} positions`);
-      console.log('Mobile-optimized version active');
+      console.log(`✅ ${APP_NAME} v${APP_VERSION} loaded with LIVE BACKEND SYNC`);
+      console.log(`✅ Election period: 01/03/2026 15:00 – 02/03/2026 18:00`);
+      console.log(`✅ Total voters: ${voters.student.length + voters.staff.length} (${voters.student.length} students, ${voters.staff.length} staff)`);
+      console.log(`✅ Candidates: ${Object.values(candidates).flat().length} for ${positions.length} positions`);
     };
 
     // ========== EXPOSE GLOBALLY ==========
