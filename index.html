@@ -11,14 +11,12 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
   <!-- Google Fonts Inter -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-  <!-- Chart.js -->
+  <!-- Chart.js, Moment, etc -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
-  <!-- html2canvas for chart capture -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
@@ -196,108 +194,18 @@
       margin: 1rem 0;
       border-radius: 8px;
     }
-    
-    /* Export styles - hidden container for chart capture */
-    #exportContainer {
-      position: fixed;
-      top: -9999px;
-      left: -9999px;
-      width: 800px;
-      background: white;
-      padding: 30px;
-      border-radius: 10px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-    }
-    
-    .export-title {
-      color: #f57c00;
-      font-size: 28px;
-      font-weight: 800;
-      text-align: center;
-      margin-bottom: 10px;
-    }
-    
-    .export-subtitle {
-      color: #333;
-      text-align: center;
-      font-size: 16px;
-      margin-bottom: 20px;
-    }
-    
-    .export-stats {
-      display: flex;
-      justify-content: space-around;
-      margin: 20px 0;
-      padding: 15px;
-      background: #f5f5f5;
-      border-radius: 8px;
-    }
-    
-    .export-stat-item {
+    .export-card {
+      background: #1e2436;
+      border-radius: 16px;
+      padding: 1rem;
+      border: 2px solid #2e3a4c;
+      transition: 0.2s;
+      cursor: pointer;
       text-align: center;
     }
-    
-    .export-stat-value {
-      font-size: 24px;
-      font-weight: 700;
-      color: #f57c00;
-    }
-    
-    .export-stat-label {
-      font-size: 12px;
-      color: #666;
-    }
-    
-    .export-table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 20px;
-      font-size: 12px;
-    }
-    
-    .export-table th {
-      background: #f57c00;
-      color: white;
-      padding: 8px;
-      text-align: left;
-    }
-    
-    .export-table td {
-      padding: 8px;
-      border-bottom: 1px solid #ddd;
-    }
-    
-    .export-table tr:last-child td {
-      border-bottom: none;
-    }
-    
-    .export-footer {
-      margin-top: 20px;
-      text-align: center;
-      font-size: 10px;
-      color: #999;
-      border-top: 1px solid #eee;
-      padding-top: 10px;
-    }
-    
-    .export-chart-container {
-      width: 100%;
-      height: 250px;
-      margin: 20px 0;
-    }
-    
-    .position-breakdown {
-      margin-top: 20px;
-      page-break-inside: avoid;
-    }
-    
-    .position-title {
-      background: #f0f0f0;
-      padding: 8px;
-      font-weight: 600;
-      color: #f57c00;
-      border-left: 4px solid #f57c00;
-      margin-bottom: 10px;
+    .export-card:hover {
+      border-color: #f57c00;
+      background: #2a3145;
     }
   </style>
 </head>
@@ -335,7 +243,7 @@
           <button class="list-group-item list-group-item-action bg-transparent text-white" onclick="showSection('searchSection')">🔍 Search</button>
           <button class="list-group-item list-group-item-action bg-transparent text-white" onclick="showDeveloperInfo()">👤 Developer</button>
           <button class="list-group-item list-group-item-action bg-transparent text-white" onclick="showSetupInstructions()">⚙️ Firebase Setup</button>
-          <button class="list-group-item list-group-item-action bg-transparent text-white" onclick="showExportOptions()">📤 Enhanced Export</button>
+          <button class="list-group-item list-group-item-action bg-transparent text-white" onclick="showExportOptions()">📤 Export Results</button>
         </div>
       </div>
     </div>
@@ -434,9 +342,10 @@
       
       <div id="resultsContent" class="hidden">
         <div class="d-flex gap-2 mb-3 flex-wrap">
-          <button class="btn btn-danger btn-sm" onclick="downloadEnhancedPDF()"><i class="bi bi-file-pdf"></i> Enhanced PDF</button>
-          <button class="btn btn-primary btn-sm" onclick="downloadEnhancedDOCX()"><i class="bi bi-file-word"></i> Enhanced DOCX</button>
-          <button class="btn btn-success btn-sm" onclick="downloadSummaryReport()"><i class="bi bi-graph-up"></i> Summary</button>
+          <button class="btn btn-danger btn-sm" onclick="downloadEnhancedPDF()"><i class="bi bi-file-pdf"></i> PDF Report</button>
+          <button class="btn btn-primary btn-sm" onclick="downloadEnhancedDOCX()"><i class="bi bi-file-word"></i> DOCX Report</button>
+          <button class="btn btn-success btn-sm" onclick="downloadSummaryReport()"><i class="bi bi-file-text"></i> Summary</button>
+          <button class="btn btn-info btn-sm" onclick="downloadDetailedReport()"><i class="bi bi-file-spreadsheet"></i> Detailed</button>
         </div>
         <div class="row g-2">
           <div class="col-4"><div class="stat-card p-2"><span id="resultsTotalVoters">116</span><small>Voters</small></div></div>
@@ -503,48 +412,54 @@
         <div id="candidateManagement" class="table-responsive" style="max-height:200px;"></div>
       </div>
       
-      <button class="btn btn-secondary w-100 mt-3" onclick="adminLogout()">Logout</button>
+      <div class="d-flex gap-2 mt-3">
+        <button class="btn btn-primary flex-fill" onclick="showExportOptions()">📤 Export Results</button>
+        <button class="btn btn-secondary flex-fill" onclick="adminLogout()">Logout</button>
+      </div>
     </div>
   </section>
 
   <!-- ========== EXPORT OPTIONS ========== -->
   <section id="exportOptions" class="hidden fade-in">
     <div class="card-modern">
-      <h5 class="text-center">📤 Enhanced Export Options</h5>
-      <p class="text-center text-muted small">Generate professional election reports</p>
+      <h5 class="text-center">📤 Export Election Results</h5>
+      <p class="text-center text-muted small">Generate professional reports with vote analysis</p>
       
       <div class="row g-3 mt-3">
         <div class="col-6">
-          <div class="candidate-card text-center p-3" onclick="downloadEnhancedPDF()">
+          <div class="export-card" onclick="downloadEnhancedPDF()">
             <i class="bi bi-file-pdf fs-1 text-danger"></i>
-            <h6>PDF Report</h6>
-            <small>With charts & analysis</small>
+            <h6 class="mt-2">PDF Report</h6>
+            <small class="text-muted">With charts & tables</small>
           </div>
         </div>
         <div class="col-6">
-          <div class="candidate-card text-center p-3" onclick="downloadEnhancedDOCX()">
+          <div class="export-card" onclick="downloadEnhancedDOCX()">
             <i class="bi bi-file-word fs-1 text-primary"></i>
-            <h6>DOCX Report</h6>
-            <small>With tables & stats</small>
+            <h6 class="mt-2">DOCX Report</h6>
+            <small class="text-muted">Formatted document</small>
           </div>
         </div>
         <div class="col-6">
-          <div class="candidate-card text-center p-3" onclick="downloadSummaryReport()">
+          <div class="export-card" onclick="downloadSummaryReport()">
             <i class="bi bi-file-text fs-1 text-success"></i>
-            <h6>Summary</h6>
-            <small>Brief overview</small>
+            <h6 class="mt-2">Summary</h6>
+            <small class="text-muted">Brief overview</small>
           </div>
         </div>
         <div class="col-6">
-          <div class="candidate-card text-center p-3" onclick="downloadDetailedReport()">
+          <div class="export-card" onclick="downloadDetailedReport()">
             <i class="bi bi-file-spreadsheet fs-1 text-warning"></i>
-            <h6>Detailed</h6>
-            <small>Full analysis</small>
+            <h6 class="mt-2">Detailed</h6>
+            <small class="text-muted">Full analysis</small>
           </div>
         </div>
       </div>
       
-      <button class="btn btn-outline-secondary w-100 mt-3" onclick="showSection('home')">Home</button>
+      <div class="mt-4">
+        <button class="btn btn-outline-secondary w-100" onclick="showSection('adminPanel')">Back to Admin</button>
+        <button class="btn btn-link text-white-50 w-100 mt-2" onclick="showSection('home')">Home</button>
+      </div>
     </div>
   </section>
 
@@ -612,9 +527,6 @@
   <footer class="text-center small text-muted mt-4">© 2026 Lukenya · Celestino Onyango · Live Sync</footer>
 </div>
 
-<!-- Hidden export container for capturing charts -->
-<div id="exportContainer"></div>
-
 <!-- MODALS for Add/Edit -->
 <div class="modal fade" id="voterModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content card-modern">
   <div class="modal-header"><h5 class="modal-title" id="voterModalTitle">Add Voter</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
@@ -650,6 +562,7 @@
 
 <script>
 // ==================== FIREBASE CONFIG ====================
+// REPLACE THIS WITH YOUR ACTUAL FIREBASE CONFIG FROM FIREBASE CONSOLE
 const firebaseConfig = {
   apiKey: "YOUR_API_KEY",
   authDomain: "YOUR_AUTH_DOMAIN",
@@ -822,12 +735,17 @@ function generateDeviceId() {
 
 // ==================== FIREBASE INIT ====================
 try {
+  // Check if config has placeholder values
   if (firebaseConfig.apiKey !== "YOUR_API_KEY") {
     firebase.initializeApp(firebaseConfig);
     database = firebase.database();
     firebaseInitialized = true;
     updateSyncStatus(true);
+    
+    // Listen for real-time updates
     setupFirebaseListeners();
+    
+    // Initial sync
     syncInitialData();
   } else {
     console.warn("Firebase not configured - using offline mode");
@@ -853,6 +771,7 @@ function updateSyncStatus(connected) {
 function setupFirebaseListeners() {
   if (!database) return;
   
+  // Listen for votes
   const votesRef = database.ref('votes');
   votesRef.on('value', (snapshot) => {
     const data = snapshot.val();
@@ -861,6 +780,7 @@ function setupFirebaseListeners() {
     }
   });
   
+  // Listen for voters
   const votersRef = database.ref('voters');
   votersRef.on('value', (snapshot) => {
     const data = snapshot.val();
@@ -869,6 +789,7 @@ function setupFirebaseListeners() {
     }
   });
   
+  // Listen for recent votes
   const recentRef = database.ref('recentVotes').limitToLast(20);
   recentRef.on('value', (snapshot) => {
     const data = snapshot.val();
@@ -884,6 +805,7 @@ function setupFirebaseListeners() {
 function syncInitialData() {
   if (!database) return;
   
+  // Sync voters to Firebase
   const allVoters = {};
   voters.student.forEach(v => { allVoters[v.id] = { ...v, type: 'student' }; });
   voters.staff.forEach(v => { allVoters[v.id] = { ...v, type: 'staff' }; });
@@ -894,12 +816,14 @@ function syncInitialData() {
 function mergeFirebaseData(firebaseVotes) {
   if (!firebaseVotes) return;
   
+  // Reset local votes
   Object.keys(votes).forEach(pos => {
     Object.keys(votes[pos]).forEach(cand => {
       votes[pos][cand] = 0;
     });
   });
   
+  // Apply Firebase votes
   Object.keys(firebaseVotes).forEach(voteId => {
     const vote = firebaseVotes[voteId];
     if (vote && vote.position && vote.candidate) {
@@ -908,6 +832,7 @@ function mergeFirebaseData(firebaseVotes) {
     }
   });
   
+  // Update UI
   if (document.getElementById('electionResults').classList.contains('hidden') === false) {
     updateResults();
   }
@@ -920,9 +845,11 @@ function mergeFirebaseData(firebaseVotes) {
 function mergeFirebaseVoters(firebaseVoters) {
   if (!firebaseVoters) return;
   
+  // Update hasVoted status from Firebase
   Object.keys(firebaseVoters).forEach(voterId => {
     const fbVoter = firebaseVoters[voterId];
     
+    // Find in students
     let found = voters.student.find(v => v.id === fbVoter.id);
     if (found) {
       found.hasVoted = fbVoter.hasVoted || false;
@@ -930,6 +857,7 @@ function mergeFirebaseVoters(firebaseVoters) {
       found.voteTimestamp = fbVoter.voteTimestamp || null;
     }
     
+    // Find in staff
     found = voters.staff.find(v => v.id === fbVoter.id);
     if (found) {
       found.hasVoted = fbVoter.hasVoted || false;
@@ -952,6 +880,7 @@ async function syncVoteToFirebase(voter, voteDetails) {
   const timestamp = Date.now();
   const voteId = `vote_${timestamp}_${voter.id}`;
   
+  // Record the vote
   await database.ref(`votes/${voteId}`).set({
     voterId: voter.id,
     voterName: voter.name,
@@ -963,6 +892,7 @@ async function syncVoteToFirebase(voter, voteDetails) {
     formattedTime: moment(timestamp).format('HH:mm:ss DD/MM')
   });
   
+  // Update voter status
   await database.ref(`voters/${voter.id}`).set({
     id: voter.id,
     name: voter.name,
@@ -973,6 +903,7 @@ async function syncVoteToFirebase(voter, voteDetails) {
     voteTimestamp: timestamp
   });
   
+  // Add to recent votes
   await database.ref(`recentVotes/${voteId}`).set({
     voterName: voter.name,
     position: voteDetails.position,
@@ -1051,7 +982,14 @@ function showVoterChoice() {
 function checkAndShowResults() { showSection('electionResults'); }
 function showDeveloperInfo() { showSection('developerInfo'); }
 function showSetupInstructions() { showSection('setupInstructions'); }
-function showExportOptions() { showSection('exportOptions'); }
+function showExportOptions() { 
+  if (!isAdminLoggedIn) {
+    alert("Admin access required");
+    showSection('adminLogin');
+    return;
+  }
+  showSection('exportOptions'); 
+}
 
 // ==================== VERIFICATION ====================
 function verifyStudent() {
@@ -1109,15 +1047,18 @@ async function submitVote() {
   
   if (missing.length) { alert("Select for: "+missing.join(', ')); return; }
   
+  // Record votes locally and sync to Firebase
   for (let vote of selectedVotes) {
     if (!votes[vote.position]) votes[vote.position] = {};
     votes[vote.position][vote.candidate] = (votes[vote.position][vote.candidate] || 0) + 1;
     
+    // Sync to Firebase if available
     if (database) {
       await syncVoteToFirebase(currentVoter, vote);
     }
   }
   
+  // Update local voter status
   if (currentVoter.type==='student') {
     const student = voters.student.find(v=>v.id===currentVoter.id);
     student.hasVoted = true;
@@ -1156,6 +1097,7 @@ function updateAdminStats() {
   let candCount = 0;
   POSITIONS.forEach(p=> candCount += (candidates[p]?.length||0));
   
+  // Count unique devices that have voted
   const devices = new Set();
   voters.student.filter(v=>v.hasVoted && v.deviceId).forEach(v=>devices.add(v.deviceId));
   voters.staff.filter(v=>v.hasVoted && v.deviceId).forEach(v=>devices.add(v.deviceId));
@@ -1232,6 +1174,7 @@ function saveVoter() {
     else voters.staff.push(voter);
   }
   
+  // Sync to Firebase if available
   if (database) {
     const allVoters = {};
     voters.student.forEach(v => { allVoters[v.id] = { ...v, type: 'student' }; });
@@ -1248,6 +1191,7 @@ function deleteVoter(type,index) {
     if (type==='student') voters.student.splice(index,1);
     else voters.staff.splice(index,1);
     
+    // Sync to Firebase if available
     if (database) {
       const allVoters = {};
       voters.student.forEach(v => { allVoters[v.id] = { ...v, type: 'student' }; });
@@ -1367,198 +1311,161 @@ function updateResults() {
 
 // ==================== ENHANCED EXPORT FUNCTIONS ====================
 
-// Generate professional HTML report content
-function generateReportHTML(includeChart = true) {
+// Generate simple text report for PDF
+function generateTextReport() {
   const totalVoters = voters.student.length + voters.staff.length;
   const totalVotes = voters.student.filter(v=>v.hasVoted).length + voters.staff.filter(v=>v.hasVoted).length;
-  const turnout = totalVoters ? ((totalVotes/totalVoters)*100).toFixed(1) : 0;
+  const turnout = totalVoters? ((totalVotes/totalVoters)*100).toFixed(1) : 0;
   const now = moment().format('DD/MM/YYYY HH:mm:ss');
   
-  let html = `
-    <div style="font-family: 'Inter', sans-serif; max-width: 800px; margin: 0 auto;">
-      <div style="text-align: center; margin-bottom: 30px;">
-        <h1 style="color: #f57c00; font-size: 32px; font-weight: 800; margin-bottom: 5px;">LUKENYA SCHOOL</h1>
-        <h2 style="color: #333; font-size: 24px; font-weight: 600; margin-top: 0;">Student Council Election 2026</h2>
-        <h3 style="color: #666; font-size: 18px; font-weight: 400;">OFFICIAL RESULTS REPORT</h3>
-        <p style="color: #999; font-size: 14px;">Generated: ${now}</p>
-      </div>
-      
-      <div style="background: linear-gradient(135deg, #f57c00, #ff9800); padding: 20px; border-radius: 10px; color: white; margin-bottom: 30px;">
-        <div style="display: flex; justify-content: space-around; text-align: center;">
-          <div>
-            <div style="font-size: 36px; font-weight: 800;">${totalVoters}</div>
-            <div style="font-size: 14px;">Registered Voters</div>
-          </div>
-          <div>
-            <div style="font-size: 36px; font-weight: 800;">${totalVotes}</div>
-            <div style="font-size: 14px;">Votes Cast</div>
-          </div>
-          <div>
-            <div style="font-size: 36px; font-weight: 800;">${turnout}%</div>
-            <div style="font-size: 14px;">Turnout</div>
-          </div>
-        </div>
-      </div>
-  `;
+  let report = [];
+  report.push("=".repeat(60));
+  report.push("LUKENYA SCHOOL - OFFICIAL ELECTION RESULTS 2026".padStart(40));
+  report.push("=".repeat(60));
+  report.push(`Generated: ${now}`);
+  report.push("");
+  report.push("SUMMARY STATISTICS");
+  report.push("-".repeat(40));
+  report.push(`Registered Voters: ${totalVoters}`);
+  report.push(`Votes Cast: ${totalVotes}`);
+  report.push(`Turnout: ${turnout}%`);
+  report.push(`Students: ${voters.student.length}`);
+  report.push(`Staff: ${voters.staff.length}`);
+  report.push("");
+  report.push("VOTE BREAKDOWN BY POSITION");
+  report.push("-".repeat(40));
   
-  // Position breakdown
   POSITIONS.forEach(pos => {
     if (candidates[pos] && candidates[pos].length > 0) {
       const totalPos = candidates[pos].reduce((s, c) => s + (votes[pos]?.[c.name] || 0), 0);
-      
-      html += `
-        <div style="margin-bottom: 25px; page-break-inside: avoid;">
-          <div style="background: #f0f0f0; padding: 10px 15px; border-left: 4px solid #f57c00; font-weight: 600; font-size: 18px; margin-bottom: 10px;">
-            ${pos} (Total: ${totalPos} votes)
-          </div>
-          <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
-            <thead>
-              <tr style="background: #f57c00; color: white;">
-                <th style="padding: 10px; text-align: left;">Candidate</th>
-                <th style="padding: 10px; text-align: center;">Votes</th>
-                <th style="padding: 10px; text-align: center;">Percentage</th>
-                <th style="padding: 10px; text-align: left;">Visual</th>
-              </tr>
-            </thead>
-            <tbody>
-      `;
+      report.push(`\n${pos} (Total: ${totalPos} votes)`);
       
       candidates[pos].forEach(c => {
         const v = votes[pos]?.[c.name] || 0;
         const pct = totalPos > 0 ? ((v / totalPos) * 100).toFixed(1) : 0;
-        const barWidth = pct;
-        
-        html += `
-          <tr style="border-bottom: 1px solid #eee;">
-            <td style="padding: 10px;">${c.name}</td>
-            <td style="padding: 10px; text-align: center; font-weight: 600;">${v}</td>
-            <td style="padding: 10px; text-align: center;">${pct}%</td>
-            <td style="padding: 10px;">
-              <div style="background: #f0f0f0; height: 20px; width: 100%; border-radius: 10px; overflow: hidden;">
-                <div style="background: #f57c00; width: ${barWidth}%; height: 100%;"></div>
-              </div>
-            </td>
-          </tr>
-        `;
+        report.push(`  ${c.name}: ${v} votes (${pct}%)`);
       });
-      
-      html += `
-            </tbody>
-          </table>
-        </div>
-      `;
     }
   });
   
-  // Overall statistics
-  html += `
-    <div style="margin-top: 30px; padding: 20px; background: #f9f9f9; border-radius: 10px;">
-      <h4 style="color: #f57c00; margin-top: 0;">Voter Statistics</h4>
-      <div style="display: flex; gap: 20px; flex-wrap: wrap;">
-        <div style="flex: 1; min-width: 200px;">
-          <table style="width: 100%;">
-            <tr><td style="padding: 5px;">Students:</td><td style="padding: 5px; font-weight: 600;">${voters.student.length}</td></tr>
-            <tr><td style="padding: 5px;">Staff:</td><td style="padding: 5px; font-weight: 600;">${voters.staff.length}</td></tr>
-            <tr><td style="padding: 5px;">Students voted:</td><td style="padding: 5px; font-weight: 600;">${voters.student.filter(v => v.hasVoted).length}</td></tr>
-            <tr><td style="padding: 5px;">Staff voted:</td><td style="padding: 5px; font-weight: 600;">${voters.staff.filter(v => v.hasVoted).length}</td></tr>
-          </table>
-        </div>
-        <div style="flex: 1; min-width: 200px;">
-          <table style="width: 100%;">
-            <tr><td style="padding: 5px;">Total positions:</td><td style="padding: 5px; font-weight: 600;">${POSITIONS.length}</td></tr>
-            <tr><td style="padding: 5px;">Total candidates:</td><td style="padding: 5px; font-weight: 600;">${Object.values(candidates).reduce((s, arr) => s + arr.length, 0)}</td></tr>
-            <tr><td style="padding: 5px;">Active devices:</td><td style="padding: 5px; font-weight: 600;">${new Set([...voters.student.filter(v => v.deviceId).map(v => v.deviceId), ...voters.staff.filter(v => v.deviceId).map(v => v.deviceId)]).size}</td></tr>
-          </table>
-        </div>
-      </div>
-    </div>
-    
-    <div style="margin-top: 20px; text-align: center; color: #999; font-size: 12px; border-top: 1px solid #eee; padding-top: 10px;">
-      <p>This is an official election report generated by Lukenya Voting System v8.0</p>
-      <p>© 2026 Lukenya School · Celestino Onyango</p>
-    </div>
-  </div>`;
+  report.push("");
+  report.push("=".repeat(60));
+  report.push("© 2026 Lukenya School · Celestino Onyango");
   
-  return html;
+  return report.join('\n');
 }
 
-// Enhanced PDF download with chart
-async function downloadEnhancedPDF() {
+// Enhanced PDF download
+function downloadEnhancedPDF() {
   if (!isAdminLoggedIn) return alert("Admin only");
   
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF('p', 'mm', 'a4');
-  
-  // Generate HTML content
-  const html = generateReportHTML(true);
-  
-  // Create a temporary div to render HTML
-  const tempDiv = document.createElement('div');
-  tempDiv.innerHTML = html;
-  tempDiv.style.width = '800px';
-  tempDiv.style.padding = '20px';
-  tempDiv.style.background = 'white';
-  tempDiv.style.position = 'absolute';
-  tempDiv.style.left = '-9999px';
-  document.body.appendChild(tempDiv);
-  
   try {
-    // Capture the chart from the main page if it exists
-    const chartCanvas = document.getElementById('overallResultsChart');
-    if (chartCanvas) {
-      const chartImage = await html2canvas(chartCanvas, {
-        scale: 2,
-        backgroundColor: '#ffffff'
-      });
-      
-      // Add chart image to the temp div
-      const chartImg = document.createElement('img');
-      chartImg.src = chartImage.toDataURL('image/png');
-      chartImg.style.width = '100%';
-      chartImg.style.maxWidth = '700px';
-      chartImg.style.margin = '20px auto';
-      chartImg.style.display = 'block';
-      
-      // Insert chart after the header
-      const headerDiv = tempDiv.querySelector('div[style*="text-align: center"]');
-      if (headerDiv && headerDiv.nextSibling) {
-        tempDiv.insertBefore(chartImg, headerDiv.nextSibling);
-      }
-    }
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
     
-    // Convert to PDF
-    const canvas = await html2canvas(tempDiv, {
-      scale: 2,
-      backgroundColor: '#ffffff'
+    // Add title
+    doc.setFontSize(20);
+    doc.setTextColor(245, 124, 0);
+    doc.text("LUKENYA SCHOOL", 105, 20, { align: 'center' });
+    
+    doc.setFontSize(16);
+    doc.setTextColor(0, 0, 0);
+    doc.text("Official Election Results 2026", 105, 30, { align: 'center' });
+    
+    doc.setFontSize(10);
+    doc.setTextColor(100, 100, 100);
+    doc.text(`Generated: ${moment().format('DD/MM/YYYY HH:mm:ss')}`, 105, 38, { align: 'center' });
+    
+    // Statistics
+    const totalVoters = voters.student.length + voters.staff.length;
+    const totalVotes = voters.student.filter(v=>v.hasVoted).length + voters.staff.filter(v=>v.hasVoted).length;
+    const turnout = totalVoters? ((totalVotes/totalVoters)*100).toFixed(1) : 0;
+    
+    doc.setFillColor(245, 124, 0);
+    doc.rect(20, 45, 170, 25, 'F');
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(12);
+    doc.text(`Total Voters: ${totalVoters}`, 30, 55);
+    doc.text(`Votes Cast: ${totalVotes}`, 80, 55);
+    doc.text(`Turnout: ${turnout}%`, 140, 55);
+    
+    // Results table
+    let yPos = 80;
+    doc.setTextColor(0, 0, 0);
+    
+    POSITIONS.forEach(pos => {
+      if (candidates[pos] && candidates[pos].length > 0) {
+        // Check if we need a new page
+        if (yPos > 250) {
+          doc.addPage();
+          yPos = 20;
+        }
+        
+        doc.setFontSize(12);
+        doc.setFont(undefined, 'bold');
+        doc.text(pos, 20, yPos);
+        yPos += 6;
+        
+        doc.setFontSize(10);
+        doc.setFont(undefined, 'normal');
+        
+        candidates[pos].forEach(c => {
+          const v = votes[pos]?.[c.name] || 0;
+          doc.text(`  ${c.name}: ${v} votes`, 25, yPos);
+          yPos += 5;
+        });
+        
+        yPos += 5;
+      }
     });
     
-    const imgData = canvas.toDataURL('image/png');
-    const imgWidth = 210; // A4 width in mm
-    const pageHeight = 297; // A4 height in mm
-    const imgHeight = (canvas.height * imgWidth) / canvas.width;
-    
-    doc.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
-    
-    // If content exceeds one page
-    if (imgHeight > pageHeight) {
-      let heightLeft = imgHeight - pageHeight;
-      let position = 0;
-      
-      while (heightLeft > 0) {
-        doc.addPage();
-        position = position - pageHeight;
-        doc.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-        heightLeft -= pageHeight;
-      }
-    }
+    // Footer
+    doc.setFontSize(8);
+    doc.setTextColor(150, 150, 150);
+    doc.text("© 2026 Lukenya School · Celestino Onyango", 105, 285, { align: 'center' });
     
     doc.save(`Lukenya_Election_Results_${moment().format('YYYY-MM-DD_HHmm')}.pdf`);
+    
   } catch (error) {
     console.error('PDF generation error:', error);
-    alert('Error generating PDF. Using simple PDF instead.');
-    downloadResultsPDF();
-  } finally {
-    document.body.removeChild(tempDiv);
+    alert('Error generating PDF. Using simple version instead.');
+    downloadSimplePDF();
+  }
+}
+
+// Simple PDF as fallback
+function downloadSimplePDF() {
+  if (!isAdminLoggedIn) return alert("Admin only");
+  
+  try {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+    
+    doc.setFontSize(16);
+    doc.text("Lukenya Voting Results 2026", 20, 20);
+    
+    const totalVoters = voters.student.length + voters.staff.length;
+    const votesCast = voters.student.filter(v=>v.hasVoted).length + voters.staff.filter(v=>v.hasVoted).length;
+    const turnout = totalVoters? ((votesCast/totalVoters)*100).toFixed(1) : 0;
+    
+    doc.setFontSize(12);
+    doc.text(`Total voters: ${totalVoters}`, 20, 30);
+    doc.text(`Votes cast: ${votesCast} (${turnout}%)`, 20, 35);
+    
+    let y = 45;
+    POSITIONS.forEach(p => {
+      doc.text(p, 20, y);
+      y += 5;
+      candidates[p]?.forEach(c => {
+        doc.text(`  ${c.name}: ${votes[p]?.[c.name]||0}`, 25, y);
+        y += 5;
+      });
+      y += 5;
+    });
+    
+    doc.save("results.pdf");
+  } catch (error) {
+    alert("Error generating PDF. Please try again.");
   }
 }
 
@@ -1566,146 +1473,98 @@ async function downloadEnhancedPDF() {
 function downloadEnhancedDOCX() {
   if (!isAdminLoggedIn) return alert("Admin only");
   
-  const html = generateReportHTML(false);
-  const styles = `
-    <style>
-      body { font-family: 'Inter', sans-serif; margin: 30px; }
-      h1 { color: #f57c00; font-size: 32px; }
-      h2 { color: #333; font-size: 24px; }
-      .stats-box { background: linear-gradient(135deg, #f57c00, #ff9800); padding: 20px; border-radius: 10px; color: white; }
-      table { border-collapse: collapse; width: 100%; margin: 15px 0; }
-      th { background: #f57c00; color: white; padding: 10px; text-align: left; }
-      td { padding: 8px; border-bottom: 1px solid #ddd; }
-      .position-title { background: #f0f0f0; padding: 10px; border-left: 4px solid #f57c00; font-weight: 600; }
-      .progress-bar { background: #f0f0f0; height: 20px; border-radius: 10px; overflow: hidden; }
-      .progress-fill { background: #f57c00; height: 100%; }
-    </style>
-  `;
-  
-  const fullHTML = `<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="UTF-8">
-  <title>Lukenya Election Results 2026</title>
-  ${styles}
-</head>
-<body>
-  ${html}
-</body>
-</html>`;
-  
-  const blob = new Blob([fullHTML], { type: 'application/msword' });
-  saveAs(blob, `Lukenya_Election_Results_${moment().format('YYYY-MM-DD_HHmm')}.doc`);
+  try {
+    const totalVoters = voters.student.length + voters.staff.length;
+    const totalVotes = voters.student.filter(v=>v.hasVoted).length + voters.staff.filter(v=>v.hasVoted).length;
+    const turnout = totalVoters? ((totalVotes/totalVoters)*100).toFixed(1) : 0;
+    const now = moment().format('DD/MM/YYYY HH:mm:ss');
+    
+    let content = `
+      <html>
+      <head>
+        <style>
+          body { font-family: Arial, sans-serif; margin: 30px; }
+          h1 { color: #f57c00; border-bottom: 2px solid #f57c00; padding-bottom: 10px; }
+          h2 { color: #333; margin-top: 20px; }
+          .stats { background: #f5f5f5; padding: 15px; border-radius: 5px; margin: 20px 0; }
+          .stat-item { display: inline-block; margin-right: 30px; }
+          .stat-value { font-size: 24px; font-weight: bold; color: #f57c00; }
+          .stat-label { font-size: 12px; color: #666; }
+          table { border-collapse: collapse; width: 100%; margin: 15px 0; }
+          th { background: #f57c00; color: white; padding: 10px; text-align: left; }
+          td { padding: 8px; border-bottom: 1px solid #ddd; }
+          .position-header { background: #f0f0f0; padding: 10px; margin-top: 20px; font-weight: bold; border-left: 4px solid #f57c00; }
+        </style>
+      </head>
+      <body>
+        <h1>LUKENYA SCHOOL - OFFICIAL ELECTION RESULTS 2026</h1>
+        <p><em>Generated: ${now}</em></p>
+        
+        <div class="stats">
+          <div class="stat-item">
+            <div class="stat-value">${totalVoters}</div>
+            <div class="stat-label">Registered Voters</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value">${totalVotes}</div>
+            <div class="stat-label">Votes Cast</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value">${turnout}%</div>
+            <div class="stat-label">Turnout</div>
+          </div>
+        </div>
+        
+        <h2>Vote Breakdown by Position</h2>
+    `;
+    
+    POSITIONS.forEach(pos => {
+      if (candidates[pos] && candidates[pos].length > 0) {
+        const totalPos = candidates[pos].reduce((s, c) => s + (votes[pos]?.[c.name] || 0), 0);
+        
+        content += `
+          <div class="position-header">${pos} (Total: ${totalPos} votes)</div>
+          <table>
+            <thead>
+              <tr>
+                <th>Candidate</th>
+                <th>Votes</th>
+                <th>Percentage</th>
+              </tr>
+            </thead>
+            <tbody>
+        `;
+        
+        candidates[pos].forEach(c => {
+          const v = votes[pos]?.[c.name] || 0;
+          const pct = totalPos > 0 ? ((v / totalPos) * 100).toFixed(1) : 0;
+          content += `<tr><td>${c.name}</td><td>${v}</td><td>${pct}%</td></tr>`;
+        });
+        
+        content += `</tbody></table>`;
+      }
+    });
+    
+    content += `
+        <p style="margin-top: 30px; color: #999; font-size: 10px;">© 2026 Lukenya School · Celestino Onyango</p>
+      </body>
+      </html>
+    `;
+    
+    const blob = new Blob([content], { type: 'application/msword' });
+    saveAs(blob, `Lukenya_Election_Results_${moment().format('YYYY-MM-DD_HHmm')}.doc`);
+    
+  } catch (error) {
+    console.error('DOCX generation error:', error);
+    alert('Error generating DOCX. Using simple version instead.');
+    downloadSimpleDOCX();
+  }
 }
 
-// Summary report
-function downloadSummaryReport() {
+// Simple DOCX as fallback
+function downloadSimpleDOCX() {
   if (!isAdminLoggedIn) return alert("Admin only");
   
-  const totalVoters = voters.student.length + voters.staff.length;
-  const totalVotes = voters.student.filter(v => v.hasVoted).length + voters.staff.filter(v => v.hasVoted).length;
-  const turnout = totalVoters ? ((totalVotes / totalVoters) * 100).toFixed(1) : 0;
-  
-  let summary = `LUKENYA SCHOOL - ELECTION SUMMARY 2026\n`;
-  summary += `====================================\n`;
-  summary += `Generated: ${moment().format('DD/MM/YYYY HH:mm:ss')}\n\n`;
-  summary += `TOTAL STATISTICS:\n`;
-  summary += `Registered Voters: ${totalVoters}\n`;
-  summary += `Votes Cast: ${totalVotes}\n`;
-  summary += `Turnout: ${turnout}%\n\n`;
-  summary += `POSITION WINNERS:\n`;
-  
-  POSITIONS.forEach(pos => {
-    if (candidates[pos] && candidates[pos].length > 0) {
-      const votesArray = candidates[pos].map(c => ({
-        name: c.name,
-        votes: votes[pos]?.[c.name] || 0
-      }));
-      
-      const winner = votesArray.reduce((max, curr) => curr.votes > max.votes ? curr : max, { votes: -1 });
-      summary += `${pos}: ${winner.name} (${winner.votes} votes)\n`;
-    }
-  });
-  
-  summary += `\n====================================\n`;
-  summary += `© 2026 Lukenya School · Celestino Onyango\n`;
-  
-  const blob = new Blob([summary], { type: 'text/plain' });
-  saveAs(blob, `Lukenya_Summary_${moment().format('YYYY-MM-DD_HHmm')}.txt`);
-}
-
-// Detailed report with all candidates
-function downloadDetailedReport() {
-  if (!isAdminLoggedIn) return alert("Admin only");
-  
-  const totalVoters = voters.student.length + voters.staff.length;
-  const totalVotes = voters.student.filter(v => v.hasVoted).length + voters.staff.filter(v => v.hasVoted).length;
-  const turnout = totalVoters ? ((totalVotes / totalVoters) * 100).toFixed(1) : 0;
-  
-  let report = `LUKENYA SCHOOL - DETAILED ELECTION REPORT 2026\n`;
-  report += `================================================\n`;
-  report += `Generated: ${moment().format('DD/MM/YYYY HH:mm:ss')}\n\n`;
-  report += `OVERALL STATISTICS:\n`;
-  report += `┌──────────────────────┬─────────┐\n`;
-  report += `│ Registered Voters    │ ${totalVoters.toString().padStart(7)} │\n`;
-  report += `│ Votes Cast           │ ${totalVotes.toString().padStart(7)} │\n`;
-  report += `│ Turnout              │ ${turnout.toString().padStart(7)}% │\n`;
-  report += `│ Students             │ ${voters.student.length.toString().padStart(7)} │\n`;
-  report += `│ Staff                │ ${voters.staff.length.toString().padStart(7)} │\n`;
-  report += `│ Student Votes        │ ${voters.student.filter(v => v.hasVoted).length.toString().padStart(7)} │\n`;
-  report += `│ Staff Votes          │ ${voters.staff.filter(v => v.hasVoted).length.toString().padStart(7)} │\n`;
-  report += `└──────────────────────┴─────────┘\n\n`;
-  
-  report += `VOTE BREAKDOWN BY POSITION:\n`;
-  
-  POSITIONS.forEach(pos => {
-    if (candidates[pos] && candidates[pos].length > 0) {
-      const totalPos = candidates[pos].reduce((s, c) => s + (votes[pos]?.[c.name] || 0), 0);
-      report += `\n${pos} (Total: ${totalPos} votes)\n`;
-      report += `┌──────────────────────────┬───────┬────────┐\n`;
-      report += `│ Candidate                │ Votes │   %    │\n`;
-      report += `├──────────────────────────┼───────┼────────┤\n`;
-      
-      candidates[pos].forEach(c => {
-        const v = votes[pos]?.[c.name] || 0;
-        const pct = totalPos > 0 ? ((v / totalPos) * 100).toFixed(1) : 0;
-        report += `│ ${c.name.padEnd(24)} │ ${v.toString().padStart(5)} │ ${pct.toString().padStart(6)}% │\n`;
-      });
-      
-      report += `└──────────────────────────┴───────┴────────┘\n`;
-    }
-  });
-  
-  report += `\n================================================\n`;
-  report += `© 2026 Lukenya School · Celestino Onyango\n`;
-  report += `System: Lukenya Voting System v8.0\n`;
-  
-  const blob = new Blob([report], { type: 'text/plain' });
-  saveAs(blob, `Lukenya_Detailed_${moment().format('YYYY-MM-DD_HHmm')}.txt`);
-}
-
-// Keep original functions for backward compatibility
-function downloadResultsPDF() {
-  if (!isAdminLoggedIn) return alert("Admin only");
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF();
-  doc.text("Lukenya Voting Results 2026",20,20);
-  const totalVoters = voters.student.length + voters.staff.length;
-  const votesCast = voters.student.filter(v=>v.hasVoted).length + voters.staff.filter(v=>v.hasVoted).length;
-  const turnout = totalVoters? ((votesCast/totalVoters)*100).toFixed(1) : 0;
-  doc.text(`Total voters: ${totalVoters}`,20,30);
-  doc.text(`Votes cast: ${votesCast} (${turnout}%)`,20,35);
-  let y=45;
-  POSITIONS.forEach(p => {
-    doc.text(p,20,y); y+=5;
-    candidates[p]?.forEach(c => { doc.text(`  ${c.name}: ${votes[p]?.[c.name]||0}`,25,y); y+=5; });
-    y+=5;
-  });
-  doc.save("results.pdf");
-}
-
-function downloadResultsDOCX() {
-  if (!isAdminLoggedIn) return alert("Admin only");
   const totalVoters = voters.student.length + voters.staff.length;
   const votesCast = voters.student.filter(v=>v.hasVoted).length + voters.staff.filter(v=>v.hasVoted).length;
   const turnout = totalVoters? ((votesCast/totalVoters)*100).toFixed(1) : 0;
@@ -1722,6 +1581,97 @@ function downloadResultsDOCX() {
   content += '</table>';
   const blob = new Blob([content], {type:'application/msword'});
   saveAs(blob, "results.docx");
+}
+
+// Summary report
+function downloadSummaryReport() {
+  if (!isAdminLoggedIn) return alert("Admin only");
+  
+  try {
+    const totalVoters = voters.student.length + voters.staff.length;
+    const totalVotes = voters.student.filter(v => v.hasVoted).length + voters.staff.filter(v => v.hasVoted).length;
+    const turnout = totalVoters ? ((totalVotes / totalVoters) * 100).toFixed(1) : 0;
+    
+    let summary = `LUKENYA SCHOOL - ELECTION SUMMARY 2026\n`;
+    summary += `====================================\n`;
+    summary += `Generated: ${moment().format('DD/MM/YYYY HH:mm:ss')}\n\n`;
+    summary += `TOTAL STATISTICS:\n`;
+    summary += `Registered Voters: ${totalVoters}\n`;
+    summary += `Votes Cast: ${totalVotes}\n`;
+    summary += `Turnout: ${turnout}%\n`;
+    summary += `Students: ${voters.student.length}\n`;
+    summary += `Staff: ${voters.staff.length}\n\n`;
+    summary += `WINNERS BY POSITION:\n`;
+    
+    POSITIONS.forEach(pos => {
+      if (candidates[pos] && candidates[pos].length > 0) {
+        const votesArray = candidates[pos].map(c => ({
+          name: c.name,
+          votes: votes[pos]?.[c.name] || 0
+        }));
+        
+        const winner = votesArray.reduce((max, curr) => curr.votes > max.votes ? curr : max, { votes: -1 });
+        summary += `${pos}: ${winner.name} (${winner.votes} votes)\n`;
+      }
+    });
+    
+    summary += `\n====================================\n`;
+    summary += `© 2026 Lukenya School · Celestino Onyango\n`;
+    
+    const blob = new Blob([summary], { type: 'text/plain' });
+    saveAs(blob, `Lukenya_Summary_${moment().format('YYYY-MM-DD_HHmm')}.txt`);
+    
+  } catch (error) {
+    console.error('Summary generation error:', error);
+    alert('Error generating summary report.');
+  }
+}
+
+// Detailed report
+function downloadDetailedReport() {
+  if (!isAdminLoggedIn) return alert("Admin only");
+  
+  try {
+    const totalVoters = voters.student.length + voters.staff.length;
+    const totalVotes = voters.student.filter(v => v.hasVoted).length + voters.staff.filter(v => v.hasVoted).length;
+    const turnout = totalVoters ? ((totalVotes / totalVoters) * 100).toFixed(1) : 0;
+    
+    let report = `LUKENYA SCHOOL - DETAILED ELECTION REPORT 2026\n`;
+    report += `================================================\n`;
+    report += `Generated: ${moment().format('DD/MM/YYYY HH:mm:ss')}\n\n`;
+    report += `OVERALL STATISTICS:\n`;
+    report += `Registered Voters: ${totalVoters}\n`;
+    report += `Votes Cast: ${totalVotes}\n`;
+    report += `Turnout: ${turnout}%\n`;
+    report += `Students: ${voters.student.length} (${voters.student.filter(v => v.hasVoted).length} voted)\n`;
+    report += `Staff: ${voters.staff.length} (${voters.staff.filter(v => v.hasVoted).length} voted)\n\n`;
+    
+    report += `VOTE BREAKDOWN BY POSITION:\n`;
+    report += `------------------------------------------------\n`;
+    
+    POSITIONS.forEach(pos => {
+      if (candidates[pos] && candidates[pos].length > 0) {
+        const totalPos = candidates[pos].reduce((s, c) => s + (votes[pos]?.[c.name] || 0), 0);
+        report += `\n${pos} (Total: ${totalPos} votes)\n`;
+        
+        candidates[pos].forEach(c => {
+          const v = votes[pos]?.[c.name] || 0;
+          const pct = totalPos > 0 ? ((v / totalPos) * 100).toFixed(1) : 0;
+          report += `  ${c.name}: ${v} votes (${pct}%)\n`;
+        });
+      }
+    });
+    
+    report += `\n================================================\n`;
+    report += `© 2026 Lukenya School · Celestino Onyango\n`;
+    
+    const blob = new Blob([report], { type: 'text/plain' });
+    saveAs(blob, `Lukenya_Detailed_${moment().format('YYYY-MM-DD_HHmm')}.txt`);
+    
+  } catch (error) {
+    console.error('Detailed report error:', error);
+    alert('Error generating detailed report.');
+  }
 }
 
 // ==================== SEARCH ====================
@@ -1755,17 +1705,33 @@ loadData();
 updateHomeStats();
 
 // expose globals
-window.showSection = showSection; window.checkAndShowResults = checkAndShowResults; window.showVoterChoice = showVoterChoice;
-window.showDeveloperInfo = showDeveloperInfo; window.verifyStudent = verifyStudent; window.verifyStaff = verifyStaff;
-window.selectCandidate = selectCandidate; window.submitVote = submitVote; window.adminAccess = adminAccess;
-window.adminLogout = adminLogout; window.showRegistered = showRegistered; window.showCandidates = showCandidates;
-window.showAddVoterModal = showAddVoterModal; window.editVoter = editVoter; window.deleteVoter = deleteVoter;
-window.saveVoter = saveVoter; window.showAddCandidateModal = showAddCandidateModal; window.editCandidate = editCandidate;
-window.deleteCandidate = deleteCandidate; window.saveCandidate = saveCandidate; window.performSearch = performSearch;
-window.downloadResultsPDF = downloadResultsPDF; window.downloadResultsDOCX = downloadResultsDOCX;
-window.downloadEnhancedPDF = downloadEnhancedPDF; window.downloadEnhancedDOCX = downloadEnhancedDOCX;
-window.downloadSummaryReport = downloadSummaryReport; window.downloadDetailedReport = downloadDetailedReport;
-window.showSetupInstructions = showSetupInstructions; window.showExportOptions = showExportOptions;
+window.showSection = showSection; 
+window.checkAndShowResults = checkAndShowResults; 
+window.showVoterChoice = showVoterChoice;
+window.showDeveloperInfo = showDeveloperInfo; 
+window.verifyStudent = verifyStudent; 
+window.verifyStaff = verifyStaff;
+window.selectCandidate = selectCandidate; 
+window.submitVote = submitVote; 
+window.adminAccess = adminAccess;
+window.adminLogout = adminLogout; 
+window.showRegistered = showRegistered; 
+window.showCandidates = showCandidates;
+window.showAddVoterModal = showAddVoterModal; 
+window.editVoter = editVoter; 
+window.deleteVoter = deleteVoter;
+window.saveVoter = saveVoter; 
+window.showAddCandidateModal = showAddCandidateModal; 
+window.editCandidate = editCandidate;
+window.deleteCandidate = deleteCandidate; 
+window.saveCandidate = saveCandidate; 
+window.performSearch = performSearch;
+window.downloadEnhancedPDF = downloadEnhancedPDF; 
+window.downloadEnhancedDOCX = downloadEnhancedDOCX;
+window.downloadSummaryReport = downloadSummaryReport; 
+window.downloadDetailedReport = downloadDetailedReport;
+window.showSetupInstructions = showSetupInstructions; 
+window.showExportOptions = showExportOptions;
 
 // init
 showSection('home');
